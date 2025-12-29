@@ -1,0 +1,48 @@
+class RoutePath {
+  static const String basePath = '/';
+
+  // Init
+  static const String splashScreen = 'splashScreen';
+  static const String welcomeScreen = 'welcomeScreen';
+  static const String onboardingScreen = 'onboardingScreen';
+  static const String vendorSelectionScreen = 'vendorSelectionScreen';
+  static const String loginScreen = 'loginScreen';
+  static const String signUpScreen = 'signUpScreen';
+  static const String verifyOtpScreen = 'verifyOtpScreen';
+  static const String forgetPasswordScreen = 'forgetPasswordScreen';
+  static const String otpScreen = 'otpScreen';
+  static const String resetPasswordScreen = 'resetPasswordScreen';
+  static const String driverNavScreen = 'driverNavScreen';
+  static const String activeOtpScreen = 'activeOtpScreen';
+  static const String passwordAndSecurityScreen = 'passwordAndSecurityScreen';
+  static const String changePasswordScreen = 'changePasswordScreen';
+  static const String termsAndConditionsScreen = 'termsAndConditionsScreen';
+  static const String privacyPolicyScreen = 'privacyPolicyScreen';
+  static const String customerReviewScreen = 'customerReviewScreen';
+  static const String chatListScreen = 'chatListScreen';
+  static const String trainerNavScreen = 'trainerNavScreen';
+  static const String editProfileScreen = 'editProfileScreen';
+  static const String profileScreen = 'profileScreen';
+  static const String professionalInfoScreen = 'professionalInfoScreen';
+  static const String professionalInfoEditScreen = 'professionalInfoEditScreen';
+  static const String chatScreen = 'chatScreen';
+  static const String audioCallScreen = 'audioCallScreen';
+  static const String parcelDetailsScreen = 'parcelDetailsScreen';
+  static const String driverNotificationScreen = 'driverNotificationScreen';
+  static const String commuterRegistrationScreen = 'commuterRegistrationScreen';
+  static const String parcelOwnerNavScreen = 'parcelOwnerNavScreen';
+  static const String supportHelpScreen = 'supportHelpScreen';
+  static const String transactionScreen = 'transactionScreen';
+  static const String parcelOtpScreen = 'parcelOtpScreen';
+  static const String parcelsScreen = 'parcelsScreen';
+  static const String trackParcelScreen = 'trackParcelScreen';
+  static const String createParcelScreen = 'createParcelScreen';
+  static const String allCommuterScreen = 'allCommuterScreen';
+  static const String commuterProfileScreen = 'commuterProfileScreen';
+  static const String refundScreen = 'refundScreen';
+  static const String parcelOwnerReviewScreen = 'parcelOwnerReviewScreen';
+  static const String createDetailsParcelScreen = 'createDetailsParcelScreen';
+  static const String detailsMyParcelScreen = 'detailsMyParcelScreen';
+  static const String editParcelScreen = 'editParcelScreen';
+  static const String paymentScreen = 'paymentScreen';
+}
