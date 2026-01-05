@@ -60,10 +60,13 @@ class CommuterCard extends StatelessWidget {
                         color: Colors.red, // Design shows red car icon
                       ),
                       Gap(4.w),
-                      Text(
-                        commuter.vehicleType,
-                        style: context.bodyMedium.copyWith(
-                          color: Colors.grey[800],
+                      Flexible(
+                        child: Text(
+                          commuter.vehicleType,
+                          style: context.bodyMedium.copyWith(
+                            color: Colors.grey[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -78,11 +81,14 @@ class CommuterCard extends StatelessWidget {
                         ),
                       ),
                       Icon(Icons.star, size: 16.sp, color: Colors.amber),
-                      Text(
-                        "${commuter.rating} (${commuter.deliveryCount} deliveries)",
-                        style: context.bodySmall.copyWith(
-                          color: Colors.grey[800],
-                          fontSize: 12.sp,
+                      Flexible(
+                        child: Text(
+                          "${commuter.rating} (${commuter.deliveryCount} deliveries)",
+                          style: context.bodySmall.copyWith(
+                            color: Colors.grey[800],
+                            fontSize: 12.sp,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

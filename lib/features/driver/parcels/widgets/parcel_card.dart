@@ -58,11 +58,14 @@ class ParcelCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Parcel ID:$parcelId",
-                          style: context.bodyMedium.copyWith(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            "Parcel ID:$parcelId",
+                            style: context.bodyMedium.copyWith(
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         _buildStatusBadge(status),
