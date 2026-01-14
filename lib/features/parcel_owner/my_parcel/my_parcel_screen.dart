@@ -49,6 +49,8 @@ class MyParcelScreen extends GetView<MyParcelController> {
           ),
         ),
         body: Obx(
+
+          
           () => TabBarView(
             children: [
               _buildParcelList(ParcelStatus.pending),

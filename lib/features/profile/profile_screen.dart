@@ -168,7 +168,7 @@ class ProfileScreen extends StatelessWidget {
                     Gap(32.h),
                     ProfileSectionTitle(title: 'SETTINGS SECTION'.tr),
                     Gap(12.h),
-                    if (CommonController.to.isSeller.value)
+                    if (CommonController.to.isUser.value)
                       ProfileMenuItem(
                         title: AppStrings.professionalInfo.tr,
                         onTap: () {
@@ -177,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
                           );
                         },
                       ),
-                    if (CommonController.to.isSeller.value)
+                    if (CommonController.to.isUser.value)
                       ProfileMenuItem(
                         title: AppStrings.reviewsAndRatings.tr,
                         onTap: () {
@@ -204,14 +204,14 @@ class ProfileScreen extends StatelessWidget {
                         AppRouter.route.pushNamed(RoutePath.supportHelpScreen);
                       },
                     ),
-                    if (!CommonController.to.isSeller.value)
+                    if (!CommonController.to.isUser.value)
                       ProfileMenuItem(
                         title: AppStrings.refund.tr,
                         onTap: () {
                           /*AppRouter.route.pushNamed(RoutePath.favoriteTrainerScreen)*/
                         },
                       ),
-                    if (!CommonController.to.isSeller.value)
+                    if (!CommonController.to.isUser.value)
                       ProfileMenuItem(
                         title: AppStrings.faqs.tr,
                         onTap: () {

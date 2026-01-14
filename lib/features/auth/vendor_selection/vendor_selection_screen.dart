@@ -8,6 +8,7 @@ import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/common_controller/common_controller.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
+
 class VendorSelectionScreen extends StatefulWidget {
   const VendorSelectionScreen({super.key});
 
@@ -41,7 +42,7 @@ class _VendorSelectionScreenState extends State<VendorSelectionScreen> {
                   Gap(32),
                   CustomButton(
                     onTap: () {
-                      CommonController.to.isSeller.value = false;
+                      CommonController.to.isUser.value = false;
                       AppRouter.route.pushNamed(RoutePath.signUpScreen);
                     },
                     text: AppStrings.asAParcelOwner.tr,
@@ -49,7 +50,7 @@ class _VendorSelectionScreenState extends State<VendorSelectionScreen> {
                   Gap(16),
                   CustomButton(
                     onTap: () {
-                      CommonController.to.isSeller.value = true;
+                      CommonController.to.isUser.value = true;
                       AppRouter.route.pushNamed(RoutePath.signUpScreen);
                     },
                     text: AppStrings.asACommuterDriver.tr,

@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           CustomButton(
                             text: AppStrings.signIn.tr,
                             onTap: () {
-                              CommonController.to.isSeller.value == true
+                              CommonController.to.isUser.value == true
                                   ? AppRouter.route.goNamed(
                                       RoutePath.driverNavScreen,
                                     )
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               RoutePath.vendorSelectionScreen,
                             ),
                             child: Text(
-                              AppStrings.signIn.tr,
+                              AppStrings.signUp.tr,
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: isDarkMode

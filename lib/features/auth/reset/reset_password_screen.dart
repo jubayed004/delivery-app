@@ -81,9 +81,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   isPassword: true,
                   controller: _resetPassword,
                   validator: TextFieldValidator.password(),
-                  onChanged: (value) {
-                    _auth.password.value = value;
-                  },
                 ),
                 Gap(16.h),
 

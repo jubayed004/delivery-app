@@ -26,7 +26,6 @@ import 'package:delivery_app/features/driver/professional_info/professional_info
 import 'package:delivery_app/features/driver/professional_info/professional_info_screen.dart';
 import 'package:delivery_app/features/driver/track_parcel/track_parcel_screen.dart';
 import 'package:delivery_app/features/onboarding/onboarding_screen.dart';
-import 'package:delivery_app/features/other/change_password_screen.dart';
 import 'package:delivery_app/features/other/password_and_security_screen.dart';
 import 'package:delivery_app/features/other/privacy_policy_screen.dart';
 import 'package:delivery_app/features/other/support_help_screen.dart';
@@ -194,8 +193,9 @@ class AppRouter {
           );
         },
       ),
+
       //=============Setting==========
-  /*    GoRoute(
+      /*    GoRoute(
         name: RoutePath.changePasswordScreen,
         path: RoutePath.changePasswordScreen.addBasePath,
         pageBuilder: (context, state) {
@@ -205,7 +205,6 @@ class AppRouter {
           );
         },
       ),*/
-
       GoRoute(
         name: RoutePath.customerReviewScreen,
         path: RoutePath.customerReviewScreen.addBasePath,

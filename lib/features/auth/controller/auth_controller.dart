@@ -1,56 +1,169 @@
 import 'dart:async';
 
+import 'package:delivery_app/core/di/injection.dart';
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
+import 'package:delivery_app/core/service/datasource/local/local_service.dart';
+import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
+import 'package:delivery_app/helper/toast/toast_helper.dart';
+import 'package:delivery_app/utils/api_urls/api_urls.dart';
+import 'package:delivery_app/utils/common_controller/common_controller.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AuthController extends GetxController {
   RxInt start = 30.obs;
   RxBool isResendEnabled = false.obs;
 
   Timer? _timer;
+  final ImagePicker _imagePicker = ImagePicker();
+
+  final ApiClient apiClient = sl();
+  final LocalService localService = sl();
+
+  RxBool isTermsAccepted = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     startTimer();
   }
+
   @override
   void onClose() {
     _timer?.cancel();
     super.onClose();
   }
+
   void startTimer() {
     const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-          (Timer timer) {
-        if (start.value == 0) {
-          timer.cancel();
-          isResendEnabled.value = true;
-        } else {
-          start.value--;
-        }
-      },
-    );
+    _timer = Timer.periodic(oneSec, (Timer timer) {
+      if (start.value == 0) {
+        timer.cancel();
+        isResendEnabled.value = true;
+      } else {
+        start.value--;
+      }
+    });
   }
+
   void resendCode() {
     start.value = 30;
     isResendEnabled.value = false;
     startTimer();
-
   }
 
-  var obscureText = true.obs;
-  var password = "".obs;
-  bool get hasMinLength => password.value.length >= 8;
-  bool get hasNumber => RegExp(r'[0-9]').hasMatch(password.value);
-  bool get hasUppercase => RegExp(r'[A-Z]').hasMatch(password.value);
-  void toggleVisibility() {
-    obscureText.value = !obscureText.value;
+  // Sign Up Section
+  RxBool signUpLoading = false.obs;
+  bool signUpLoadingMethod(bool status) => signUpLoading.value = status;
+
+  final TextEditingController nameSignUp = TextEditingController();
+  final TextEditingController emailSignUp = TextEditingController();
+  final TextEditingController passwordSignUp = TextEditingController();
+  final TextEditingController confirmPasswordSignUp = TextEditingController();
+  final TextEditingController phoneNumberSignUp = TextEditingController();
+
+  Future<void> signUp() async {
+    try {
+      signUpLoadingMethod(true);
+
+      final body = {
+        "name": nameSignUp.text,
+        "email": emailSignUp.text,
+        "password": passwordSignUp.text,
+        "confirmPassword": confirmPasswordSignUp.text,
+        "phone": phoneNumberSignUp.text,
+        "role": CommonController.to.isUser.value ? "CUSTOMER" : "DRIVER",
+      };
+
+      AppConfig.logger.i(body);
+
+      final response = await apiClient.post(
+        url: ApiUrls.register(),
+        body: body,
+      );
+
+      if (response.statusCode == 201) {
+        signUpLoadingMethod(false);
+        AppToast.success(
+          message: response.data?['message'].toString() ?? "Success",
+        );
+        final body = {"email": emailSignUp.text, "isSignUp": true};
+        AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
+        nameSignUp.clear();
+        emailSignUp.clear();
+        passwordSignUp.clear();
+        confirmPasswordSignUp.clear();
+        phoneNumberSignUp.clear();
+      } else {
+        signUpLoadingMethod(false);
+        AppToast.error(
+          message: response.data?['message'].toString() ?? "Error",
+        );
+      }
+    } catch (err) {
+      signUpLoadingMethod(false);
+      AppConfig.logger.e(err);
+      AppToast.error(message: "Something went wrong");
+    }
   }
 
+  // Sign In Section
+  RxBool signInLoading = false.obs;
+  bool signInLoadingMethod(bool status) => signInLoading.value = status;
 
+  final TextEditingController emailSignIn = TextEditingController();
+  final TextEditingController passwordSignIn = TextEditingController();
 
+  Future<void> signIn() async {
+    try {
+      signInLoadingMethod(true);
 
+      final body = {"email": emailSignIn.text, "password": passwordSignIn.text};
 
+      AppConfig.logger.i(body);
 
+      final response = await apiClient.post(url: ApiUrls.login(), body: body);
 
+      if (response.statusCode == 200) {
+        signInLoadingMethod(false);
+        AppToast.success(
+          message: response.data?['message'].toString() ?? "Login Successful",
+        );
+
+        final data = response.data['data'];
+        final token = data['accessToken'];
+        final refreshToken = data['refreshToken'];
+        final userId = data['user']['id'];
+        final role = data['user']['role'];
+
+        await localService.saveUserdata(
+          token: token,
+          refreshToken: refreshToken,
+          id: userId,
+          role: role,
+        );
+
+        if (role == "CUSTOMER") {
+          AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
+        } else {
+          AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        }
+
+        emailSignIn.clear();
+        passwordSignIn.clear();
+      } else {
+        signInLoadingMethod(false);
+        AppToast.error(
+          message: response.data?['message'].toString() ?? "Login Failed",
+        );
+      }
+    } catch (err) {
+      signInLoadingMethod(false);
+      AppConfig.logger.e(err);
+      AppToast.error(message: "Something went wrong");
+    }
+  }
 }

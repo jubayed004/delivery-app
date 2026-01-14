@@ -43,29 +43,41 @@ class _DriverNavScreenState extends State<DriverNavScreen> {
             items: [
               BottomBarItem(
                 icon: const Icon(Iconsax.home),
-                selectedIcon: const Icon(Iconsax.home1),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.home1,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Home'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.directbox_send),
-                selectedIcon: const Icon(Iconsax.directbox_send5),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.directbox_send5,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Parcels'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.messages),
-                selectedIcon: const Icon(Iconsax.messages_15),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.messages_15,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('chat'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.profile_add4),
-                selectedIcon: const Icon(Iconsax.profile_add5),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.profile_add5,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Profile'),
               ),

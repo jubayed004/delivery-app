@@ -89,7 +89,7 @@ class _ActiveOtpScreenState extends State<ActiveOtpScreen> {
                   text: AppStrings.verifyCode.tr,
                   onTap: () {
                     // ignore: unrelated_type_equality_checks
-                    CommonController.to.isSeller == true
+                    CommonController.to.isUser == true
                         ? AppRouter.route.goNamed(
                             RoutePath.commuterRegistrationScreen,
                           )
