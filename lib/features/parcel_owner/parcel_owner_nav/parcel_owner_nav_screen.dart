@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:delivery_app/core/custom_assets/assets.gen.dart';
@@ -25,10 +26,13 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
   @override
   void initState() {
     super.initState();
-    print("widget.initialIndex call: ${widget.initialIndex}");
-    print("initialIndex: ${widget.initialIndex}");
+    if (kDebugMode) {
+      print("widget.initialIndex call: ${widget.initialIndex}");
+    }
     selectedIndex = ValueNotifier<int>(widget.initialIndex ?? 0);
-    print("selectedIndex: ${selectedIndex.value}");
+    if (kDebugMode) {
+      print("selectedIndex: ${selectedIndex.value}");
+    }
   }
 
   @override
@@ -47,7 +51,9 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.initialIndex);
+    if (kDebugMode) {
+      print(widget.initialIndex);
+    }
     return Scaffold(
       bottomNavigationBar: ValueListenableBuilder<int>(
         valueListenable: selectedIndex,
@@ -61,29 +67,41 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
             items: [
               BottomBarItem(
                 icon: const Icon(Iconsax.home),
-                selectedIcon: const Icon(Iconsax.home1),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.home1,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Home'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.directbox_send),
-                selectedIcon: const Icon(Iconsax.directbox_send5),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.directbox_send5,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Parcels'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.messages),
-                selectedIcon: const Icon(Iconsax.messages_15),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.messages_15,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('chat'),
               ),
               BottomBarItem(
                 icon: const Icon(Iconsax.profile_add4),
-                selectedIcon: const Icon(Iconsax.profile_add5),
-                selectedColor: AppColors.secondPrimaryColor,
+                selectedIcon: const Icon(
+                  Iconsax.profile_add5,
+                  color: AppColors.primaryColor,
+                ),
+                selectedColor: AppColors.primaryColor,
                 unSelectedColor: AppColors.secondPrimaryColor,
                 title: const Text('Profile'),
               ),
@@ -116,7 +134,7 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
         builder: (context, selected, _) {
           return switch (selected) {
             0 => const ParcelOwnerHomeScreen(),
-            1 => const MyParcelScreen(),
+            1 => MyParcelScreen(),
             2 => const ChatListScreen(),
             3 => const ProfileScreen(),
             _ => const ParcelOwnerHomeScreen(),

@@ -1,4 +1,4 @@
-enum ParcelStatus { pending, ongoing, completed, reject }
+import 'package:delivery_app/utils/enum/app_enum.dart';
 
 class ParcelModel {
   final int id;

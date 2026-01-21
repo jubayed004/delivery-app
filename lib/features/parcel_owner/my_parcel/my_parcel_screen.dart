@@ -1,3 +1,4 @@
+import 'package:delivery_app/utils/enum/app_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -6,18 +7,14 @@ import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/controller/my_parcel_controller.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/widgets/parcel_card.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
-import 'model/parcel_model.dart';
 
-
-class MyParcelScreen extends GetView<MyParcelController> {
-  const MyParcelScreen({super.key});
-
+class MyParcelScreen extends StatelessWidget {
+  MyParcelScreen({super.key});
+  final controller = Get.find<MyParcelController>();
   @override
   Widget build(BuildContext context) {
-    Get.put(MyParcelController());
-
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(
@@ -26,6 +23,7 @@ class MyParcelScreen extends GetView<MyParcelController> {
           centerTitle: true,
           backgroundColor: Colors.white,
           bottom: TabBar(
+            padding: EdgeInsets.only(left: 16.w, right: 16.w),
             dividerColor: Colors.transparent,
             onTap: controller.changeTab,
             labelColor: Colors.white,
@@ -40,7 +38,10 @@ class MyParcelScreen extends GetView<MyParcelController> {
               vertical: 4.h,
             ),
             labelStyle: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             tabs: const [
+              Tab(text: 'Waiting'),
               Tab(text: 'Pending'),
               Tab(text: 'Ongoing'),
               Tab(text: 'Completed'),
@@ -49,10 +50,9 @@ class MyParcelScreen extends GetView<MyParcelController> {
           ),
         ),
         body: Obx(
-
-          
           () => TabBarView(
             children: [
+              _buildParcelList(ParcelStatus.waiting),
               _buildParcelList(ParcelStatus.pending),
               _buildParcelList(ParcelStatus.ongoing),
               _buildParcelList(ParcelStatus.completed),
@@ -85,7 +85,9 @@ class MyParcelScreen extends GetView<MyParcelController> {
         return ParcelCardList(
           parcel: parcel,
           onTap: () {
-            if (parcel.status == ParcelStatus.pending) {
+            if (parcel.status == ParcelStatus.pending ||
+                parcel.status == ParcelStatus.waiting ||
+                parcel.status == ParcelStatus.ongoing) {
               AppRouter.route.pushNamed(
                 RoutePath.detailsMyParcelScreen,
                 extra: parcel,

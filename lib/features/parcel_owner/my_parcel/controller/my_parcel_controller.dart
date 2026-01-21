@@ -1,3 +1,4 @@
+import 'package:delivery_app/utils/enum/app_enum.dart';
 import 'package:get/get.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
 
@@ -12,6 +13,17 @@ class MyParcelController extends GetxController {
 
   void loadMockData() {
     parcels.value = [
+      // Waiting
+      ParcelModel(
+        id: 9,
+        parcelId: '#112222',
+        parcelName: 'Waiting Parcel 1',
+        size: 'Medium',
+        price: 30.00,
+        status: ParcelStatus.waiting,
+        imageUrl:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Qp8paJgXVKLyyJkx4N7TOlv5izREplTlXw&s',
+      ),
       // Pending
       ParcelModel(
         id: 1,

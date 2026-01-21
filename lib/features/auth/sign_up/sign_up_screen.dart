@@ -22,6 +22,20 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
   final AuthController _auth = Get.find<AuthController>();
+  final TextEditingController nameSignUp = TextEditingController();
+  final TextEditingController emailSignUp = TextEditingController();
+  final TextEditingController passwordSignUp = TextEditingController();
+  final TextEditingController confirmPasswordSignUp = TextEditingController();
+  final TextEditingController phoneNumberSignUp = TextEditingController();
+  @override
+  void dispose() {
+    nameSignUp.dispose();
+    emailSignUp.dispose();
+    passwordSignUp.dispose();
+    confirmPasswordSignUp.dispose();
+    phoneNumberSignUp.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: AppStrings.fullName.tr,
                   hintText: AppStrings.enterYourName.tr,
                   keyboardType: TextInputType.name,
+                  controller: nameSignUp,
                   validator: TextFieldValidator.name(),
                 ),
                 Gap(14),
@@ -69,6 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: AppStrings.email.tr,
                   hintText: AppStrings.enterYourEmail.tr,
                   keyboardType: TextInputType.emailAddress,
+                  controller: emailSignUp,
                   prefixIcon: const Icon(Icons.mail_outline),
                   validator: TextFieldValidator.email(),
                 ),
@@ -79,6 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: AppStrings.password.tr,
                   hintText: AppStrings.enterYourPassword.tr,
                   prefixIcon: const Icon(Icons.lock_outline),
+                  controller: passwordSignUp,
                   isPassword: true,
                   validator: TextFieldValidator.password(),
                 ),
@@ -89,6 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: AppStrings.confirmPassword.tr,
                   hintText: AppStrings.confirmPassword.tr,
                   prefixIcon: const Icon(Icons.lock_outline),
+                  controller: confirmPasswordSignUp,
                   isPassword: true,
                   validator: TextFieldValidator.password(),
                 ),
@@ -96,10 +114,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 /// ---------- Register Button ----------
                 CustomButton(
+                  isLoading: _auth.signUpLoading.value,
                   text: AppStrings.signUp.tr,
                   onTap: () {
                     if (formKey.currentState!.validate()) {
-                      _auth.signUp();
+                      _auth.signUp(nameSignUp: '', emailSignUp: '', passwordSignUp: '', confirmPassword: '');
                     }
                   },
                 ),

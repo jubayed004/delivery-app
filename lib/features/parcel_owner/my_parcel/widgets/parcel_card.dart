@@ -1,7 +1,9 @@
+import 'package:delivery_app/utils/enum/app_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:gap/gap.dart';
 import '../model/parcel_model.dart';
 
 class ParcelCardList extends StatelessWidget {
@@ -27,64 +29,64 @@ class ParcelCardList extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.primaryColor.withOpacity(0.2)),
+          border: Border.all(
+            color: AppColors.primaryColor.withValues(alpha: .2),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: .1),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
         ),
+        clipBehavior: Clip.hardEdge,
         child: Column(
           children: [
-            Stack(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: CustomNetworkImage(
-                        imageUrl: parcel.imageUrl,
-                        height: 80.h,
-                        width: 100.w,
-                      ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [_buildStatusBadge()],
+            ),
+            Gap(12.h),
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 4.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: CustomNetworkImage(
+                      imageUrl: parcel.imageUrl,
+                      height: 80.h,
+                      width: 100.w,
                     ),
-                    SizedBox(width: 12.w),
-                    // Details
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 16.h), // Space for badge
-                          _buildDetailRow('Parcel ID', parcel.parcelId),
-                          _buildDetailRow('Parcel Name', parcel.parcelName),
-                          _buildDetailRow('Size', parcel.size),
-                          _buildDetailRow(
-                            'Price',
-                            '\$${parcel.price.toStringAsFixed(2)}',
-                          ),
-                        ],
-                      ),
+                  ),
+                  SizedBox(width: 22.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildDetailRow('Parcel ID', parcel.parcelId),
+                        _buildDetailRow('Parcel Name', parcel.parcelName),
+                        _buildDetailRow('Size', parcel.size),
+                        _buildDetailRow(
+                          'Price',
+                          '\$${parcel.price.toStringAsFixed(2)}',
+                        ),
+                        isButtonsVisible()
+                            ? _buildActionButtons()
+                            : const SizedBox.shrink(),
+                      ],
                     ),
-                  ],
-                ),
-                // Status Badge
-                Positioned(right: 0, top: 0, child: _buildStatusBadge()),
-              ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 12.h),
-            // Action Buttons
-            isButtonsVisible()
-                ? _buildActionButtons()
-                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -131,12 +133,16 @@ class ParcelCardList extends StatelessWidget {
         statusText = 'Ongoing Parcel';
         break;
       case ParcelStatus.completed:
-        badgeColor = AppColors.success; // Or greenTextColor if preferred
+        badgeColor = AppColors.success;
         statusText = 'Completed Parcel';
         break;
       case ParcelStatus.reject:
         badgeColor = AppColors.redColor;
         statusText = 'Reject';
+        break;
+      case ParcelStatus.waiting:
+        badgeColor = AppColors.brownColor;
+        statusText = 'Waiting';
         break;
     }
 
@@ -161,7 +167,6 @@ class ParcelCardList extends StatelessWidget {
   }
 
   bool isButtonsVisible() {
-    // Checking if we should show any buttons row at all
     return true;
   }
 
@@ -226,10 +231,9 @@ class ParcelCardList extends StatelessWidget {
             onTap: onChatTap,
           ),
         );
-        buttons.add(SizedBox(width: 8.w));
-        buttons.add(
-          _buildButton(label: 'Add Review', icon: null, onTap: onReviewTap),
-        );
+
+        break;
+      case ParcelStatus.waiting:
         break;
     }
 

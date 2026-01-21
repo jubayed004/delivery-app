@@ -16,27 +16,20 @@ import 'package:image_picker/image_picker.dart';
 class AuthController extends GetxController {
   RxInt start = 30.obs;
   RxBool isResendEnabled = false.obs;
-
   Timer? _timer;
   final ImagePicker _imagePicker = ImagePicker();
-
   final ApiClient apiClient = sl();
   final LocalService localService = sl();
-
-  RxBool isTermsAccepted = false.obs;
-
   @override
   void onInit() {
     super.onInit();
     startTimer();
   }
-
   @override
   void onClose() {
     _timer?.cancel();
     super.onClose();
   }
-
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(oneSec, (Timer timer) {
@@ -48,7 +41,6 @@ class AuthController extends GetxController {
       }
     });
   }
-
   void resendCode() {
     start.value = 30;
     isResendEnabled.value = false;
@@ -59,49 +51,36 @@ class AuthController extends GetxController {
   RxBool signUpLoading = false.obs;
   bool signUpLoadingMethod(bool status) => signUpLoading.value = status;
 
-  final TextEditingController nameSignUp = TextEditingController();
-  final TextEditingController emailSignUp = TextEditingController();
-  final TextEditingController passwordSignUp = TextEditingController();
-  final TextEditingController confirmPasswordSignUp = TextEditingController();
-  final TextEditingController phoneNumberSignUp = TextEditingController();
-
-  Future<void> signUp() async {
+  Future<void> signUp({required String nameSignUp,required String emailSignUp,required String passwordSignUp,required String confirmPassword}) async {
     try {
       signUpLoadingMethod(true);
-
       final body = {
-        "name": nameSignUp.text,
-        "email": emailSignUp.text,
-        "password": passwordSignUp.text,
-        "confirmPassword": confirmPasswordSignUp.text,
-        "phone": phoneNumberSignUp.text,
+        "full_name": nameSignUp.trim(),
+        "email": emailSignUp.trim(),
+        "password": passwordSignUp.trim(),
         "role": CommonController.to.isUser.value ? "CUSTOMER" : "DRIVER",
       };
 
       AppConfig.logger.i(body);
 
-      final response = await apiClient.post(
-        url: ApiUrls.register(),
-        body: body,
-      );
+      final response = await apiClient.post(url: ApiUrls.register(), body: body, );
+
+      AppConfig.logger.i(response.data);
 
       if (response.statusCode == 201) {
+
         signUpLoadingMethod(false);
-        AppToast.success(
-          message: response.data?['message'].toString() ?? "Success",
-        );
-        final body = {"email": emailSignUp.text, "isSignUp": true};
+
+        AppToast.success(message: response.data?['message'].toString() ?? "Success",);
+
+        final body = {"email": emailSignUp, "isSignUp": true};
+
         AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
-        nameSignUp.clear();
-        emailSignUp.clear();
-        passwordSignUp.clear();
-        confirmPasswordSignUp.clear();
-        phoneNumberSignUp.clear();
+
       } else {
         signUpLoadingMethod(false);
-        AppToast.error(
-          message: response.data?['message'].toString() ?? "Error",
-        );
+        AppToast.error(message: response.data?['message'].toString() ?? "Error",);
+        
       }
     } catch (err) {
       signUpLoadingMethod(false);
@@ -126,6 +105,8 @@ class AuthController extends GetxController {
       AppConfig.logger.i(body);
 
       final response = await apiClient.post(url: ApiUrls.login(), body: body);
+
+      AppConfig.logger.i(response.data);
 
       if (response.statusCode == 200) {
         signInLoadingMethod(false);

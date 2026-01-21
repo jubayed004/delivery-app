@@ -18,7 +18,6 @@ class TrackParcelScreen extends StatefulWidget {
 class _TrackParcelScreenState extends State<TrackParcelScreen> {
   final controller = Get.put(TrackParcelController());
 
-
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,7 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: .1),
                 blurRadius: 10,
                 offset: const Offset(0, -5),
               ),

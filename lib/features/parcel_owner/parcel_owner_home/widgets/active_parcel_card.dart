@@ -8,7 +8,9 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ActiveParcelCard extends StatelessWidget {
-  const ActiveParcelCard({super.key});
+  final Map<String, dynamic> activeParcel;
+
+  const ActiveParcelCard({super.key, required this.activeParcel});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +19,12 @@ class ActiveParcelCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.primaryColor.withOpacity(0.1)),
+        border: Border.all(
+          color: AppColors.primaryColor.withValues(alpha: 0.1),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -31,8 +35,7 @@ class ActiveParcelCard extends StatelessWidget {
         children: [
           CustomNetworkImage(
             borderRadius: BorderRadius.circular(8.r),
-            imageUrl:
-                "https://img.freepik.com/free-photo/cardboard-box-isolated_125540-652.jpg",
+            imageUrl: activeParcel['image'],
             width: 80.w,
             height: 80.w,
           ),
@@ -45,7 +48,7 @@ class ActiveParcelCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Parcel ID: 112222",
+                      "Parcel ID: ${activeParcel['id']}",
                       style: context.labelLarge.copyWith(
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.bold,
@@ -75,7 +78,7 @@ class ActiveParcelCard extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  "Dhaka to Chattogram",
+                  activeParcel['route'],
                   style: context.bodySmall.copyWith(
                     color: AppColors.grayTextSecondaryColor,
                   ),
@@ -91,7 +94,7 @@ class ActiveParcelCard extends StatelessWidget {
                   ),
                   child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: 0.6,
+                    widthFactor: activeParcel['progress'],
                     child: Container(
                       decoration: BoxDecoration(
                         color: AppColors.primaryColor,
@@ -113,7 +116,7 @@ class ActiveParcelCard extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: "In Transit",
+                              text: activeParcel['status'],
                               style: context.bodySmall.copyWith(
                                 color: AppColors.success,
                                 fontWeight: FontWeight.bold,

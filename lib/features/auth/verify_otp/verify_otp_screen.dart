@@ -87,7 +87,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 CustomButton(
                   text: AppStrings.verifyCode.tr,
                   onTap: () {
-                    AppRouter.route.pushNamed(RoutePath.resetPasswordScreen);
+                   if(_formKey.currentState!.validate()){
+                     AppRouter.route.pushNamed(RoutePath.resetPasswordScreen);
+                   }
                   },
                 ),
                 Gap(28.h),

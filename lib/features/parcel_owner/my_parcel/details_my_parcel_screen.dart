@@ -1,3 +1,4 @@
+import 'package:delivery_app/share/widgets/dialog/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -168,7 +169,31 @@ class DetailsMyParcelScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            AppRouter.route.pop();
+                            AppDialog.show(
+                              context: context,
+                              title: AppStrings.reject.tr,
+                              subtitle:
+                                  'Are you sure you want to reject this parcel?',
+                              type: AppDialogType.error,
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    AppRouter.route.pop();
+                                  },
+                                  child: Text(AppStrings.cancel.tr),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    AppRouter.route.pop();
+                                    // Add rejection logic here
+                                  },
+                                  child: Text(
+                                    AppStrings.reject.tr,
+                                    style: TextStyle(color: AppColors.error),
+                                  ),
+                                ),
+                              ],
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.error,

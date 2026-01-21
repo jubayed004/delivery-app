@@ -31,4 +31,5 @@ class AppColors {
   static const Color blueTextColor200 = Color(0xFF9CB7CA);
   static const Color appbarTextColor = Color(0xFFE94E6C);
   static const Color orangeSecondaryAccentColorNormal = Color(0xFFFFD700);
+  static const Color brownColor = Color(0xFFAC7F5E);
 }

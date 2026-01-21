@@ -25,16 +25,6 @@ class ParcelOwnerActionButtons extends StatelessWidget {
           ),
         ),
         Gap(16.w),
-        Expanded(
-          child: _buildActionButton(
-            context,
-            "All Commuter",
-            Iconsax.route_square,
-            onTap: () {
-              AppRouter.route.pushNamed(RoutePath.allCommuterScreen);
-            },
-          ),
-        ),
       ],
     );
   }

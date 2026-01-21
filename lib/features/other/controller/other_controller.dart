@@ -22,7 +22,7 @@ class OtherController extends GetxController{
       termsConditionsData.value = TermsConditionsModel.fromJson(response.body);
       termsLoadingMethod(ApiStatus.completed);
     } else {
-      if (response.statusCode == 503) {
+      if (response.statusCode == A503) {
         termsLoadingMethod(ApiStatus.internetError);
       } else if (response.statusCode == 404) {
         termsLoadingMethod(ApiStatus.noDataFound);

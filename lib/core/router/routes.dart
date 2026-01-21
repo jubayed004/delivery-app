@@ -30,7 +30,6 @@ import 'package:delivery_app/features/other/password_and_security_screen.dart';
 import 'package:delivery_app/features/other/privacy_policy_screen.dart';
 import 'package:delivery_app/features/other/support_help_screen.dart';
 import 'package:delivery_app/features/other/terms_and_conditions_screen.dart';
-import 'package:delivery_app/features/parcel_owner/all_commuter/all_commuter_screen.dart';
 import 'package:delivery_app/features/parcel_owner/all_commuter/commuter_profile_screen.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/create_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/refund/refund_screen.dart';
@@ -368,16 +367,16 @@ class AppRouter {
         },
       ),
 
-      GoRoute(
-        name: RoutePath.allCommuterScreen,
-        path: RoutePath.allCommuterScreen.addBasePath,
-        pageBuilder: (context, state) {
-          return _buildPageWithAnimation(
-            child: const AllCommuterScreen(),
-            state: state,
-          );
-        },
-      ),
+      // GoRoute(
+      //   name: RoutePath.allCommuterScreen,
+      //   path: RoutePath.allCommuterScreen.addBasePath,
+      //   pageBuilder: (context, state) {
+      //     return _buildPageWithAnimation(
+      //       child: const AllCommuterScreen(),
+      //       state: state,
+      //     );
+      //   },
+      // ),
       GoRoute(
         name: RoutePath.commuterProfileScreen,
         path: RoutePath.commuterProfileScreen.addBasePath,

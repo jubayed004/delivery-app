@@ -5,31 +5,12 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class RecentDeliveryList extends StatelessWidget {
-  const RecentDeliveryList({super.key});
+  final List<Map<String, dynamic>> recentParcels;
+
+  const RecentDeliveryList({super.key, required this.recentParcels});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> recentParcels = [
-      {
-        "id": "112222",
-        "name": "Medicine",
-        "size": "Small",
-        "image": "https://cdn-icons-png.flaticon.com/512/883/883407.png",
-      },
-      {
-        "id": "112222",
-        "name": "Electronics",
-        "size": "Small",
-        "image": "https://cdn-icons-png.flaticon.com/512/3659/3659899.png",
-      },
-      {
-        "id": "112222",
-        "name": "Gifts",
-        "size": "Small",
-        "image": "https://cdn-icons-png.flaticon.com/512/4213/4213958.png",
-      },
-    ];
-
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -38,7 +19,7 @@ class RecentDeliveryList extends StatelessWidget {
       itemBuilder: (context, index) {
         final parcel = recentParcels[index];
         return Container(
-          padding: EdgeInsets.all(12.r),
+          padding: EdgeInsets.symmetric(vertical: 12.h),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
