@@ -25,11 +25,13 @@ class AuthController extends GetxController {
     super.onInit();
     startTimer();
   }
+
   @override
   void onClose() {
     _timer?.cancel();
     super.onClose();
   }
+
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(oneSec, (Timer timer) {
@@ -41,6 +43,7 @@ class AuthController extends GetxController {
       }
     });
   }
+
   void resendCode() {
     start.value = 30;
     isResendEnabled.value = false;
@@ -51,7 +54,11 @@ class AuthController extends GetxController {
   RxBool signUpLoading = false.obs;
   bool signUpLoadingMethod(bool status) => signUpLoading.value = status;
 
-  Future<void> signUp({required String nameSignUp,required String emailSignUp,required String passwordSignUp,required String confirmPassword}) async {
+  Future<void> signUp({
+    required String nameSignUp,
+    required String emailSignUp,
+    required String passwordSignUp,
+  }) async {
     try {
       signUpLoadingMethod(true);
       final body = {
@@ -63,24 +70,28 @@ class AuthController extends GetxController {
 
       AppConfig.logger.i(body);
 
-      final response = await apiClient.post(url: ApiUrls.register(), body: body, );
+      final response = await apiClient.post(
+        url: ApiUrls.register(),
+        body: body,
+      );
 
       AppConfig.logger.i(response.data);
 
       if (response.statusCode == 201) {
-
         signUpLoadingMethod(false);
 
-        AppToast.success(message: response.data?['message'].toString() ?? "Success",);
+        AppToast.success(
+          message: response.data?['message'].toString() ?? "Success",
+        );
 
         final body = {"email": emailSignUp, "isSignUp": true};
 
         AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
-
       } else {
         signUpLoadingMethod(false);
-        AppToast.error(message: response.data?['message'].toString() ?? "Error",);
-        
+        AppToast.error(
+          message: response.data?['message'].toString() ?? "Error",
+        );
       }
     } catch (err) {
       signUpLoadingMethod(false);
@@ -89,7 +100,94 @@ class AuthController extends GetxController {
     }
   }
 
-  // Sign In Section
+  // ===================== Verify OTP Section ===============
+  RxBool activeOtpLoading = false.obs;
+  bool activeOtpLoadingMethod(bool status) => activeOtpLoading.value = status;
+
+  Future<void> activeOtp({
+    required String otp,
+    required String purpose,
+  }) async {
+    try {
+      activeOtpLoadingMethod(true);
+      final body = {
+        "otp": otp.trim(),
+        "purpose": purpose,
+      };
+
+      AppConfig.logger.i(body);
+
+      final response = await apiClient.post(
+        url: ApiUrls.verifyOtp(),
+        body: body,
+      );
+
+      AppConfig.logger.i(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        activeOtpLoadingMethod(false);
+
+        AppToast.success(
+          message: response.data?["message"].toString() ?? "Success",
+        );
+
+        if (CommonController.to.isUser.value) {
+          AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+        } else {
+          AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen, extra: 0);
+        }
+      } else {
+        activeOtpLoadingMethod(false);
+        AppToast.error(
+          message: response.data?["message"].toString() ?? "Error",
+        );
+      }
+    } catch (err) {
+      activeOtpLoadingMethod(false);
+      AppConfig.logger.e(err);
+      AppToast.error(message: "Something went wrong");
+    }
+  }
+
+  // ===================== Resend OTP Section ===============
+
+  RxBool resendOtpLoading = false.obs;
+  bool resendOtpLoadingMethod(bool status) => resendOtpLoading.value = status;
+
+  Future<void> resendOtp({required String email, required String purpose}) async {
+    try {
+      resendOtpLoadingMethod(true);
+      final body = {"email": email.trim(),"purpose" : purpose};
+
+      AppConfig.logger.i(body);
+
+      final response = await apiClient.post(
+        url: ApiUrls.resendOtp(),
+        body: body,
+      );
+
+      AppConfig.logger.i(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        resendOtpLoadingMethod(false);
+
+        AppToast.success(
+          message: response.data?["message"].toString() ?? "Success",
+        );
+      } else {
+        resendOtpLoadingMethod(false);
+        AppToast.error(
+          message: response.data?["message"].toString() ?? "Error",
+        );
+      }
+    } catch (err) {
+      resendOtpLoadingMethod(false);
+      AppConfig.logger.e(err);
+      AppToast.error(message: "Something went wrong");
+    }
+  }
+
+  // ================== Sign In Section
   RxBool signInLoading = false.obs;
   bool signInLoadingMethod(bool status) => signInLoading.value = status;
 

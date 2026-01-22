@@ -26,16 +26,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailSignUp = TextEditingController();
   final TextEditingController passwordSignUp = TextEditingController();
   final TextEditingController confirmPasswordSignUp = TextEditingController();
-  final TextEditingController phoneNumberSignUp = TextEditingController();
   @override
   void dispose() {
     nameSignUp.dispose();
     emailSignUp.dispose();
     passwordSignUp.dispose();
     confirmPasswordSignUp.dispose();
-    phoneNumberSignUp.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +117,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   text: AppStrings.signUp.tr,
                   onTap: () {
                     if (formKey.currentState!.validate()) {
-                      _auth.signUp(nameSignUp: '', emailSignUp: '', passwordSignUp: '', confirmPassword: '');
+                      _auth.signUp(
+                        nameSignUp: nameSignUp.text,
+                        emailSignUp: emailSignUp.text,
+                        passwordSignUp: passwordSignUp.text,
+                      );
                     }
                   },
                 ),

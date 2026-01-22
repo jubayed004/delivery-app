@@ -5,7 +5,7 @@ class ApiUrls {
 
   static String login() => '$base/v1/auth/login';
   static String register() => '$base/v1/auth/register';
-  static String verifyOtp() => '$base/v1/auth/verify-email';
+  static String verifyOtp() => '$base/v1/auth/verify-otp';
   static String resendOtp() => '$base/v1/auth/resend-otp';
   static String logout() => '$base/v1/auth/logout';
   static String changePassword() => '$base/v1/auth/change-password';

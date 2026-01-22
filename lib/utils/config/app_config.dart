@@ -4,7 +4,8 @@ import 'package:logger/logger.dart';
 
 class AppConfig {
   //API Base URL
-  static const String baseURL = "http://10.10.20.36:5000/api";
+  //static const String baseURL = "http://10.10.20.36:5000/api";
+  static const String baseURL = "https://whxmt66k-5000.inc1.devtunnels.ms/api";
   // static const String baseURL = "http://10.10.20.9:7050";
   static const String fontFamily = "";
   static final logger = Logger(
