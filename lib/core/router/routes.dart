@@ -10,7 +10,7 @@ import 'package:delivery_app/utils/extension/base_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:delivery_app/features/auth/active/active_otp_screen.dart';
-import 'package:delivery_app/features/auth/commuter_registration/commuter_registration_screen.dart';
+import 'package:delivery_app/features/driver/commuter_registration/commuter_registration_screen.dart';
 import 'package:delivery_app/features/auth/forget/forget_password_screen.dart';
 import 'package:delivery_app/features/auth/reset/reset_password_screen.dart';
 import 'package:delivery_app/features/auth/sign_up/sign_up_screen.dart';
@@ -116,8 +116,16 @@ class AppRouter {
         name: RoutePath.verifyOtpScreen,
         path: RoutePath.verifyOtpScreen.addBasePath,
         pageBuilder: (context, state) {
+          final args = state.extra as Map<String, dynamic>?;
+          final token = args?['token'] as String? ?? '';
+          final email = args?['email'] as String? ?? '';
+          final isSignUp = args?['isSignUp'] as bool? ?? false;
           return _buildPageWithAnimation(
-            child: VerifyOtpScreen(),
+            child: VerifyOtpScreen(
+              token: token,
+              isSignUp: isSignUp,
+              email: email,
+            ),
             state: state,
           );
         },
@@ -126,8 +134,9 @@ class AppRouter {
         name: RoutePath.resetPasswordScreen,
         path: RoutePath.resetPasswordScreen.addBasePath,
         pageBuilder: (context, state) {
+          final token = state.extra as String? ?? '';
           return _buildPageWithAnimation(
-            child: ResetPasswordScreen(),
+            child: ResetPasswordScreen(token: token),
             state: state,
           );
         },
@@ -136,8 +145,17 @@ class AppRouter {
         name: RoutePath.activeOtpScreen,
         path: RoutePath.activeOtpScreen.addBasePath,
         pageBuilder: (context, state) {
+          final args = state.extra as Map<String, dynamic>?;
+          final email = args?['email'] as String? ?? '';
+          final isSignUp = args?['isSignUp'] as bool? ?? false;
+          final token = args?['token'] as String?;
+
           return _buildPageWithAnimation(
-            child: ActiveOtpScreen(),
+            child: ActiveOtpScreen(
+              email: email,
+              isSignUp: isSignUp,
+              token: token,
+            ),
             state: state,
           );
         },

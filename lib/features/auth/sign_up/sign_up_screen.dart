@@ -2,7 +2,6 @@ import 'package:delivery_app/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:delivery_app/core/custom_assets/assets.gen.dart';
 import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/core/router/routes.dart';
@@ -112,18 +111,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Gap(24),
 
                 /// ---------- Register Button ----------
-                CustomButton(
-                  isLoading: _auth.signUpLoading.value,
-                  text: AppStrings.signUp.tr,
-                  onTap: () {
-                    if (formKey.currentState!.validate()) {
-                      _auth.signUp(
-                        nameSignUp: nameSignUp.text,
-                        emailSignUp: emailSignUp.text,
-                        passwordSignUp: passwordSignUp.text,
-                      );
-                    }
-                  },
+                Obx(
+                  () => CustomButton(
+                    isLoading: _auth.signUpLoading.value,
+                    text: AppStrings.signUp.tr,
+                    onTap: () {
+                      if (formKey.currentState!.validate()) {
+                        _auth.signUp(
+                          nameSignUp: nameSignUp.text,
+                          emailSignUp: emailSignUp.text,
+                          passwordSignUp: passwordSignUp.text,
+                        );
+                      }
+                    },
+                  ),
                 ),
 
                 Gap(26),

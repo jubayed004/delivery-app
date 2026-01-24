@@ -9,6 +9,9 @@ class ApiUrls {
   static String resendOtp() => '$base/v1/auth/resend-otp';
   static String logout() => '$base/v1/auth/logout';
   static String changePassword() => '$base/v1/auth/change-password';
-  static String forgotPassword() => '$base/v1/auth/forgot-password';
+  static String forgotPassword() => '$base/v1/auth/forget-password';
   static String resetPassword() => '$base/v1/auth/reset-password';
+  // =========== Customer Api Urls ===========
+  static String getProfile() => '$base/v1/user/get-me';
+  static String updateProfile() => '$base/v1/user/update-me';
 }

@@ -1,3 +1,4 @@
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -13,7 +14,15 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
-  const VerifyOtpScreen({super.key});
+  final String token;
+  final String email;
+  final bool isSignUp;
+  const VerifyOtpScreen({
+    super.key,
+    required this.token,
+    required this.isSignUp,
+    required this.email,
+  });
 
   @override
   State<VerifyOtpScreen> createState() => _VerifyOtpScreenState();
@@ -23,6 +32,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController verifyOtp = TextEditingController();
   final AuthController _auth = Get.find<AuthController>();
+  late String purpose;
+
+  @override
+  void initState() {
+    purpose = widget.isSignUp ? "REGISTER" : "RESET_PASSWORD";
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -84,13 +100,20 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 Gap(28.h),
 
                 /// ---------- CONFIRM BUTTON ----------
-                CustomButton(
-                  text: AppStrings.verifyCode.tr,
-                  onTap: () {
-                   if(_formKey.currentState!.validate()){
-                     AppRouter.route.pushNamed(RoutePath.resetPasswordScreen);
-                   }
-                  },
+                Obx(
+                  () => CustomButton(
+                    isLoading: _auth.resetVerifyOtpLoading.value,
+                    text: AppStrings.verifyCode.tr,
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        _auth.resetVerifyOtp(
+                          otp: verifyOtp.text,
+                          purpose: purpose,
+                          token: widget.token,
+                        );
+                      }
+                    },
+                  ),
                 ),
                 Gap(28.h),
 
@@ -100,9 +123,15 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
                 ///  ---------- RESEND WITH TIMER UI ----------
                 Obx(
-                  () => _auth.isResendEnabled.value
+                  () => _auth.resendOtpLoading.value
+                      ? LoadingWidget()
+                      : _auth.isResendEnabled.value
                       ? TextButton(
                           onPressed: () {
+                            _auth.resendOtp(
+                              email: widget.email,
+                              purpose: purpose,
+                            );
                             _auth.resendCode();
                           },
                           child: Text(

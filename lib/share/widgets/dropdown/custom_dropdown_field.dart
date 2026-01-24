@@ -45,7 +45,7 @@ class CustomDropdownField<T> extends StatelessWidget {
       value: items.contains(value) ? value : null,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
-          vertical: 16,
+          vertical: 12,
           horizontal: 12,
         ),
         border: OutlineInputBorder(

@@ -1,3 +1,4 @@
+import 'package:delivery_app/features/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -16,8 +17,8 @@ import 'package:delivery_app/utils/common_controller/common_controller.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
+  ProfileScreen({super.key});
+  final ProfileController profileController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,12 +87,19 @@ class ProfileScreen extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Flexible(
-                                          child: Text(
-                                            "Jubayed Islam",
-                                            style: context.titleSmall,
-                                          ),
-                                        ),
+                                        Obx(() {
+                                          return Flexible(
+                                            child: Text(
+                                              profileController
+                                                      .profile
+                                                      .value
+                                                      .data
+                                                      ?.fullName ??
+                                                  "",
+                                              style: context.titleSmall,
+                                            ),
+                                          );
+                                        }),
                                         GestureDetector(
                                           behavior: HitTestBehavior.opaque,
                                           onTap: () {
@@ -134,13 +142,20 @@ class ProfileScreen extends StatelessWidget {
                                         ),
                                         Gap(4),
                                         Expanded(
-                                          child: Text(
-                                            textAlign: TextAlign.start,
-                                            /*profileController.profile.value.data?.email ?? */ "mohammadjubayed.islam97@gamil.com",
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 3,
-                                            style: context.labelMedium,
-                                          ),
+                                          child: Obx(() {
+                                            return Text(
+                                              textAlign: TextAlign.start,
+                                              profileController
+                                                      .profile
+                                                      .value
+                                                      .data
+                                                      ?.email ??
+                                                  "mohammadjubayed.islam97@gamil.com",
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                              style: context.labelMedium,
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),

@@ -5,8 +5,6 @@ import 'package:delivery_app/features/onboarding/controller/onboarding_controlle
 import 'package:delivery_app/features/other/controller/other_controller.dart';
 import 'package:delivery_app/share/controller/language_controller.dart';
 import 'package:delivery_app/utils/common_controller/common_controller.dart';
-import 'package:delivery_app/features/auth/otp/controller/otp_controller.dart';
-import 'package:delivery_app/features/auth/reset/controller/reset_password_controller.dart';
 import 'package:delivery_app/features/chat/controller/chat_controller.dart';
 import 'package:delivery_app/features/driver/track_parcel/controller/track_parcel_controller.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/controller/my_parcel_controller.dart';
@@ -17,8 +15,6 @@ void initGetx() {
   //Auth
   Get.lazyPut(() => LanguageController(), fenix: true);
   Get.lazyPut(() => AuthController(), fenix: true);
-  Get.lazyPut(() => OtpController(), fenix: true);
-  Get.lazyPut(() => ResetPasswordController(), fenix: true);
 
   //Others
   Get.lazyPut(() => OtherController(), fenix: true);

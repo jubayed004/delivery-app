@@ -1,3 +1,4 @@
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -15,7 +16,16 @@ import 'package:delivery_app/utils/extension/base_extension.dart';
 import 'package:go_router/go_router.dart';
 
 class ActiveOtpScreen extends StatefulWidget {
-  const ActiveOtpScreen({super.key});
+  final String email;
+  final bool isSignUp;
+  final String? token;
+
+  const ActiveOtpScreen({
+    super.key,
+    required this.email,
+    this.isSignUp = false,
+    this.token,
+  });
 
   @override
   State<ActiveOtpScreen> createState() => _ActiveOtpScreenState();
@@ -25,6 +35,14 @@ class _ActiveOtpScreenState extends State<ActiveOtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController verifyOtp = TextEditingController();
   final AuthController _auth = Get.find<AuthController>();
+
+  late String purpose;
+
+  @override
+  void initState() {
+    super.initState();
+    purpose = widget.isSignUp ? "REGISTER" : "RESET_PASSWORD";
+  }
 
   @override
   void dispose() {
@@ -86,16 +104,18 @@ class _ActiveOtpScreenState extends State<ActiveOtpScreen> {
                 Gap(28.h),
 
                 /// ---------- CONFIRM BUTTON ----------
-                CustomButton(
-                  isLoading: _auth.activeOtpLoading.value,
-                  text: AppStrings.verifyCode.tr,
-                  onTap: () {
-                    
-                    _auth.activeOtp(
-                      otp: verifyOtp.text,
-                      purpose: "RESET_PASSWORD",
-                    );
-                  },
+                Obx(
+                  () => CustomButton(
+                    isLoading: _auth.activeOtpLoading.value,
+                    text: AppStrings.verifyCode.tr,
+                    onTap: () {
+                      _auth.activeOtp(
+                        otp: verifyOtp.text,
+                        purpose: purpose,
+                        token: widget.token,
+                      );
+                    },
+                  ),
                 ),
                 Gap(28.h),
 
@@ -105,11 +125,16 @@ class _ActiveOtpScreenState extends State<ActiveOtpScreen> {
 
                 ///  ---------- RESEND WITH TIMER UI ----------
                 Obx(
-                  () => _auth.isResendEnabled.value
+                  () => _auth.resendOtpLoading.value
+                      ? LoadingWidget()
+                      : _auth.isResendEnabled.value
                       ? TextButton(
                           onPressed: () {
+                            _auth.resendOtp(
+                              email: widget.email,
+                              purpose: purpose,
+                            );
                             _auth.resendCode();
-                            
                           },
                           child: Text(
                             AppStrings.resendCode.tr,

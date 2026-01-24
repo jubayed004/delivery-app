@@ -77,15 +77,20 @@ class ParcelCardList extends StatelessWidget {
                           'Price',
                           '\$${parcel.price.toStringAsFixed(2)}',
                         ),
-                        isButtonsVisible()
-                            ? _buildActionButtons()
-                            : const SizedBox.shrink(),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+
+            if (isButtonsVisible()) ...[
+              Gap(12.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: _buildActionButtons(),
+              ),
+            ],
             SizedBox(height: 12.h),
           ],
         ),

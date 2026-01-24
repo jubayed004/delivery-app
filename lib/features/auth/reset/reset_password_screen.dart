@@ -13,7 +13,8 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final String token;
+  const ResetPasswordScreen({super.key, required this.token});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -84,9 +85,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
                 Gap(16.h),
 
-                /// ---------- Password Rule Checklist ----------
-                Gap(24.h),
-
                 /// ---------- Confirm Password ----------
                 CustomTextField(
                   title: AppStrings.confirmNewPassword.tr,
@@ -100,15 +98,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 Gap(40.h),
 
                 /// ---------- Confirm Button ----------
-                CustomButton(
-                  text: AppStrings.confirm.tr,
-                  onTap: () {
-                    /*  if (_formKey.currentState!.validate()) {
-                      Get.snackbar("Success", "Password reset successful!", snackPosition: SnackPosition.BOTTOM);
-                    }*/
-
-                    AppRouter.route.goNamed(RoutePath.loginScreen);
-                  },
+                Obx(
+                  () => CustomButton(
+                    text: AppStrings.confirm.tr,
+                    isLoading: _auth.resetPasswordLoading.value,
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        _auth.resetPassword(
+                          password: _resetPassword.text,
+                          token: widget.token,
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

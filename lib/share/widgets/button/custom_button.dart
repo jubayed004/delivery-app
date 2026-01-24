@@ -40,7 +40,7 @@ class CustomButton extends StatelessWidget {
 
   Widget buildChild(BuildContext context) {
     if (isLoading) {
-      return const LoadingWidget(color: AppColors.white);
+      return const LoadingWidget(color: AppColors.redColor);
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
