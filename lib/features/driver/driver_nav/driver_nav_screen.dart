@@ -109,11 +109,11 @@ class _DriverNavScreenState extends State<DriverNavScreen> {
       body: SafeArea(
         child: PageView(
           controller: controller,
-          children: const [
-            DriverHomeScreen(),
-            ParcelsScreen(),
+          children: [
+            const DriverHomeScreen(),
+            const ParcelsScreen(),
 
-            ChatListScreen(),
+            const ChatListScreen(),
             ProfileScreen(),
           ],
         ),

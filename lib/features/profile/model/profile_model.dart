@@ -32,6 +32,7 @@ class Data {
   final DateTime? passwordChangedAt;
   final int? v;
   final String? address;
+  final String? phoneNumber;
   final String? dataId;
 
   Data({
@@ -48,6 +49,7 @@ class Data {
     this.passwordChangedAt,
     this.v,
     this.address,
+    this.phoneNumber,
     this.dataId,
   });
 
@@ -71,6 +73,7 @@ class Data {
         : DateTime.parse(json["password_changed_at"]),
     v: json["__v"],
     address: json["address"],
+    phoneNumber: json["phone_number"],
     dataId: json["id"],
   );
 
@@ -88,6 +91,7 @@ class Data {
     "password_changed_at": passwordChangedAt?.toIso8601String(),
     "__v": v,
     "address": address,
+    "phone_number": phoneNumber,
     "id": dataId,
   };
 }

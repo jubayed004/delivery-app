@@ -1,8 +1,13 @@
+import 'package:delivery_app/core/di/injection.dart';
+import 'package:delivery_app/core/service/datasource/local/local_service.dart';
+import 'package:delivery_app/features/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/share/widgets/custom_image/custom_image.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -10,13 +15,14 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _logoController;
   late AnimationController _cityController;
   late Animation<double> _logoFadeAnimation;
   late Animation<double> _logoScaleAnimation;
   late Animation<Offset> _citySlideAnimation;
-
+  final LocalService localService = sl();
   @override
   void initState() {
     super.initState();
@@ -47,6 +53,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     _startAnimations();
 
+    _handleNavigationFlow();
+
     _navigateToNextScreen();
   }
 
@@ -59,9 +67,26 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   void _navigateToNextScreen() async {
     await Future.delayed(const Duration(milliseconds: 4000));
-
     if (mounted) {
       AppRouter.route.pushReplacementNamed(RoutePath.onboardingScreen);
+    }
+  }
+
+  Future<void> _handleNavigationFlow() async {
+    try {
+      final token = await localService.getToken() ?? "";
+      if (token.isEmpty || JwtDecoder.isExpired(token)) {
+        AppRouter.route.goNamed(RoutePath.onboardingScreen);
+        return;
+      }
+      final role = await localService.getRole();
+      if (role == "DRIVER") {
+        AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+      } else {
+        AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
+      }
+    } catch (e) {
+      AppRouter.route.goNamed(RoutePath.onboardingScreen);
     }
   }
 
@@ -87,8 +112,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo image
-                  CustomImage(imageSrc: "assets/images/splashmainlogo.png")
-         
+                    CustomImage(imageSrc: "assets/images/splashmainlogo.png"),
                   ],
                 ),
               ),
@@ -101,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               position: _citySlideAnimation,
               child: CustomImage(
                 width: context.screenWidth,
-                  imageSrc: "assets/images/simage.png"
+                imageSrc: "assets/images/simage.png",
               ),
             ),
           ),

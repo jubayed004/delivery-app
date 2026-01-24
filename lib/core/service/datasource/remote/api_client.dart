@@ -4,6 +4,8 @@ import 'package:delivery_app/utils/multipart/multipart_body.dart';
 import 'package:dio/dio.dart';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
 import 'network_checker.dart';
 
 class ApiClient {
@@ -81,8 +83,9 @@ class ApiClient {
     Map<String, dynamic>? body,
     String? token,
   }) async {
-    if (!await _hasConnection())
+    if (!await _hasConnection()) {
       return _buildErrorResponse('No internet connection');
+    }
 
     try {
       final headers = await _headers(token: token);
@@ -188,7 +191,7 @@ class ApiClient {
     );
   }
 
-  Response _handleDioError(dynamic error) {
+  Future<Response> _handleDioError(dynamic error) async {
     if (error is Response) return error;
 
     if (error is DioException) {
@@ -196,13 +199,20 @@ class ApiClient {
       final statusCode = error.response?.statusCode ?? 500;
       final data = error.response?.data ?? {};
 
-      /*if (statusCode == 401) {
+      if (statusCode == 401) {
         try {
-          sl<LocalService>().logOut();
+          await localService.logOut();
           AppRouter.route.goNamed(RoutePath.loginScreen);
         } catch (_) {}
-        return Response(requestOptions: requestOptions, statusCode: 401, data: {'success': false, 'message': 'Session expired. Please login again.'});
-      }*/
+        return Response(
+          requestOptions: requestOptions,
+          statusCode: 401,
+          data: {
+            'success': false,
+            'message': 'Session expired. Please login again.',
+          },
+        );
+      }
 
       if ({
         DioExceptionType.connectionTimeout,

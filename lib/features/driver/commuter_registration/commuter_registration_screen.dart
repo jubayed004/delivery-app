@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:delivery_app/core/router/route_path.dart';
-import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:delivery_app/share/widgets/dropdown/custom_dropdown_field.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';

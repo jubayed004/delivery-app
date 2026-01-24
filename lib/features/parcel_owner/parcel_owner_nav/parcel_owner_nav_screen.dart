@@ -136,7 +136,7 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
             0 => const ParcelOwnerHomeScreen(),
             1 => MyParcelScreen(),
             2 => const ChatListScreen(),
-            3 => const ProfileScreen(),
+            3 => ProfileScreen(),
             _ => const ParcelOwnerHomeScreen(),
           };
         },

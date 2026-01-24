@@ -13,7 +13,6 @@ import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
-
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -22,17 +21,14 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final controller = Get.put(ProfileController());
+  final ProfileController profileController = Get.find();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController name = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController number = TextEditingController();
+  TextEditingController name = .new();
+  TextEditingController number = .new();
   @override
   void dispose() {
     name.dispose();
-    email.dispose();
-    name.dispose();
-    controller.onDelete;
+    number.dispose();
     super.dispose();
   }
 
@@ -60,15 +56,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: Obx(() {
-                          return controller.selectedImage.value != null
+                          return profileController.selectedImage.value != null
                               ? Image.file(
                                   File(
-                                    controller.selectedImage.value?.path ?? "",
+                                    profileController
+                                            .selectedImage
+                                            .value
+                                            ?.path ??
+                                        "",
                                   ),
                                   fit: BoxFit.cover,
                                 )
                               : CustomNetworkImage(
-                                  imageUrl: /*controller.profile.value.data?.profileImage ??*/
+                                  imageUrl:
+                                      profileController
+                                          .profile
+                                          .value
+                                          .data
+                                          ?.profilePicture ??
                                       "",
                                 );
                         }),
@@ -79,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       right: 2,
                       child: GestureDetector(
                         onTap: () {
-                          controller.pickImage();
+                          profileController.pickImage();
                         },
                         child: Container(
                           height: 30,
@@ -125,10 +130,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const Gap(12),
 
-              CustomButton(
-                text: "Update",
-                isLoading: controller.isUpdateLoading.value,
-                onTap: () {},
+              Obx(
+                () => CustomButton(
+                  text: "Update",
+                  isLoading: profileController.updateProfileLoading.value,
+                  onTap: () {
+                    final body = {
+                      "full_name": name.text,
+                      "phone_number": number.text,
+                    };
+
+                    if (_formKey.currentState!.validate()) {
+                      profileController.updateProfile(body: body);
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -166,10 +166,17 @@ class ProfileScreen extends StatelessWidget {
                                           color: AppColors.primaryColor,
                                         ),
                                         Gap(4),
-                                        Text(
-                                          /*profileController.profile.value.data?.phoneNumber ?? */ "08834534524",
-                                          style: context.labelMedium,
-                                        ),
+                                        Obx(() {
+                                          final phoneNumber = profileController
+                                              .profile
+                                              .value
+                                              .data
+                                              ?.phoneNumber;
+                                          return Text(
+                                            phoneNumber ?? "08834534524",
+                                            style: context.labelMedium,
+                                          );
+                                        }),
                                       ],
                                     ),
                                   ],

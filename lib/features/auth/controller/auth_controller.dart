@@ -9,8 +9,6 @@ import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
 import 'package:delivery_app/utils/common_controller/common_controller.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
-import 'package:delivery_app/utils/variable/variable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -206,53 +204,52 @@ class AuthController extends GetxController {
   bool signInLoadingMethod(bool status) => signInLoading.value = status;
 
   Future<void> signIn({required String email, required String password}) async {
-    signInLoadingMethod(true);
+    try {
+      signInLoadingMethod(true);
 
-    final body = {"email": email.trim(), "password": password.trim()};
+      final body = {"email": email.trim(), "password": password.trim()};
 
-    AppConfig.logger.i(body);
+      AppConfig.logger.i(body);
 
-    final response = await apiClient.post(url: ApiUrls.login(), body: body);
+      final response = await apiClient.post(url: ApiUrls.login(), body: body);
 
-    AppConfig.logger.i(response.data);
+      AppConfig.logger.i(response.data);
 
-    if (response.statusCode == 200) {
-      signInLoadingMethod(false);
-      AppToast.success(
-        message: response.data?["message"].toString() ?? "Login Successful",
-      );
+      if (response.statusCode == 200) {
+        signInLoadingMethod(false);
+        AppToast.success(
+          message: response.data?["message"].toString() ?? "Login Successful",
+        );
 
-      final data = response.data['data'];
-      final token = data['accessToken']?.toString() ?? "";
-      final refreshToken = data['refreshToken']?.toString() ?? "";
-      final userId = data['user']['id']?.toString() ?? "";
-      final role = data['user']['role']?.toString() ?? "";
+        final data = response.data['data'];
+        final token = data['accessToken']?.toString() ?? "";
+        final refreshToken = data['refreshToken']?.toString() ?? "";
+        final userId = data['user']['id']?.toString() ?? "";
+        final role = data['user']['role']?.toString() ?? "";
 
-      await localService.saveUserdata(
-        token: token,
-        refreshToken: refreshToken,
-        id: userId,
-        role: role,
-      );
+        await localService.saveUserdata(
+          token: token,
+          refreshToken: refreshToken,
+          id: userId,
+          role: role,
+        );
 
-      if (role == "CUSTOMER") {
-        AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
+        if (role == "CUSTOMER") {
+          AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
+        } else {
+          AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        }
       } else {
-        AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        signInLoadingMethod(false);
+        AppToast.error(
+          message: response.data?["message"].toString() ?? "Login Failed",
+        );
       }
-    } else {
+    } catch (err) {
       signInLoadingMethod(false);
-      AppToast.error(
-        message: response.data?["message"].toString() ?? "Login Failed",
-      );
+      AppConfig.logger.e(err);
+      AppToast.error(message: "Something went wrong");
     }
-    // try {
-
-    // } catch (err) {
-    //   signInLoadingMethod(false);
-    //   AppConfig.logger.e(err);
-    //   AppToast.error(message: "Something went wrong");
-    // }
   }
 
   // ================== Forgot Password Section ===================

@@ -13,7 +13,6 @@ import 'package:delivery_app/share/widgets/custom_image/custom_image.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
-import 'package:delivery_app/utils/common_controller/common_controller.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class LoginScreen extends StatefulWidget {
