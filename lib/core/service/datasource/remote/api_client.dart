@@ -149,7 +149,7 @@ class ApiClient {
     required List<MultipartBody> files,
     required String method,
     required String token,
-    Map<String, String>? fields,
+    Map<String, dynamic>? fields,
   }) async {
     if (!await _hasConnection()) {
       return _buildErrorResponse('No internet connection');

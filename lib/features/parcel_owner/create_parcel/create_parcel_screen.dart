@@ -1,10 +1,13 @@
+import 'package:delivery_app/features/driver/commuter_registration/models/record_location.dart';
+import 'package:delivery_app/features/parcel_owner/create_parcel/controller/create_parcel_controller.dart';
+import 'package:delivery_app/helper/location_picker_helper/location_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:go_router/go_router.dart';
-import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/helper/validator/text_field_validator.dart';
 import 'package:delivery_app/share/widgets/align/custom_align_text.dart';
 import 'package:delivery_app/share/widgets/button/custom_button.dart';
@@ -14,7 +17,6 @@ import 'package:delivery_app/share/widgets/text_field/description_text_field.dar
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
-
 
 class CreateParcelScreen extends StatefulWidget {
   const CreateParcelScreen({super.key});
@@ -26,10 +28,17 @@ class CreateParcelScreen extends StatefulWidget {
 class _CreateParcelScreenState extends State<CreateParcelScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  final CreateParcelController createParcelController = Get.put(
+    CreateParcelController(),
+  );
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _handoverLocationController =
       TextEditingController();
+  final TextEditingController _pickupLocationController =
+      TextEditingController();
+
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _receiverNameController = TextEditingController();
@@ -37,9 +46,16 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
       TextEditingController();
   final TextEditingController _senderRemarksController =
       TextEditingController();
+  final TextEditingController _vehicleTypeController = TextEditingController();
+
+  final selectedPickupLocation = ValueNotifier<RecordLocation>(
+    RecordLocation(LatLng(0.0, 0.0), ""),
+  );
+  final selectedHandoverLocation = ValueNotifier<RecordLocation>(
+    RecordLocation(LatLng(0.0, 0.0), ""),
+  );
 
   final ValueNotifier<String?> _selectedSize = ValueNotifier(null);
-  final ValueNotifier<String?> _selectedVehicle = ValueNotifier(null);
   final ValueNotifier<String?> _selectedPriority = ValueNotifier(null);
 
   @override
@@ -52,10 +68,11 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
     _receiverNameController.dispose();
     _receiverPhoneController.dispose();
     _senderRemarksController.dispose();
+    _vehicleTypeController.dispose();
     _selectedSize.dispose();
-    _selectedVehicle.dispose();
     _selectedPriority.dispose();
     super.dispose();
+    Get.delete<CreateParcelController>();
   }
 
   @override
@@ -108,23 +125,14 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 },
               ),
               Gap(16.h),
-
-              CustomAlignText(text: "Vehicle Type"),
-              Gap(12.h),
-              ValueListenableBuilder<String?>(
-                valueListenable: _selectedVehicle,
-                builder: (context, value, child) {
-                  return CustomDropdownField<String>(
-                    value: value,
-                    hintText: "Select vehicle",
-                    items: const ["Bike", "Car", "Truck"],
-                    onChanged: (val) => _selectedVehicle.value = val,
-                    fillColor: Colors.white,
-                    validator: TextFieldValidator.requiredField(
-                      label: "Vehicle Type",
-                    ),
-                  );
-                },
+              CustomTextField(
+                controller: _vehicleTypeController,
+                title: "Vehicle Type",
+                hintText: "Enter vehicle type",
+                fillColor: Colors.white,
+                validator: TextFieldValidator.requiredField(
+                  label: "Vehicle Type",
+                ),
               ),
               Gap(16.h),
 
@@ -139,6 +147,39 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
               Gap(16.h),
 
               CustomTextField(
+                readOnly: true,
+                onTap: () {
+                  openLocationPicker(
+                    context: context,
+                    isFromField: false,
+                    fromLocation: selectedPickupLocation,
+                    toLocation: selectedHandoverLocation,
+                    fromController: _pickupLocationController,
+                    toController: _handoverLocationController,
+                  );
+                },
+                controller: _pickupLocationController,
+                title: "Pickup Location",
+                hintText: "enter location",
+                fillColor: Colors.white,
+                validator: TextFieldValidator.requiredField(
+                  label: "Pickup Location",
+                ),
+              ),
+              Gap(16.h),
+
+              CustomTextField(
+                readOnly: true,
+                onTap: () {
+                  openLocationPicker(
+                    context: context,
+                    isFromField: false,
+                    fromLocation: selectedPickupLocation,
+                    toLocation: selectedHandoverLocation,
+                    fromController: _pickupLocationController,
+                    toController: _handoverLocationController,
+                  );
+                },
                 controller: _handoverLocationController,
                 title: "Handover location",
                 hintText: "enter location",
@@ -157,7 +198,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                   return CustomDropdownField<String>(
                     value: value,
                     hintText: "Select Priority",
-                    items: const ["Standard", "Express"],
+                    items: const ["Urgent", "Normal", "Low"],
                     onChanged: (val) => _selectedPriority.value = val,
                     fillColor: Colors.white,
                     validator: TextFieldValidator.requiredField(
@@ -245,10 +286,41 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
               Gap(32.h),
               CustomButton(
                 onTap: () {
-                  // if (_formKey.currentState!.validate()) {
-
-                  // }
-                  context.pushNamed(RoutePath.createDetailsParcelScreen);
+                  if (_formKey.currentState!.validate()) {
+                    final body = {
+                      "parcel_name": _nameController.text,
+                      "size": _selectedSize.value,
+                      "vehicle_type": _vehicleTypeController.text,
+                      "weight": double.parse(_weightController.text),
+                      "pickup_location": {
+                        "address": selectedPickupLocation.value.address,
+                        "latitude":
+                            selectedPickupLocation.value.latLng.latitude,
+                        "longitude":
+                            selectedPickupLocation.value.latLng.longitude,
+                      },
+                      "handover_location": {
+                        "address": selectedHandoverLocation.value.address,
+                        "latitude": selectedHandoverLocation
+                            .value
+                            .latLng
+                            .latitude
+                            .toString(),
+                        "longitude": selectedHandoverLocation
+                            .value
+                            .latLng
+                            .longitude
+                            .toString(),
+                      },
+                      "priority": _selectedPriority.value,
+                      "date": _dateController.text,
+                      "time": _timeController.text,
+                      "receiver_name": _receiverNameController.text,
+                      "receiver_phone": _receiverPhoneController.text,
+                      "sender_remarks": _senderRemarksController.text,
+                    };
+                    createParcelController.createParcel(body: body);
+                  }
                 },
                 text: AppStrings.confirm.tr,
               ),

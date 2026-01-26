@@ -18,9 +18,7 @@ final ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.w800,
       color: AppColors.primaryColor,
     ),
-    iconTheme: IconThemeData(
-      color: AppColors.grayTertiaryTextColor,
-    ),
+    iconTheme: IconThemeData(color: AppColors.grayTertiaryTextColor),
   ),
 
   // ================= Buttons =================
@@ -29,13 +27,8 @@ final ThemeData lightTheme = ThemeData(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: AppColors.white,
       minimumSize: const Size(double.infinity, 48),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   ),
 
@@ -43,17 +36,9 @@ final ThemeData lightTheme = ThemeData(
     style: OutlinedButton.styleFrom(
       foregroundColor: AppColors.primaryColor,
       minimumSize: const Size(double.infinity, 48),
-      side: const BorderSide(
-        color: AppColors.primaryColor,
-        width: 1.5,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   ),
 
@@ -66,10 +51,7 @@ final ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.w400,
       color: AppColors.grayTextSecondaryColor,
     ),
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 14,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: AppColors.primaryColor),
@@ -80,10 +62,7 @@ final ThemeData lightTheme = ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.primaryColor,
-        width: 2,
-      ),
+      borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -91,15 +70,9 @@ final ThemeData lightTheme = ThemeData(
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        color: AppColors.error,
-        width: 2,
-      ),
+      borderSide: const BorderSide(color: AppColors.error, width: 2),
     ),
-    errorStyle: const TextStyle(
-      fontSize: 12,
-      color: AppColors.redColor,
-    ),
+    errorStyle: const TextStyle(fontSize: 12, color: AppColors.redColor),
   ),
 
   // ================= Text Theme =================

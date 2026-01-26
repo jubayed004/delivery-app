@@ -9,6 +9,7 @@ import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
+
 class PaymentScreen extends StatefulWidget {
   final ParcelModel parcel;
   const PaymentScreen({super.key, required this.parcel});

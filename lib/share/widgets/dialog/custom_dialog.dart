@@ -24,7 +24,10 @@ class AppDialog {
     Duration transitionDuration = const Duration(milliseconds: 350),
     Curve curve = Curves.easeOutBack,
     Curve reverseCurve = Curves.easeInCubic,
-    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 16,
+    ),
     double maxWidth = 380,
   }) {
     IconData defaultIcon;
@@ -70,7 +73,9 @@ class AppDialog {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: typeColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           onPressed: () {
             Navigator.pop(context, true);
@@ -102,7 +107,9 @@ class AppDialog {
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxWidth),
                 child: Dialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                  ),
                   backgroundColor: backgroundColor ?? AppColors.white,
                   elevation: 10,
                   child: Padding(
@@ -118,16 +125,19 @@ class AppDialog {
                               color: typeColor.withValues(alpha: 0.15),
                             ),
                             padding: const EdgeInsets.all(12),
-                            child: icon ?? Icon(defaultIcon, color: typeColor, size: 38),
+                            child:
+                                icon ??
+                                Icon(defaultIcon, color: typeColor, size: 38),
                           ),
                         if (title?.isNotEmpty ?? false)
                           Text(
                             title!,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: titleColor ?? AppColors.black,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: titleColor ?? AppColors.black,
+                                ),
                           ),
                         if (subtitle?.isNotEmpty ?? false)
                           Padding(
@@ -135,12 +145,14 @@ class AppDialog {
                             child: Text(
                               subtitle!,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: subtitleColor ?? AppColors.white,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: subtitleColor ?? AppColors.white,
+                                  ),
                             ),
                           ),
-                        if ((actions?.isNotEmpty ?? false) || showDefaultButtons)
+                        if ((actions?.isNotEmpty ?? false) ||
+                            showDefaultButtons)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: actions ?? defaultButtons,

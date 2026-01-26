@@ -26,15 +26,19 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
 
       if (trimmed.isEmpty) return "Password is required";
-      if (trimmed.length < 8) return "Password must be at least 8 characters";
-      if (!RegExp(r'[A-Z]').hasMatch(trimmed)) return "Must contain at least one uppercase letter";
-      if (!RegExp(r'[0-9]').hasMatch(trimmed)) return "Must contain at least one number";
+      if (trimmed.length < 6) return "Password must be at least 6 characters";
+      if (!RegExp(r'[a-zA-Z]').hasMatch(trimmed))
+        return "Must contain at least one letter";
+      if (!RegExp(r'[0-9]').hasMatch(trimmed))
+        return "Must contain at least one number";
 
       return null;
     };
   }
 
-  static String? Function(String?) confirmPassword(TextEditingController originalController) {
+  static String? Function(String?) confirmPassword(
+    TextEditingController originalController,
+  ) {
     return (value) {
       final trimmed = value?.trim() ?? '';
 
@@ -54,12 +58,15 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "OTP is required";
       if (trimmed.length != 6) return "OTP must be 6 digits";
-      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed)) return "OTP must contain only numbers";
+      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed))
+        return "OTP must contain only numbers";
       return null;
     };
   }
 
-  static String? Function(String?) requiredField({String label = "This field"}) {
+  static String? Function(String?) requiredField({
+    String label = "This field",
+  }) {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "$label is required";
@@ -72,7 +79,10 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Website URL is required";
 
-      final urlPattern = RegExp(r'^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$', caseSensitive: false);
+      final urlPattern = RegExp(
+        r'^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$',
+        caseSensitive: false,
+      );
 
       if (!urlPattern.hasMatch(trimmed)) return "Enter a valid website URL";
       return null;
@@ -173,7 +183,8 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Description is required";
-      if (trimmed.length < minLength) return "Description must be at least $minLength characters";
+      if (trimmed.length < minLength)
+        return "Description must be at least $minLength characters";
       return null;
     };
   }
@@ -195,20 +206,26 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Date of birth is required";
 
-      if (!RegExp(r'^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/](\d{4})$').hasMatch(trimmed)) {
+      if (!RegExp(
+        r'^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/](\d{4})$',
+      ).hasMatch(trimmed)) {
         return "Please enter a valid date of birth (DD/MM/YYYY)";
       }
 
-      final dateParts = trimmed.split(RegExp(r'[-/ ]')); // Split date by separator
+      final dateParts = trimmed.split(
+        RegExp(r'[-/ ]'),
+      ); // Split date by separator
       final day = int.tryParse(dateParts[0]);
       final month = int.tryParse(dateParts[1]);
       final year = int.tryParse(dateParts[2]);
 
-      if (day == null || month == null || year == null) return "Invalid date format";
+      if (day == null || month == null || year == null)
+        return "Invalid date format";
 
       try {
         final date = DateTime(year, month, day);
-        if (date.isAfter(DateTime.now())) return "Date of birth cannot be in the future";
+        if (date.isAfter(DateTime.now()))
+          return "Date of birth cannot be in the future";
       } catch (e) {
         return "Invalid date of birth";
       }
@@ -230,7 +247,6 @@ class TextFieldValidator {
     };
   }
 }
-
 
 /*
 import 'package:flutter/material.dart';

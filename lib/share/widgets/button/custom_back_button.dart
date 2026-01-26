@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 
@@ -16,8 +15,8 @@ class CustomBackButton extends StatelessWidget {
     this.backgroundColor = AppColors.backgroundColor,
     this.borderColor = AppColors.backgroundsLinesColor,
     this.borderRadius = 23,
-// Default height
-    this.icon = const Icon(Icons.arrow_back,size: 24,),
+    // Default height
+    this.icon = const Icon(Icons.arrow_back, size: 24),
   });
 
   @override
@@ -27,18 +26,14 @@ class CustomBackButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(3),
         child: Container(
-
-            padding: EdgeInsets.zero,
-            margin: EdgeInsets.zero,
-            decoration: BoxDecoration(
-              color: backgroundColor.withValues(alpha: 0.1),
-              border: Border.all(
-                color: borderColor,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
-            child: icon
+          padding: EdgeInsets.zero,
+          margin: EdgeInsets.zero,
+          decoration: BoxDecoration(
+            color: backgroundColor.withValues(alpha: 0.1),
+            border: Border.all(color: borderColor, width: 1),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          child: icon,
         ),
       ),
     );

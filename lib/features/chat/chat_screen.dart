@@ -5,6 +5,7 @@ import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/chat/controller/chat_controller.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 

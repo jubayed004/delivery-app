@@ -63,7 +63,7 @@ class CertificateDialog extends StatelessWidget {
                       Expanded(
                         child: Text(
                           text,
-                          style:context.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: const Color(0xFF243048),
                           ),
                         ),

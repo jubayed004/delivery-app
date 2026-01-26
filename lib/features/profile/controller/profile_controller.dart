@@ -30,9 +30,11 @@ class ProfileController extends GetxController {
   bool loadingProdileMethod(bool status) => profileLoading.value = status;
   final Rx<ProfileModel> profile = ProfileModel().obs;
   Future<void> getProfile() async {
+    AppConfig.logger.i("Get Profile Method Called");
     loadingProdileMethod(true);
     try {
       final response = await apiClient.get(url: ApiUrls.getProfile());
+      AppConfig.logger.i(response.data);
       if (response.statusCode == 200) {
         final newData = ProfileModel.fromJson(response.data);
         profile.value = newData;
@@ -74,9 +76,11 @@ class ProfileController extends GetxController {
         loadingUpdateProfileMethod(false);
         AppToast.success(message: response.data["message"].toString());
         AppRouter.route.pop();
+        return; // Add return to stop execution
+      } else {
+        loadingUpdateProfileMethod(false);
+        AppToast.error(message: response.data["message"].toString());
       }
-      loadingUpdateProfileMethod(false);
-      AppToast.error(message: response.data["message"].toString());
     } catch (e) {
       loadingUpdateProfileMethod(false);
       AppToast.error(message: e.toString());

@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 
 class DateConverter {
-
   static String formatDate({
     DateTime? dateTime,
     String format = 'MMM dd, yyyy',
@@ -14,10 +13,7 @@ class DateConverter {
     }
   }
 
-  static String formatDateRange({
-    DateTime? startDate,
-    DateTime? endDate,
-  }) {
+  static String formatDateRange({DateTime? startDate, DateTime? endDate}) {
     final start = startDate ?? DateTime.now();
     final end = endDate ?? start;
 
@@ -29,19 +25,25 @@ class DateConverter {
       final startDay = DateFormat('d').format(start);
       final endDay = DateFormat('d').format(end);
       final year = DateFormat('y').format(start);
-      return '$month $startDay–$endDay, $year'; /// "June 15–17, 2025"
+      return '$month $startDay–$endDay, $year';
+
+      /// "June 15–17, 2025"
     }
 
     if (!sameMonth && sameYear) {
       final startText = DateFormat('MMMM d').format(start);
       final endText = DateFormat('MMMM d').format(end);
       final year = DateFormat('y').format(start);
-      return '$startText – $endText, $year'; /// "June 28 – July 2, 2025"
+      return '$startText – $endText, $year';
+
+      /// "June 28 – July 2, 2025"
     }
 
     final startText = DateFormat('MMMM d, y').format(start);
     final endText = DateFormat('MMMM d, y').format(end);
-    return '$startText – $endText'; /// "Dec 30, 2024 – Jan 2, 2025"
+    return '$startText – $endText';
+
+    /// "Dec 30, 2024 – Jan 2, 2025"
   }
 
   /// Returns time in "hh:mm a" (12-hour) format → 03:45 PM
@@ -60,20 +62,28 @@ class DateConverter {
     if (diff.inHours < 24) return '${diff.inHours} hr ago';
     if (diff.inDays == 1) return 'Yesterday';
     if (diff.inDays < 7) return '${diff.inDays} days ago';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()} week${diff.inDays >= 14 ? 's' : ''} ago';
-    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()} month${diff.inDays >= 60 ? 's' : ''} ago';
+    if (diff.inDays < 30)
+      return '${(diff.inDays / 7).floor()} week${diff.inDays >= 14 ? 's' : ''} ago';
+    if (diff.inDays < 365)
+      return '${(diff.inDays / 30).floor()} month${diff.inDays >= 60 ? 's' : ''} ago';
 
     return '${(diff.inDays / 365).floor()} year${diff.inDays >= 730 ? 's' : ''} ago';
   }
 
   /// Returns formatted date + time (e.g. "Jun 12, 2025 10:30 AM")
-  static String formatDateTime({DateTime? dateTime, String pattern = 'MMM dd, yyyy hh:mm a'}) {
+  static String formatDateTime({
+    DateTime? dateTime,
+    String pattern = 'MMM dd, yyyy hh:mm a',
+  }) {
     final dt = dateTime ?? DateTime.now();
     return DateFormat(pattern).format(dt);
   }
 
   /// Converts string → DateTime safely
-  static DateTime? parseDate(String? dateString, {String pattern = 'yyyy-MM-dd HH:mm:ss'}) {
+  static DateTime? parseDate(
+    String? dateString, {
+    String pattern = 'yyyy-MM-dd HH:mm:ss',
+  }) {
     if (dateString == null || dateString.isEmpty) return null;
     try {
       return DateFormat(pattern).parse(dateString, true).toLocal();
@@ -100,7 +110,9 @@ class DateConverter {
   /// Checks if given date is today
   static bool isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   /// Returns day of week → “Monday”, “Tuesday”, etc.

@@ -37,15 +37,14 @@ class NoDataCard extends StatelessWidget {
     final effectiveSubtitle = subtitle ?? "The list is currently empty";
 
     return Padding(
-      padding: padding ??
-          EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: isList ? 12 : 48,
-          ),
+      padding:
+          padding ??
+          EdgeInsets.symmetric(horizontal: 16, vertical: isList ? 12 : 48),
       child: Center(
         child: Column(
-          mainAxisAlignment:
-          isList ? MainAxisAlignment.center : MainAxisAlignment.start,
+          mainAxisAlignment: isList
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (!isList) const Gap(12),
@@ -60,7 +59,9 @@ class NoDataCard extends StatelessWidget {
               Icon(
                 icon ?? Icons.inbox_outlined,
                 size: iconSize,
-                color: iconColor ?? theme.colorScheme.primary.withValues(alpha: 0.7),
+                color:
+                    iconColor ??
+                    theme.colorScheme.primary.withValues(alpha: 0.7),
               ),
 
             const Gap(16),
@@ -97,7 +98,10 @@ class NoDataCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
                 ),
               ),
           ],

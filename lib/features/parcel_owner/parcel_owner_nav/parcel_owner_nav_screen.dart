@@ -133,11 +133,11 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
         valueListenable: selectedIndex,
         builder: (context, selected, _) {
           return switch (selected) {
-            0 => const ParcelOwnerHomeScreen(),
+            0 => ParcelOwnerHomeScreen(),
             1 => MyParcelScreen(),
             2 => const ChatListScreen(),
             3 => ProfileScreen(),
-            _ => const ParcelOwnerHomeScreen(),
+            _ => ParcelOwnerHomeScreen(),
           };
         },
       ),

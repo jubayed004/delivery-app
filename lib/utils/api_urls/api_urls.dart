@@ -14,4 +14,8 @@ class ApiUrls {
   // =========== Customer Api Urls ===========
   static String getProfile() => '$base/v1/user/get-me';
   static String updateProfile() => '$base/v1/user/update-me';
+  // =========== Parcel Owner Api Urls ===========
+  static String getHomeData({required String status, required int page}) =>
+      '$base/v1/parcel/get-my-parcels?status=$status&page=$page&limit=10';
+  static String createParcel() => '$base/v1/parcel/create';
 }

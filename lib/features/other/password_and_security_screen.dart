@@ -9,7 +9,6 @@ import 'package:delivery_app/features/other/widgets/settings_disclosure_item.dar
 import 'package:delivery_app/share/widgets/custom_buttom_sheet/custom_buttom_sheet.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 
-
 class PasswordAndSecurityScreen extends StatelessWidget {
   const PasswordAndSecurityScreen({super.key});
   @override
@@ -19,9 +18,7 @@ class PasswordAndSecurityScreen extends StatelessWidget {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text(
-            'Password & Security'.tr
-        ),
+        title: Text('Password & Security'.tr),
         centerTitle: true,
       ),
 
@@ -33,7 +30,8 @@ class PasswordAndSecurityScreen extends StatelessWidget {
             SettingsDisclosureItem(
               title: 'Change Password'.tr,
               icon: Iconsax.lock_1,
-              onTap: ()=>AppRouter.route.pushNamed(RoutePath.changePasswordScreen),
+              onTap: () =>
+                  AppRouter.route.pushNamed(RoutePath.changePasswordScreen),
             ),
             Gap(16.h),
 
@@ -45,11 +43,11 @@ class PasswordAndSecurityScreen extends StatelessWidget {
                 showYesNoModal(
                   context,
                   title: 'Hey!'.tr,
-                  message: 'Are you sure you want to delete your account? All your data will be lost after deletion.'.tr,
+                  message:
+                      'Are you sure you want to delete your account? All your data will be lost after deletion.'
+                          .tr,
                   confirmButtonText: 'Delete'.tr,
-                  onConfirm: () {
-
-                  },
+                  onConfirm: () {},
                 );
               },
               isLast: true,

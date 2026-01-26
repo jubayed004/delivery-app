@@ -23,7 +23,7 @@ class StarRating extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(maxRating, (index) {
         return Icon(
-          index < rating ?Icons.star_rounded: Icons.star_outline_rounded,
+          index < rating ? Icons.star_rounded : Icons.star_outline_rounded,
           color: index < rating ? filledColor : borderColor,
           size: size,
         );

@@ -1,7 +1,7 @@
 import 'package:delivery_app/features/driver/commuter_registration/controller/commuter_registration_controller.dart';
 import 'package:delivery_app/features/driver/commuter_registration/models/record_location.dart';
 import 'package:delivery_app/features/driver/commuter_registration/widgets/image_picker_box.dart';
-import 'package:delivery_app/features/driver/commuter_registration/widgets/location_picker_helper.dart';
+import 'package:delivery_app/helper/location_picker_helper/location_picker_helper.dart';
 import 'package:delivery_app/features/driver/commuter_registration/widgets/selected_image_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

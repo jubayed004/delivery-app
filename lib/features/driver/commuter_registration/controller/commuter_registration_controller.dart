@@ -78,13 +78,8 @@ class CommuterRegistrationController extends GetxController {
       }
     }
 
-    // Convert body to Map<String, String> for multipart
-    final fields = <String, String>{};
-    _flattenMap(body, fields);
-
-    print(fields);
     final response = await apiClient.uploadMultipart(
-      fields: fields,
+      fields: body,
       url: ApiUrls.register(),
       files: multipart,
       method: 'POST',
@@ -112,33 +107,5 @@ class CommuterRegistrationController extends GetxController {
     //   AppConfig.logger.e(e);
     //   AppToast.error(message: "Something went wrong");
     // }
-  }
-
-  // Helper method to flatten nested map for multipart
-  void _flattenMap(
-    Map<String, dynamic> map,
-    Map<String, String> result, [
-    String prefix = '',
-  ]) {
-    map.forEach((key, value) {
-      final newKey = prefix.isEmpty ? key : '$prefix[$key]';
-      if (value is Map<String, dynamic>) {
-        _flattenMap(value, result, newKey);
-      } else if (value is List) {
-        for (int i = 0; i < value.length; i++) {
-          if (value[i] is Map<String, dynamic>) {
-            _flattenMap(
-              value[i] as Map<String, dynamic>,
-              result,
-              '$newKey[$i]',
-            );
-          } else {
-            result['$newKey[$i]'] = value[i].toString();
-          }
-        }
-      } else {
-        result[newKey] = value.toString();
-      }
-    });
   }
 }

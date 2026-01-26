@@ -5,16 +5,16 @@ import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/features/other/model/terms_conditions_model.dart';
 import 'package:delivery_app/utils/enum/app_enum.dart';
 
-class OtherController extends GetxController{
+class OtherController extends GetxController {
   final ApiClient apiClient = sl<ApiClient>();
   final LocalService localService = sl<LocalService>();
 
-
   /// ============================= GET Terms Condition =====================================
-  final Rx<TermsConditionsModel> termsConditionsData = TermsConditionsModel().obs;
+  final Rx<TermsConditionsModel> termsConditionsData =
+      TermsConditionsModel().obs;
   final Rx<ApiStatus> termsLoading = ApiStatus.completed.obs;
   void termsLoadingMethod(ApiStatus status) => termsLoading.value = status;
-/*
+  /*
   Future<void> getTermsCondition() async {
     termsLoadingMethod(ApiStatus.loading);
     var response = await apiClient.get(url: ApiUrl.termsConditions(),showResult: true);
@@ -32,11 +32,12 @@ class OtherController extends GetxController{
     }
   }*/
   /// ============================= GET Privacy Policy =====================================
-  final Rx<TermsConditionsModel> privacyConditionsData = TermsConditionsModel().obs;
+  final Rx<TermsConditionsModel> privacyConditionsData =
+      TermsConditionsModel().obs;
   final Rx<ApiStatus> privacyLoading = ApiStatus.completed.obs;
   void privacyLoadingMethod(ApiStatus status) => privacyLoading.value = status;
 
-/*  Future<void> getPrivacyPolicy() async {
+  /*  Future<void> getPrivacyPolicy() async {
     privacyLoadingMethod(ApiStatus.loading);
     var response = await apiClient.get(url: ApiUrl.privacyPolicy(),showResult: true);
     if (response.statusCode == 200) {
@@ -53,7 +54,7 @@ class OtherController extends GetxController{
     }
   }*/
 
-/*  /// ============================= GET Contact Number =====================================
+  /*  /// ============================= GET Contact Number =====================================
   final Rx<String> contactNumber = "".obs;
   final Rx<ApiStatus> contactLoading = ApiStatus.completed.obs;
   void contactLoadingMethod(ApiStatus status) => contactLoading.value = status;
@@ -78,7 +79,8 @@ class OtherController extends GetxController{
 
   /// ============================= Patch Change Password =====================================
   final RxBool changePasswordLoading = false.obs;
-  void changePasswordLoadingMethod(bool loading) => changePasswordLoading.value = loading;
+  void changePasswordLoadingMethod(bool loading) =>
+      changePasswordLoading.value = loading;
 
   /*Future<void> changePassword({required Map<String, String> body}) async {
     changePasswordLoadingMethod(true);
@@ -93,7 +95,7 @@ class OtherController extends GetxController{
     }
   }*/
 
-/*  /// ============================= Ticker Send =====================================
+  /*  /// ============================= Ticker Send =====================================
   final RxBool submitLoading = false.obs;
   void submitMethod(bool status) => submitLoading.value = status;
 
@@ -119,7 +121,7 @@ class OtherController extends GetxController{
   final RxBool deleteLoading = false.obs;
   void deleteMethod(bool status) => deleteLoading.value = status;
 
-/*  void deleteAccount({required String password}) async {
+  /*  void deleteAccount({required String password}) async {
     try{
       deleteMethod(true);
       final roll = await dbHelper.getUserRole();

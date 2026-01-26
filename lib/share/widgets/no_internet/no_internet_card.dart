@@ -29,12 +29,16 @@ class NoInternetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTitle = title ?? "Oops,You re offline check your connection and give it another shot";
+    final effectiveTitle =
+        title ??
+        "Oops,You re offline check your connection and give it another shot";
     final effectiveSubtitle = subtitle ?? '';
     final effectiveButtonText = buttonText ?? "Try Again";
 
     return Padding(
-      padding: padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: isList ? 8 : 32),
+      padding:
+          padding ??
+          EdgeInsets.symmetric(horizontal: 16, vertical: isList ? 8 : 32),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

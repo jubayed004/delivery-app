@@ -14,6 +14,34 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart' as _svg;
 import 'package:vector_graphics/vector_graphics.dart' as _vg;
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/Poppins-Bold.ttf
+  String get poppinsBold => 'assets/fonts/Poppins-Bold.ttf';
+
+  /// File path: assets/fonts/Poppins-ExtraBold.ttf
+  String get poppinsExtraBold => 'assets/fonts/Poppins-ExtraBold.ttf';
+
+  /// File path: assets/fonts/Poppins-Medium.ttf
+  String get poppinsMedium => 'assets/fonts/Poppins-Medium.ttf';
+
+  /// File path: assets/fonts/Poppins-Regular.ttf
+  String get poppinsRegular => 'assets/fonts/Poppins-Regular.ttf';
+
+  /// File path: assets/fonts/Poppins-SemiBold.ttf
+  String get poppinsSemiBold => 'assets/fonts/Poppins-SemiBold.ttf';
+
+  /// List of all assets
+  List<String> get values => [
+    poppinsBold,
+    poppinsExtraBold,
+    poppinsMedium,
+    poppinsRegular,
+    poppinsSemiBold,
+  ];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -61,6 +89,9 @@ class $AssetsImagesGen {
   AssetGenImage get onbordingimage =>
       const AssetGenImage('assets/images/onbordingimage.png');
 
+  /// File path: assets/images/profile.png
+  AssetGenImage get profile => const AssetGenImage('assets/images/profile.png');
+
   /// File path: assets/images/signimage.png
   AssetGenImage get signimage =>
       const AssetGenImage('assets/images/signimage.png');
@@ -81,6 +112,7 @@ class $AssetsImagesGen {
     onboardingimagetwo,
     onboardingoneimageone,
     onbordingimage,
+    profile,
     signimage,
     simage,
     splashmainlogo,
@@ -119,6 +151,7 @@ class $AssetsLanguagesGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLanguagesGen languages = $AssetsLanguagesGen();

@@ -5,7 +5,11 @@ import 'package:delivery_app/utils/enum/app_enum.dart';
 class AppLogger {
   AppLogger._();
 
-  static void log(dynamic message, {dynamic stack, AppLogType type = AppLogType.defaultLog}) {
+  static void log(
+    dynamic message, {
+    dynamic stack,
+    AppLogType type = AppLogType.defaultLog,
+  }) {
     final String prefix;
 
     switch (type) {

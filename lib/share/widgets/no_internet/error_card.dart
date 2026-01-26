@@ -1,7 +1,6 @@
-/*
+import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:percel_delivery_app/utils/color/app_colors.dart';
 
 class ErrorCard extends StatelessWidget {
   const ErrorCard({
@@ -36,13 +35,15 @@ class ErrorCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: showShadow ? [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ] : [],
+          boxShadow: showShadow
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -51,12 +52,12 @@ class ErrorCard extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (iconColor ?? AppColors.errorColor).withOpacity(0.15),
+                  color: (iconColor ?? AppColors.error).withOpacity(0.15),
                 ),
                 padding: const EdgeInsets.all(14),
                 child: Icon(
                   icon ?? Icons.error_outline,
-                  color: iconColor ?? AppColors.errorColor,
+                  color: iconColor ?? AppColors.error,
                   size: 42,
                 ),
               ),
@@ -75,7 +76,7 @@ class ErrorCard extends StatelessWidget {
                   "The application has encountered an unknown error.\nPlease try again later.",
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.secondaryText,
+                color: AppColors.blackMainTextColor,
                 height: 1.4,
               ),
             ),
@@ -83,7 +84,7 @@ class ErrorCard extends StatelessWidget {
             ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.brandHoverColor,
+                backgroundColor: AppColors.primaryColor,
                 minimumSize: const Size(140, 44),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -103,4 +104,3 @@ class ErrorCard extends StatelessWidget {
     );
   }
 }
-*/

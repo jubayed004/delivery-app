@@ -45,15 +45,8 @@ class ActiveParcelCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      "Parcel ID: ${activeParcel['id']}",
-                      style: context.labelLarge.copyWith(
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                     GestureDetector(
                       onTap: () {
                         AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
@@ -73,6 +66,22 @@ class ActiveParcelCard extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Parcel ID: ${activeParcel['id']}",
+                        style: context.labelLarge.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

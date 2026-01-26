@@ -89,7 +89,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 height: 1.2,
               );
 
-              final timeStyle =context.bodySmall.copyWith(
+              final timeStyle = context.bodySmall.copyWith(
                 color: AppColors.grayTextSecondaryColor,
               );
 

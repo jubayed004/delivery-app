@@ -5,17 +5,19 @@ import 'package:delivery_app/share/model/language_model.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
 
 class LanguageController extends GetxController implements GetxService {
-
-  static Future<Map<String, Map<String, String>>> getLanguages () async{
+  static Future<Map<String, Map<String, String>>> getLanguages() async {
     Map<String, Map<String, String>> languages = {};
-    for(LanguageModel languageModel in AppConfig.languages) {
-      String jsonStringValues =  await rootBundle.loadString('assets/languages/${languageModel.languageCode}.json');
+    for (LanguageModel languageModel in AppConfig.languages) {
+      String jsonStringValues = await rootBundle.loadString(
+        'assets/languages/${languageModel.languageCode}.json',
+      );
       Map<String, dynamic> mappedJson = jsonDecode(jsonStringValues);
       Map<String, String> json = {};
       mappedJson.forEach((key, value) {
         json[key] = value.toString();
       });
-      languages['${languageModel.languageCode}_${languageModel.countryCode}'] = json;
+      languages['${languageModel.languageCode}_${languageModel.countryCode}'] =
+          json;
     }
 
     return languages;

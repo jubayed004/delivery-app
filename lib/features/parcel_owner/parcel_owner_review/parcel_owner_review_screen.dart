@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_review/widgets/review_dialog.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
+
 class ParcelOwnerReviewScreen extends StatelessWidget {
   const ParcelOwnerReviewScreen({super.key});
 
