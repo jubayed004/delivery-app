@@ -51,7 +51,7 @@ class ProfileController extends GetxController {
       updateProfileLoading.value = status;
   Future<void> updateProfile({required Map<String, String> body}) async {
     loadingUpdateProfileMethod(true);
-    final token = await localService.getToken() ?? "";
+    final token = await localService.getToken();
     try {
       List<MultipartBody> multipartBody = [];
 
@@ -76,7 +76,7 @@ class ProfileController extends GetxController {
         loadingUpdateProfileMethod(false);
         AppToast.success(message: response.data["message"].toString());
         AppRouter.route.pop();
-        return; // Add return to stop execution
+        return;
       } else {
         loadingUpdateProfileMethod(false);
         AppToast.error(message: response.data["message"].toString());

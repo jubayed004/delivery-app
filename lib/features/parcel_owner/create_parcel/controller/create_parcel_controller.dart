@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:delivery_app/core/di/injection.dart';
 import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/core/router/routes.dart';
@@ -7,64 +7,77 @@ import 'package:delivery_app/core/service/datasource/local/local_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:delivery_app/utils/multipart/multipart_body.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateParcelController extends GetxController {
   final ImagePicker _imagePicker = ImagePicker();
   final ApiClient apiClient = sl();
   final LocalService localService = sl();
+
   Rx<XFile?> parcelImage = Rx<XFile?>(null);
+  RxBool createParcelLoading = false.obs;
 
   Future<void> pickImage() async {
     XFile? image = await _imagePicker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
     );
-    parcelImage.value = image;
+    if (image != null) parcelImage.value = image;
   }
 
-  final RxBool createParcelLoading = false.obs;
-  bool createParcelLoadingMethod(bool status) =>
-      createParcelLoading.value = status;
+  final isLoading = false.obs;
+  void setLoading(bool status) => createParcelLoading.value = status;
 
   Future<void> createParcel({required Map<String, dynamic> body}) async {
-    createParcelLoadingMethod(true);
+    setLoading(true);
+
     final token = await localService.getToken();
-    final List<MultipartBody> multipart = [];
 
-    if (parcelImage.value != null && parcelImage.value!.path.isNotEmpty) {
-      multipart.add(
-        MultipartBody(
-          fieldKey: "parcel_image",
-          file: File(parcelImage.value!.path),
-        ),
+    try {
+      final List<MultipartBody> multipart = [];
+
+      if (parcelImage.value != null && parcelImage.value!.path.isNotEmpty) {
+        multipart.add(
+          MultipartBody(
+            fieldKey: "parcel_images",
+            file: File(parcelImage.value!.path),
+          ),
+        );
+      }
+      AppConfig.logger.i("Body before encoding: $body");
+
+      final response = await apiClient.uploadMultipart(
+        url: ApiUrls.createParcel(),
+        files: multipart,
+        method: 'POST',
+        token: token,
+        fields: body,
       );
-    }
+      AppConfig.logger.i(response.data);
+      setLoading(false);
 
-    final response = await apiClient.uploadMultipart(
-      fields: body,
-      url: ApiUrls.createParcel(),
-      files: multipart,
-      method: 'POST',
-      token: token,
-    );
-    print(response.data);
-    createParcelLoadingMethod(false);
+      if (response.statusCode == 201) {
+        final data = response.data?["data"];
+        final String id = data?["_id"] ?? data?["id"] ?? "";
 
-    if (response.statusCode == 201) {
-      createParcelLoadingMethod(false);
-
-      AppToast.success(
-        message: response.data?["message"].toString() ?? "Success",
-      );
-
-      AppRouter.route.pushNamed(RoutePath.driverNavScreen);
-    } else {
-      createParcelLoadingMethod(false);
-      AppToast.error(message: response.data?["message"].toString() ?? "Error");
+        AppRouter.route.pushNamed(
+          RoutePath.createDetailsParcelScreen,
+          extra: id,
+        );
+        AppToast.success(
+          message: response.data?["message"] ?? "Parcel created successfully",
+        );
+      } else {
+        AppToast.error(
+          message: response.data?["message"] ?? "Something went wrong",
+        );
+      }
+    } catch (e) {
+      setLoading(false);
+      AppToast.error(message: e.toString());
     }
   }
 }

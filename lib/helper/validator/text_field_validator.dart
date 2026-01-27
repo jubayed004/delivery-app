@@ -27,10 +27,12 @@ class TextFieldValidator {
 
       if (trimmed.isEmpty) return "Password is required";
       if (trimmed.length < 6) return "Password must be at least 6 characters";
-      if (!RegExp(r'[a-zA-Z]').hasMatch(trimmed))
+      if (!RegExp(r'[a-zA-Z]').hasMatch(trimmed)) {
         return "Must contain at least one letter";
-      if (!RegExp(r'[0-9]').hasMatch(trimmed))
+      }
+      if (!RegExp(r'[0-9]').hasMatch(trimmed)) {
         return "Must contain at least one number";
+      }
 
       return null;
     };

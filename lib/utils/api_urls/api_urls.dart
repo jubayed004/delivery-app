@@ -18,4 +18,8 @@ class ApiUrls {
   static String getHomeData({required String status, required int page}) =>
       '$base/v1/parcel/get-my-parcels?status=$status&page=$page&limit=10';
   static String createParcel() => '$base/v1/parcel/create';
+  static String createDetailsParcel({required String id}) =>
+      '$base/v1/parcel/get/$id';
+  static String getDeliveryPrice({required String id}) =>
+      '$base/v1/parcel/request-for-price/$id';
 }

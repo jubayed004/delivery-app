@@ -429,8 +429,9 @@ class AppRouter {
         name: RoutePath.createDetailsParcelScreen,
         path: RoutePath.createDetailsParcelScreen.addBasePath,
         pageBuilder: (context, state) {
+          final id = state.extra as String;
           return _buildPageWithAnimation(
-            child: const CreateDetailsParcelScreen(),
+            child: CreateDetailsParcelScreen(id: id),
             state: state,
           );
         },

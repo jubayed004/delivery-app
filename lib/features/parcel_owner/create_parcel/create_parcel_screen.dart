@@ -1,12 +1,13 @@
+import 'dart:convert';
+
 import 'package:delivery_app/features/driver/commuter_registration/models/record_location.dart';
+import 'package:delivery_app/features/driver/commuter_registration/widgets/image_picker_box.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/controller/create_parcel_controller.dart';
-import 'package:delivery_app/helper/location_picker_helper/location_picker_helper.dart';
+import 'package:delivery_app/features/parcel_owner/create_parcel/widgets/selected_image_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:delivery_app/helper/validator/text_field_validator.dart';
 import 'package:delivery_app/share/widgets/align/custom_align_text.dart';
@@ -17,6 +18,8 @@ import 'package:delivery_app/share/widgets/text_field/description_text_field.dar
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
+import 'package:delivery_app/helper/date_converter/date_converter.dart';
+import 'package:map_location_picker/map_location_picker.dart';
 
 class CreateParcelScreen extends StatefulWidget {
   const CreateParcelScreen({super.key});
@@ -34,10 +37,6 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
-  final TextEditingController _handoverLocationController =
-      TextEditingController();
-  final TextEditingController _pickupLocationController =
-      TextEditingController();
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -62,7 +61,8 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
   void dispose() {
     _nameController.dispose();
     _weightController.dispose();
-    _handoverLocationController.dispose();
+    selectedPickupLocation.dispose();
+    selectedHandoverLocation.dispose();
     _dateController.dispose();
     _timeController.dispose();
     _receiverNameController.dispose();
@@ -146,46 +146,56 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
               ),
               Gap(16.h),
 
-              CustomTextField(
-                readOnly: true,
-                onTap: () {
-                  openLocationPicker(
-                    context: context,
-                    isFromField: false,
-                    fromLocation: selectedPickupLocation,
-                    toLocation: selectedHandoverLocation,
-                    fromController: _pickupLocationController,
-                    toController: _handoverLocationController,
-                  );
+              GestureDetector(
+                onTap: () async {
+                  _openLocationPicker(
+                    selectedPickupLocation,
+                  ); // Pass pickup notifier
                 },
-                controller: _pickupLocationController,
-                title: "Pickup Location",
-                hintText: "enter location",
-                fillColor: Colors.white,
-                validator: TextFieldValidator.requiredField(
-                  label: "Pickup Location",
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ValueListenableBuilder<RecordLocation>(
+                    valueListenable:
+                        selectedPickupLocation, // Listen to changes
+                    builder: (_, item, _) {
+                      String address = item.address.isEmpty
+                          ? "Selected Your pickup location"
+                          : item.address;
+                      return Text(address);
+                    },
+                  ),
                 ),
               ),
               Gap(16.h),
 
-              CustomTextField(
-                readOnly: true,
-                onTap: () {
-                  openLocationPicker(
-                    context: context,
-                    isFromField: false,
-                    fromLocation: selectedPickupLocation,
-                    toLocation: selectedHandoverLocation,
-                    fromController: _pickupLocationController,
-                    toController: _handoverLocationController,
-                  );
+              GestureDetector(
+                onTap: () async {
+                  _openLocationPicker(
+                    selectedHandoverLocation,
+                  ); // Pass handover notifier
                 },
-                controller: _handoverLocationController,
-                title: "Handover location",
-                hintText: "enter location",
-                fillColor: Colors.white,
-                validator: TextFieldValidator.requiredField(
-                  label: "Handover location",
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ValueListenableBuilder<RecordLocation>(
+                    valueListenable:
+                        selectedHandoverLocation, // Listen to changes
+                    builder: (_, item, _) {
+                      String address = item.address.isEmpty
+                          ? "Selected Your handover location"
+                          : item.address;
+                      return Text(address);
+                    },
+                  ),
                 ),
               ),
               Gap(16.h),
@@ -225,11 +235,13 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime(2026),
+                    lastDate: DateTime(2101),
                   );
                   if (picked != null) {
-                    _dateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                    _dateController.text = DateConverter.formatDate(
+                      dateTime: picked,
+                      format: 'yyyy-MM-dd',
+                    );
                   }
                 },
               ),
@@ -282,47 +294,59 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 backgroundColor: Colors.white,
               ),
               Gap(12.h),
-              _buildImagePickerBox(),
+              Obx(
+                () => createParcelController.parcelImage.value != null
+                    ? SelectedImageContainer(
+                        image: createParcelController.parcelImage.value!,
+                        onRemove: () =>
+                            createParcelController.parcelImage.value = null,
+                      )
+                    : ImagePickerBox(
+                        onTap: () => createParcelController.pickImage(),
+                      ),
+              ),
               Gap(32.h),
-              CustomButton(
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
+              Obx(
+                () => CustomButton(
+                  isLoading: createParcelController.createParcelLoading.value,
+                  onTap: () {
                     final body = {
-                      "parcel_name": _nameController.text,
-                      "size": _selectedSize.value,
-                      "vehicle_type": _vehicleTypeController.text,
-                      "weight": double.parse(_weightController.text),
-                      "pickup_location": {
-                        "address": selectedPickupLocation.value.address,
-                        "latitude":
-                            selectedPickupLocation.value.latLng.latitude,
-                        "longitude":
-                            selectedPickupLocation.value.latLng.longitude,
-                      },
-                      "handover_location": {
-                        "address": selectedHandoverLocation.value.address,
-                        "latitude": selectedHandoverLocation
-                            .value
-                            .latLng
-                            .latitude
-                            .toString(),
-                        "longitude": selectedHandoverLocation
-                            .value
-                            .latLng
-                            .longitude
-                            .toString(),
-                      },
-                      "priority": _selectedPriority.value,
-                      "date": _dateController.text,
-                      "time": _timeController.text,
-                      "receiver_name": _receiverNameController.text,
-                      "receiver_phone": _receiverPhoneController.text,
-                      "sender_remarks": _senderRemarksController.text,
+                      "data": jsonEncode({
+                        "parcel_name": _nameController.text,
+                        "size": _selectedSize.value ?? "",
+                        "vehicle_type": _vehicleTypeController.text,
+                        "weight": _weightController.text.isNotEmpty
+                            ? double.parse(_weightController.text)
+                            : 0.0,
+                        "pickup_location": {
+                          "address": selectedPickupLocation.value.address,
+                          "latitude":
+                              selectedPickupLocation.value.latLng.latitude,
+                          "longitude":
+                              selectedPickupLocation.value.latLng.longitude,
+                        },
+                        "handover_location": {
+                          "address": selectedHandoverLocation.value.address,
+                          "latitude":
+                              selectedHandoverLocation.value.latLng.latitude,
+                          "longitude":
+                              selectedHandoverLocation.value.latLng.longitude,
+                        },
+                        "priority": _selectedPriority.value ?? "",
+                        "date": _dateController.text,
+                        "time": _timeController.text,
+                        "receiver_name": _receiverNameController.text,
+                        "receiver_phone": _receiverPhoneController.text,
+                        "sender_remarks": _senderRemarksController.text,
+                      }),
                     };
-                    createParcelController.createParcel(body: body);
-                  }
-                },
-                text: AppStrings.confirm.tr,
+
+                    if (_formKey.currentState!.validate()) {
+                      createParcelController.createParcel(body: body);
+                    }
+                  },
+                  text: AppStrings.confirm.tr,
+                ),
               ),
               Gap(20.h),
             ],
@@ -332,25 +356,35 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
     );
   }
 
-  Widget _buildImagePickerBox() {
-    return Container(
-      width: 100.w,
-      height: 100.w,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: AppColors.grayTextSecondaryColor.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.blackMainTextColor, width: 2),
+  Future<void> _openLocationPicker(
+    ValueNotifier<RecordLocation> targetNotifier,
+  ) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapLocationPicker(
+          config: MapLocationPickerConfig(
+            apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+            initialPosition: const LatLng(37.422, -122.084),
+            onNext: (result) {
+              if (result != null) {
+                targetNotifier.value = RecordLocation(
+                  LatLng(
+                    result.geometry.location.lat,
+                    result.geometry.location.lng,
+                  ),
+                  result.formattedAddress ?? "Address not available",
+                );
+              }
+              if (context.mounted) {
+                Navigator.pop(context, result);
+              }
+            },
           ),
-          child: const Icon(Icons.add, color: AppColors.blackMainTextColor),
+          searchConfig: const SearchConfig(
+            apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+            searchHintText: "Search for a location",
+          ),
         ),
       ),
     );

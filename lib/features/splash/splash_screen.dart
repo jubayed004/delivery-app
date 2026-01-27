@@ -1,6 +1,5 @@
 import 'package:delivery_app/core/di/injection.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
-import 'package:delivery_app/features/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:delivery_app/core/router/route_path.dart';
@@ -74,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _handleNavigationFlow() async {
     try {
-      final token = await localService.getToken() ?? "";
+      final token = await localService.getToken();
       if (token.isEmpty || JwtDecoder.isExpired(token)) {
         AppRouter.route.goNamed(RoutePath.onboardingScreen);
         return;

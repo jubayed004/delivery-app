@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:delivery_app/core/di/injection.dart';
@@ -46,7 +47,7 @@ class CommuterRegistrationController extends GetxController {
   RxBool registerCommuterLoading = false.obs;
   bool registerCommuterLoadingMethod(bool status) =>
       registerCommuterLoading.value = status;
-  Future<void> registerCommuter({required Map<String, dynamic> body}) async {
+  Future<void> registerCommuter({required String body}) async {
     registerCommuterLoadingMethod(true);
     final token = await localService.getToken();
     final List<MultipartBody> multipart = [];
@@ -79,7 +80,7 @@ class CommuterRegistrationController extends GetxController {
     }
 
     final response = await apiClient.uploadMultipart(
-      fields: body,
+      fields: jsonDecode(body),
       url: ApiUrls.register(),
       files: multipart,
       method: 'POST',

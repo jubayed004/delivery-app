@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:delivery_app/features/driver/commuter_registration/controller/commuter_registration_controller.dart';
 import 'package:delivery_app/features/driver/commuter_registration/models/record_location.dart';
 import 'package:delivery_app/features/driver/commuter_registration/widgets/image_picker_box.dart';
@@ -340,7 +342,8 @@ class _CommuterRegistrationScreenState
                           "vehicle_images": controller.carImages,
                         },
                       };
-                      controller.registerCommuter(body: body);
+                      final String data = jsonEncode(body);
+                      controller.registerCommuter(body: data);
                     },
                   ),
                 ),

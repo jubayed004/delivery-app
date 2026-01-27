@@ -64,8 +64,6 @@ class NoDataCard extends StatelessWidget {
                     theme.colorScheme.primary.withValues(alpha: 0.7),
               ),
 
-            const Gap(16),
-
             Text(
               effectiveTitle,
               textAlign: TextAlign.center,
