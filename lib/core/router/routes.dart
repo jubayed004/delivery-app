@@ -450,24 +450,32 @@ class AppRouter {
         name: RoutePath.detailsMyParcelScreen,
         path: RoutePath.detailsMyParcelScreen.addBasePath,
         pageBuilder: (context, state) {
-          final parcel = state.extra as ParcelModel;
+          final extra = state.extra;
+          final ParcelItem parcel;
+
+          if (extra is Map<String, dynamic>) {
+            parcel = ParcelItem.fromJson(extra);
+          } else {
+            parcel = extra as ParcelItem;
+          }
+
           return _buildPageWithAnimation(
             child: DetailsMyParcelScreen(parcel: parcel),
             state: state,
           );
         },
       ),
-      GoRoute(
-        name: RoutePath.paymentScreen,
-        path: RoutePath.paymentScreen.addBasePath,
-        pageBuilder: (context, state) {
-          final parcel = state.extra as ParcelModel;
-          return _buildPageWithAnimation(
-            child: PaymentScreen(parcel: parcel),
-            state: state,
-          );
-        },
-      ),
+      // GoRoute(
+      //   name: RoutePath.paymentScreen,
+      //   path: RoutePath.paymentScreen.addBasePath,
+      //   pageBuilder: (context, state) {
+      //     final parcel = state.extra as MyParcelModel;
+      //     return _buildPageWithAnimation(
+      //       child: PaymentScreen(parcel: parcel),
+      //       state: state,
+      //     );
+      //   },
+      // ),
       // GoRoute(
       //   name: RoutePath.bookingsScreen,
       //   path: RoutePath.bookingsScreen.addBasePath,

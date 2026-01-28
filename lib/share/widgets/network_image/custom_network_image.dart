@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -62,7 +63,7 @@ class CustomNetworkImage extends StatelessWidget {
           imageUrl,
           fit: fit ?? BoxFit.cover,
           colorFilter: colorFilter,
-          placeholderBuilder: (context) => CircularProgressIndicator(),
+          placeholderBuilder: (context) => LoadingWidget(),
           height: height,
           width: width,
         ),
@@ -88,7 +89,7 @@ class CustomNetworkImage extends StatelessWidget {
         ),
         child: child,
       ),
-      placeholder: (context, url) => CircularProgressIndicator(),
+      placeholder: (context, url) => LoadingWidget(),
       errorWidget: (context, url, error) {
         return errorWidget ??
             Container(

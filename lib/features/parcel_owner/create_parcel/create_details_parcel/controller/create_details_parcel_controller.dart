@@ -9,7 +9,6 @@ import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:delivery_app/utils/enum/app_enum.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class CreateDetailsParcelController extends GetxController {
@@ -20,7 +19,7 @@ class CreateDetailsParcelController extends GetxController {
 
   Rx<ParcelDetailsModel?> parcelDetails = Rx<ParcelDetailsModel?>(null);
 
-  Future<void> createDetailsParcel({required String id}) async {
+  Future<void> singleCreateDetailsParcel({required String id}) async {
     loadingMethod(ApiStatus.loading);
     final token = await localService.getToken();
     try {
@@ -39,6 +38,7 @@ class CreateDetailsParcelController extends GetxController {
         return;
       } else {
         loadingMethod(ApiStatus.error);
+        AppConfig.logger.e(response.data);
         AppToast.error(message: response.data["message"].toString());
       }
     } catch (e) {
@@ -61,9 +61,8 @@ class CreateDetailsParcelController extends GetxController {
       AppConfig.logger.i(response.data);
       if (response.statusCode == 200) {
         getDeliveryPriceStatusMethod(ApiStatus.completed);
-        AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen, extra: 2);
-
         AppToast.success(message: response.data["message"].toString());
+        await singleCreateDetailsParcel(id: id);
         return;
       } else {
         getDeliveryPriceStatusMethod(ApiStatus.error);

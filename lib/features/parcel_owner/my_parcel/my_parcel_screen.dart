@@ -1,4 +1,6 @@
-import 'package:delivery_app/utils/enum/app_enum.dart';
+import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/controller/my_parcel_controller.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/widgets/parcel_card.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class MyParcelScreen extends StatelessWidget {
   MyParcelScreen({super.key});
@@ -25,7 +28,6 @@ class MyParcelScreen extends StatelessWidget {
           bottom: TabBar(
             padding: EdgeInsets.only(left: 16.w, right: 16.w),
             dividerColor: Colors.transparent,
-            onTap: controller.changeTab,
             labelColor: Colors.white,
             unselectedLabelColor: AppColors.primaryColor,
             indicator: BoxDecoration(
@@ -49,65 +51,72 @@ class MyParcelScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Obx(
-          () => TabBarView(
-            children: [
-              _buildParcelList(ParcelStatus.waiting),
-              _buildParcelList(ParcelStatus.pending),
-              _buildParcelList(ParcelStatus.ongoing),
-              _buildParcelList(ParcelStatus.completed),
-              _buildParcelList(ParcelStatus.reject),
-            ],
-          ),
+        body: TabBarView(
+          children: [
+            _buildPagedList(controller.waitingController),
+            _buildPagedList(controller.pendingController),
+            _buildPagedList(controller.ongoingController),
+            _buildPagedList(controller.completedController),
+            _buildPagedList(controller.rejectedController),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildParcelList(ParcelStatus status) {
-    final parcels = controller.getParcelsByStatus(status);
-
-    if (parcels.isEmpty) {
-      return Center(
-        child: Text(
-          'No ${status.name} parcels',
-          style: TextStyle(color: Colors.grey, fontSize: 16.sp),
-        ),
-      );
-    }
-
-    return ListView.separated(
-      padding: EdgeInsets.all(16.w),
-      itemCount: parcels.length,
-      separatorBuilder: (context, index) => SizedBox(height: 12.h),
-      itemBuilder: (context, index) {
-        final parcel = parcels[index];
-        return ParcelCardList(
-          parcel: parcel,
-          onTap: () {
-            if (parcel.status == ParcelStatus.pending ||
-                parcel.status == ParcelStatus.waiting ||
-                parcel.status == ParcelStatus.ongoing) {
-              AppRouter.route.pushNamed(
-                RoutePath.detailsMyParcelScreen,
-                extra: parcel,
-              );
-            }
-          },
-          onChatTap: () {
-            AppRouter.route.pushNamed(RoutePath.chatScreen);
-          },
-          onReviewTap: () {
-            AppRouter.route.pushNamed(RoutePath.parcelOwnerReviewScreen);
-          },
-          onRefundTap: () {
-            AppRouter.route.pushNamed(RoutePath.refundScreen);
-          },
-          onTrackLiveTap: () {
-            AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
-          },
-        );
-      },
+  Widget _buildPagedList(PagingController<int, ParcelItem> pagingController) {
+    return RefreshIndicator(
+      onRefresh: () async => pagingController.refresh(),
+      child: CustomScrollView(
+        slivers: [
+          PagedSliverList<int, ParcelItem>(
+            pagingController: pagingController,
+            builderDelegate: PagedChildBuilderDelegate<ParcelItem>(
+              itemBuilder: (context, item, index) => Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: ParcelCardList(
+                  parcel: item,
+                  onTap: () {
+                    if (item.status == "PENDING" ||
+                        item.status == "WAITING" ||
+                        item.status == "ONGOING") {
+                      AppRouter.route.pushNamed(
+                        RoutePath.detailsMyParcelScreen,
+                        extra: item,
+                      );
+                    }
+                  },
+                  onChatTap: () {
+                    AppRouter.route.pushNamed(RoutePath.chatScreen);
+                  },
+                  onReviewTap: () {
+                    AppRouter.route.pushNamed(
+                      RoutePath.parcelOwnerReviewScreen,
+                    );
+                  },
+                  onRefundTap: () {
+                    AppRouter.route.pushNamed(RoutePath.refundScreen);
+                  },
+                  onTrackLiveTap: () {
+                    AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+                  },
+                ),
+              ),
+              firstPageProgressIndicatorBuilder: (_) =>
+                  const Center(child: LoadingWidget()),
+              newPageProgressIndicatorBuilder: (_) =>
+                  const Center(child: LoadingWidget()),
+              noItemsFoundIndicatorBuilder: (_) => Center(
+                child: Text(
+                  'No parcels found',
+                  style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+                ),
+              ),
+            ),
+          ),
+          SliverPadding(padding: EdgeInsets.only(bottom: 16.h)),
+        ],
+      ),
     );
   }
 }

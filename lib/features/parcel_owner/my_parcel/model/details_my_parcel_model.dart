@@ -1,15 +1,16 @@
-class MyParcelModel {
+class DetailsMyParcelModel {
   final bool? success;
   final String? message;
   final Data? data;
 
-  MyParcelModel({this.success, this.message, this.data});
+  DetailsMyParcelModel({this.success, this.message, this.data});
 
-  factory MyParcelModel.fromJson(Map<String, dynamic> json) => MyParcelModel(
-    success: json["success"],
-    message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory DetailsMyParcelModel.fromJson(Map<String, dynamic> json) =>
+      DetailsMyParcelModel(
+        success: json["success"],
+        message: json["message"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "success": success,
@@ -19,36 +20,13 @@ class MyParcelModel {
 }
 
 class Data {
-  final Meta? meta;
-  final List<ParcelItem>? data;
-
-  Data({this.meta, this.data});
-
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
-    data: json["data"] == null
-        ? []
-        : List<ParcelItem>.from(
-            json["data"]!.map((x) => ParcelItem.fromJson(x)),
-          ),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "meta": meta?.toJson(),
-    "data": data == null
-        ? []
-        : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
-}
-
-class ParcelItem {
   final String? id;
   final String? parcelId;
   final UserId? userId;
   final String? parcelName;
   final String? size;
   final String? vehicleType;
-  final double? weight;
+  final num? weight;
   final Location? pickupLocation;
   final Location? handoverLocation;
   final String? priority;
@@ -68,9 +46,12 @@ class ParcelItem {
   final dynamic stripeCheckoutSessionId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final String? datumId;
+  final int? v;
+  final List<PriceRequest>? priceRequests;
+  final dynamic review;
+  final String? dataId;
 
-  ParcelItem({
+  Data({
     this.id,
     this.parcelId,
     this.userId,
@@ -97,17 +78,20 @@ class ParcelItem {
     this.stripeCheckoutSessionId,
     this.createdAt,
     this.updatedAt,
-    this.datumId,
+    this.v,
+    this.priceRequests,
+    this.review,
+    this.dataId,
   });
 
-  factory ParcelItem.fromJson(Map<String, dynamic> json) => ParcelItem(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["_id"],
     parcelId: json["parcel_id"],
     userId: json["user_id"] == null ? null : UserId.fromJson(json["user_id"]),
     parcelName: json["parcel_name"],
     size: json["size"],
     vehicleType: json["vehicle_type"],
-    weight: json["weight"]?.toDouble(),
+    weight: json["weight"],
     pickupLocation: json["pickup_location"] == null
         ? null
         : Location.fromJson(json["pickup_location"]),
@@ -137,7 +121,14 @@ class ParcelItem {
     updatedAt: json["updatedAt"] == null
         ? null
         : DateTime.parse(json["updatedAt"]),
-    datumId: json["id"],
+    v: json["__v"],
+    priceRequests: json["price_requests"] == null
+        ? []
+        : List<PriceRequest>.from(
+            json["price_requests"]!.map((x) => PriceRequest.fromJson(x)),
+          ),
+    review: json["review"],
+    dataId: json["id"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -170,7 +161,12 @@ class ParcelItem {
     "stripe_checkout_session_id": stripeCheckoutSessionId,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
-    "id": datumId,
+    "__v": v,
+    "price_requests": priceRequests == null
+        ? []
+        : List<dynamic>.from(priceRequests!.map((x) => x.toJson())),
+    "review": review,
+    "id": dataId,
   };
 }
 
@@ -191,6 +187,70 @@ class Location {
     "address": address,
     "latitude": latitude,
     "longitude": longitude,
+  };
+}
+
+class PriceRequest {
+  final String? id;
+  final String? parcelId;
+  final String? proposedBy;
+  final String? priceType;
+  final int? proposedPrice;
+  final dynamic rejectionReason;
+  final String? message;
+  final bool? isFinalOffer;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+
+  PriceRequest({
+    this.id,
+    this.parcelId,
+    this.proposedBy,
+    this.priceType,
+    this.proposedPrice,
+    this.rejectionReason,
+    this.message,
+    this.isFinalOffer,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
+
+  factory PriceRequest.fromJson(Map<String, dynamic> json) => PriceRequest(
+    id: json["_id"],
+    parcelId: json["parcel_id"],
+    proposedBy: json["proposed_by"],
+    priceType: json["price_type"],
+    proposedPrice: json["proposed_price"],
+    rejectionReason: json["rejection_reason"],
+    message: json["message"],
+    isFinalOffer: json["is_final_offer"],
+    status: json["status"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+    v: json["__v"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "_id": id,
+    "parcel_id": parcelId,
+    "proposed_by": proposedBy,
+    "price_type": priceType,
+    "proposed_price": proposedPrice,
+    "rejection_reason": rejectionReason,
+    "message": message,
+    "is_final_offer": isFinalOffer,
+    "status": status,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "__v": v,
   };
 }
 
@@ -269,28 +329,5 @@ class UserId {
     "address": address,
     "phone_number": phoneNumber,
     "id": userIdId,
-  };
-}
-
-class Meta {
-  final int? total;
-  final int? page;
-  final int? limit;
-  final int? totalPages;
-
-  Meta({this.total, this.page, this.limit, this.totalPages});
-
-  factory Meta.fromJson(Map<String, dynamic> json) => Meta(
-    total: json["total"],
-    page: json["page"],
-    limit: json["limit"],
-    totalPages: json["totalPages"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "total": total,
-    "page": page,
-    "limit": limit,
-    "totalPages": totalPages,
   };
 }

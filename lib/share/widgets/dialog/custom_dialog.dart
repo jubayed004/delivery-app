@@ -10,6 +10,7 @@ class AppDialog {
     String? subtitle,
     AppDialogType type = AppDialogType.info,
     Widget? icon,
+    Widget? content,
     bool dismissible = true,
     bool showDefaultButtons = false,
     String confirmText = "OK",
@@ -150,6 +151,11 @@ class AppDialog {
                                     color: subtitleColor ?? AppColors.white,
                                   ),
                             ),
+                          ),
+                        if (content != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: content,
                           ),
                         if ((actions?.isNotEmpty ?? false) ||
                             showDefaultButtons)

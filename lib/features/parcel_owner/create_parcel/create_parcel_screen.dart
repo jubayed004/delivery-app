@@ -145,7 +145,8 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 validator: TextFieldValidator.number(label: "Weight"),
               ),
               Gap(16.h),
-
+              CustomAlignText(text: "Pickup Location"),
+              Gap(12.h),
               GestureDetector(
                 onTap: () async {
                   _openLocationPicker(
@@ -156,7 +157,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                   padding: EdgeInsets.all(16),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1),
+                    border: Border.all(color: AppColors.primaryColor, width: 1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ValueListenableBuilder<RecordLocation>(
@@ -172,7 +173,8 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 ),
               ),
               Gap(16.h),
-
+              CustomAlignText(text: "Handover Location"),
+              Gap(12.h),
               GestureDetector(
                 onTap: () async {
                   _openLocationPicker(
@@ -183,7 +185,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                   padding: EdgeInsets.all(16),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1),
+                    border: Border.all(color: AppColors.primaryColor, width: 1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ValueListenableBuilder<RecordLocation>(
@@ -294,6 +296,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 backgroundColor: Colors.white,
               ),
               Gap(12.h),
+
               Obx(
                 () => createParcelController.parcelImage.value != null
                     ? SelectedImageContainer(

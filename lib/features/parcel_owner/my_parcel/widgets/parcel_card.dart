@@ -1,13 +1,12 @@
-import 'package:delivery_app/utils/enum/app_enum.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
 import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import '../model/parcel_model.dart';
 
 class ParcelCardList extends StatelessWidget {
-  final ParcelModel parcel;
+  final ParcelItem parcel;
   final VoidCallback? onChatTap;
   final VoidCallback? onReviewTap;
   final VoidCallback? onRefundTap;
@@ -26,6 +25,10 @@ class ParcelCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPriceVisible =
+        parcel.finalPrice != null &&
+        (double.tryParse(parcel.finalPrice.toString()) ?? 0.0) > 0;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -60,7 +63,11 @@ class ParcelCardList extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.r),
                     child: CustomNetworkImage(
-                      imageUrl: parcel.imageUrl,
+                      imageUrl:
+                          (parcel.parcelImages != null &&
+                              parcel.parcelImages!.isNotEmpty)
+                          ? parcel.parcelImages!.first
+                          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Qp8paJgXVKLyyJkx4N7TOlv5izREplTlXw&s",
                       height: 80.h,
                       width: 100.w,
                     ),
@@ -70,20 +77,20 @@ class ParcelCardList extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildDetailRow('Parcel ID', parcel.parcelId),
-                        _buildDetailRow('Parcel Name', parcel.parcelName),
-                        _buildDetailRow('Size', parcel.size),
-                        _buildDetailRow(
-                          'Price',
-                          '\$${parcel.price.toStringAsFixed(2)}',
-                        ),
+                        _buildDetailRow('Parcel ID', parcel.parcelId ?? ""),
+                        _buildDetailRow('Parcel Name', parcel.parcelName ?? ""),
+                        _buildDetailRow('Size', parcel.size ?? ""),
+                        if (isPriceVisible)
+                          _buildDetailRow(
+                            'Price',
+                            '\$${(double.tryParse(parcel.finalPrice.toString()) ?? 0.0).toStringAsFixed(2)}',
+                          ),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-
             if (isButtonsVisible()) ...[
               Gap(12.h),
               Padding(
@@ -127,28 +134,23 @@ class ParcelCardList extends StatelessWidget {
   Widget _buildStatusBadge() {
     Color badgeColor = Colors.grey;
     String statusText = '';
+    String status = parcel.status ?? "";
 
-    switch (parcel.status) {
-      case ParcelStatus.pending:
-        badgeColor = AppColors.orangeSecondaryAccentColorNormal;
-        statusText = 'Pending';
-        break;
-      case ParcelStatus.ongoing:
-        badgeColor = AppColors.orangeSecondaryAccentColorNormal;
-        statusText = 'Ongoing Parcel';
-        break;
-      case ParcelStatus.completed:
-        badgeColor = AppColors.success;
-        statusText = 'Completed Parcel';
-        break;
-      case ParcelStatus.reject:
-        badgeColor = AppColors.redColor;
-        statusText = 'Reject';
-        break;
-      case ParcelStatus.waiting:
-        badgeColor = AppColors.brownColor;
-        statusText = 'Waiting';
-        break;
+    if (status == "PENDING") {
+      badgeColor = AppColors.orangeSecondaryAccentColorNormal;
+      statusText = 'Pending';
+    } else if (status == "ONGOING") {
+      badgeColor = AppColors.orangeSecondaryAccentColorNormal;
+      statusText = 'Ongoing Parcel';
+    } else if (status == "COMPLETED") {
+      badgeColor = AppColors.success;
+      statusText = 'Completed Parcel';
+    } else if (status == "REJECTED") {
+      badgeColor = AppColors.redColor;
+      statusText = 'Reject';
+    } else if (status == "WAITING") {
+      badgeColor = AppColors.brownColor;
+      statusText = 'Waiting';
     }
 
     return Container(
@@ -177,69 +179,64 @@ class ParcelCardList extends StatelessWidget {
 
   Widget _buildActionButtons() {
     List<Widget> buttons = [];
+    String status = parcel.status ?? "";
 
-    switch (parcel.status) {
-      case ParcelStatus.pending:
-        buttons.add(
-          _buildButton(
-            label: 'Chat',
-            icon: Icons.chat_bubble_outline,
-            onTap: onChatTap,
-          ),
-        );
-        break;
-      case ParcelStatus.ongoing:
-        buttons.add(
-          _buildButton(
-            label: 'Chat',
-            icon: Icons.chat_bubble_outline,
-            onTap: onChatTap,
-          ),
-        );
-        buttons.add(SizedBox(width: 8.w));
-        buttons.add(
-          _buildButton(
-            label: 'Refund',
-            icon: Icons.undo,
-            onTap: onRefundTap,
-            color: AppColors.orangeSecondaryAccentColorNormal,
-          ),
-        );
-        buttons.add(SizedBox(width: 8.w));
-        buttons.add(
-          _buildButton(
-            label: 'Track Live',
-            icon: Icons.location_on,
-            onTap: onTrackLiveTap,
-            color: AppColors.redColor,
-          ),
-        );
-        break;
-      case ParcelStatus.completed:
-        buttons.add(
-          _buildButton(
-            label: 'Chat',
-            icon: Icons.chat_bubble_outline,
-            onTap: onChatTap,
-          ),
-        );
-        buttons.add(SizedBox(width: 8.w));
-        buttons.add(
-          _buildButton(label: 'Add Review', icon: null, onTap: onReviewTap),
-        );
-        break;
-      case ParcelStatus.reject:
-        buttons.add(
-          _buildButton(
-            label: 'Chat',
-            icon: Icons.chat_bubble_outline,
-            onTap: onChatTap,
-          ),
-        );
-
-        break;
-      case ParcelStatus.waiting:
-        break;
+    if (status == "PENDING") {
+      buttons.add(
+        _buildButton(
+          label: 'Chat',
+          icon: Icons.chat_bubble_outline,
+          onTap: onChatTap,
+        ),
+      );
+    } else if (status == "ONGOING") {
+      buttons.add(
+        _buildButton(
+          label: 'Chat',
+          icon: Icons.chat_bubble_outline,
+          onTap: onChatTap,
+        ),
+      );
+      buttons.add(SizedBox(width: 8.w));
+      buttons.add(
+        _buildButton(
+          label: 'Refund',
+          icon: Icons.undo,
+          onTap: onRefundTap,
+          color: AppColors.orangeSecondaryAccentColorNormal,
+        ),
+      );
+      buttons.add(SizedBox(width: 8.w));
+      buttons.add(
+        _buildButton(
+          label: 'Track Live',
+          icon: Icons.location_on,
+          onTap: onTrackLiveTap,
+          color: AppColors.redColor,
+        ),
+      );
+    } else if (status == "COMPLETED") {
+      buttons.add(
+        _buildButton(
+          label: 'Chat',
+          icon: Icons.chat_bubble_outline,
+          onTap: onChatTap,
+        ),
+      );
+      buttons.add(SizedBox(width: 8.w));
+      buttons.add(
+        _buildButton(label: 'Add Review', icon: null, onTap: onReviewTap),
+      );
+    } else if (status == "REJECTED") {
+      buttons.add(
+        _buildButton(
+          label: 'Chat',
+          icon: Icons.chat_bubble_outline,
+          onTap: onChatTap,
+        ),
+      );
+    } else if (status == "WAITING") {
+      // No buttons for waiting
     }
 
     return Row(mainAxisAlignment: MainAxisAlignment.end, children: buttons);

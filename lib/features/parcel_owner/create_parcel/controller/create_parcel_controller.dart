@@ -63,10 +63,7 @@ class CreateParcelController extends GetxController {
         final data = response.data?["data"];
         final String id = data?["_id"] ?? data?["id"] ?? "";
 
-        AppRouter.route.pushNamed(
-          RoutePath.createDetailsParcelScreen,
-          extra: id,
-        );
+        AppRouter.route.goNamed(RoutePath.createDetailsParcelScreen, extra: id);
         AppToast.success(
           message: response.data?["message"] ?? "Parcel created successfully",
         );
