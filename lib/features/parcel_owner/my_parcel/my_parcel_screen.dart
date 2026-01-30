@@ -11,9 +11,26 @@ import 'package:delivery_app/features/parcel_owner/my_parcel/widgets/parcel_card
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class MyParcelScreen extends StatelessWidget {
+class MyParcelScreen extends StatefulWidget {
   MyParcelScreen({super.key});
+
+  @override
+  State<MyParcelScreen> createState() => _MyParcelScreenState();
+}
+
+class _MyParcelScreenState extends State<MyParcelScreen> {
   final controller = Get.find<MyParcelController>();
+
+  @override
+  void initState() {
+    controller.waitingController.refresh();
+    controller.pendingController.refresh();
+    controller.ongoingController.refresh();
+    controller.completedController.refresh();
+    controller.rejectedController.refresh();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

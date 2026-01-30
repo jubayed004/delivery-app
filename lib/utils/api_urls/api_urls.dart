@@ -22,4 +22,8 @@ class ApiUrls {
       '$base/v1/parcel/get/$id';
   static String getDeliveryPrice({required String id}) =>
       '$base/v1/parcel/request-for-price/$id';
+  static String rejectAndCounterOffer({required String id}) =>
+      '$base/v1/parcel/reject-and-counter/$id';
+  static String rejectFinalOffer({required String id}) =>
+      '$base/v1/parcel/reject-price/$id';
 }

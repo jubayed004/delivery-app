@@ -296,117 +296,163 @@ class _DetailsMyParcelScreenState extends State<DetailsMyParcelScreen> {
                                           color: AppColors.black,
                                         ),
                                       ),
+                                      Gap(8.w),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w,
+                                          vertical: 4.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: _getStatusColor(
+                                            parcelDetails.priceRequests !=
+                                                        null &&
+                                                    parcelDetails
+                                                        .priceRequests!
+                                                        .isNotEmpty
+                                                ? parcelDetails
+                                                      .priceRequests!
+                                                      .last
+                                                      .priceType
+                                                : null,
+                                          ).withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(
+                                            4.r,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          parcelDetails.priceRequests != null &&
+                                                  parcelDetails
+                                                      .priceRequests!
+                                                      .isNotEmpty
+                                              ? parcelDetails
+                                                        .priceRequests!
+                                                        .last
+                                                        .priceType ??
+                                                    'NOT_SET'
+                                              : 'NOT_SET',
+                                          style: context.bodySmall.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: _getStatusColor(
+                                              parcelDetails.priceRequests !=
+                                                          null &&
+                                                      parcelDetails
+                                                          .priceRequests!
+                                                          .isNotEmpty
+                                                  ? parcelDetails
+                                                        .priceRequests!
+                                                        .last
+                                                        .priceType
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                                 Gap(30.h),
 
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          AppRouter.route.pushNamed(
-                                            RoutePath.paymentScreen,
-                                            extra: widget.parcel,
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              AppColors.primaryColor,
-                                          minimumSize: Size(
-                                            double.infinity,
-                                            48.h,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.r,
+                                // Check if status is COUNTERED
+                                if (parcelDetails.priceRequests != null &&
+                                    parcelDetails.priceRequests!.isNotEmpty &&
+                                    parcelDetails
+                                            .priceRequests!
+                                            .last
+                                            .priceType ==
+                                        "COUNTERED")
+                                  Container(
+                                    padding: EdgeInsets.all(16.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                        color: Colors.orange,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: Colors.orange,
+                                          size: 20.sp,
+                                        ),
+                                        Gap(8.w),
+                                        Expanded(
+                                          child: Text(
+                                            "Counter Offer Sent. Waiting for response...",
+                                            style: context.bodyMedium.copyWith(
+                                              color: Colors.orange.shade700,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ),
-                                        child: Text(
-                                          AppStrings.accept.tr,
-                                          style: context.titleMedium.copyWith(
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.w600,
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            AppRouter.route.pushNamed(
+                                              RoutePath.paymentScreen,
+                                              extra: widget.parcel,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                AppColors.primaryColor,
+                                            minimumSize: Size(
+                                              double.infinity,
+                                              48.h,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.r),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            AppStrings.accept.tr,
+                                            style: context.titleMedium.copyWith(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Gap(16.w),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          AppDialog.show(
-                                            context: context,
-                                            title: AppStrings.rejectReason.tr,
-                                            subtitle:
-                                                'Are you sure you want to reject this parcel?',
-                                            type: AppDialogType.info,
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CustomTextField(
-                                                  controller: reasonController,
-                                                  hintText: 'Reason',
-                                                ),
-                                                Gap(12.h),
-                                                CustomTextField(
-                                                  controller:
-                                                      finalPriceController,
-                                                  hintText: 'Final Price',
-                                                ),
-                                              ],
+                                      Gap(16.w),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            _showRejectDialog(
+                                              context,
+                                              parcelDetails,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.error,
+                                            minimumSize: Size(
+                                              double.infinity,
+                                              48.h,
                                             ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  AppRouter.route.pop();
-                                                },
-                                                child: Text(
-                                                  AppStrings.cancel.tr,
-                                                ),
-                                              ),
-                                              Gap(8.w),
-                                              TextButton(
-                                                onPressed: () {
-                                                  AppRouter.route.pop();
-
-                                                  // TODO: Implement rejection logic with reason1 and reason2
-                                                },
-                                                child: Text(
-                                                  AppStrings.reject.tr,
-                                                  style: TextStyle(
-                                                    color: AppColors.error,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.error,
-                                          minimumSize: Size(
-                                            double.infinity,
-                                            48.h,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.r,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.r),
                                             ),
                                           ),
-                                        ),
-                                        child: Text(
-                                          AppStrings.reject.tr,
-                                          style: context.titleMedium.copyWith(
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.w600,
+                                          child: Text(
+                                            AppStrings.reject.tr,
+                                            style: context.titleMedium.copyWith(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
                               ],
                               Gap(30),
                             ],
@@ -445,5 +491,123 @@ class _DetailsMyParcelScreenState extends State<DetailsMyParcelScreen> {
         ],
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    if (status == null) return Colors.grey;
+    switch (status.toUpperCase()) {
+      case "COUNTERED":
+        return Colors.orange;
+      case "PROPOSED":
+        return AppColors.primaryColor;
+      case "FINAL_OFFER":
+        return Colors.purple;
+      case "ACCEPTED":
+        return Colors.green;
+      case "REJECTED":
+        return AppColors.error;
+      case "NOT_SET":
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _showRejectDialog(BuildContext context, parcelDetails) {
+    final isFinalOffer =
+        parcelDetails.priceRequests != null &&
+        parcelDetails.priceRequests!.isNotEmpty &&
+        parcelDetails.priceRequests!.last.priceType == "FINAL_OFFER";
+
+    if (isFinalOffer) {
+      // Show simple confirmation dialog for FINAL_OFFER
+      AppDialog.show(
+        context: context,
+        title: "Reject Final Offer",
+        subtitle:
+            "Are you sure you want to reject this final offer? This action cannot be undone.",
+        subtitleColor: AppColors.black,
+        type: AppDialogType.warning,
+        actions: [
+          TextButton(
+            onPressed: () {
+              AppRouter.route.pop();
+            },
+            child: Text(AppStrings.cancel.tr),
+          ),
+          Gap(8.w),
+          Obx(
+            () => controller.loadingRejectFinalOffer.value == true
+                ? const Center(child: LoadingWidget())
+                : TextButton(
+                    onPressed: () {
+                      controller.rejectFinalOffer(id: parcelDetails._id);
+                    },
+                    child: Text(
+                      "Yes, Reject",
+                      style: TextStyle(color: AppColors.error),
+                    ),
+                  ),
+          ),
+        ],
+      );
+    } else {
+      // Show normal dialog with input fields
+      AppDialog.show(
+        context: context,
+        title: AppStrings.rejectReason.tr,
+        subtitle: 'Are you sure you want to reject this parcel?',
+        type: AppDialogType.info,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(controller: reasonController, hintText: 'Reason'),
+            Gap(12.h),
+            CustomTextField(
+              controller: finalPriceController,
+              hintText: 'Final Price',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              AppRouter.route.pop();
+            },
+            child: Text(AppStrings.cancel.tr),
+          ),
+          Gap(8.w),
+          Obx(
+            () => controller.loadingRejectAndCounterOffer.value == true
+                ? const Center(child: LoadingWidget())
+                : TextButton(
+                    onPressed: () {
+                      if (parcelDetails.priceRequests == null ||
+                          parcelDetails.priceRequests!.isEmpty) {
+                        return;
+                      }
+                      final lastRequest = parcelDetails.priceRequests!.last;
+                      final body = {
+                        "parcel_id": parcelDetails.priceRequests != null
+                            ? parcelDetails.priceRequests!.last.parcelId
+                            : parcelDetails.parcelId,
+                        "rejection_reason": reasonController.text,
+                        "suggested_price": finalPriceController.text.isNotEmpty
+                            ? double.parse(finalPriceController.text)
+                            : 0.0,
+                      };
+                      controller.rejectAndCounterOffer(
+                        id: lastRequest.id ?? "",
+                        body: body,
+                      );
+                    },
+                    child: Text(
+                      AppStrings.reject.tr,
+                      style: TextStyle(color: AppColors.error),
+                    ),
+                  ),
+          ),
+        ],
+      );
+    }
   }
 }
