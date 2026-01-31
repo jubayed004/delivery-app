@@ -1,213 +1,347 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:gap/gap.dart';
-// import 'package:get/get_utils/src/extensions/internacionalization.dart';
-// import 'package:delivery_app/core/router/route_path.dart';
-// import 'package:delivery_app/core/router/routes.dart';
-// import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
-// import 'package:delivery_app/share/widgets/button/custom_button.dart';
-// import 'package:delivery_app/utils/app_strings/app_strings.dart';
-// import 'package:delivery_app/utils/color/app_colors.dart';
-// import 'package:delivery_app/utils/extension/base_extension.dart';
+import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
+import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
+import 'package:delivery_app/share/widgets/button/custom_button.dart';
+import 'package:delivery_app/utils/app_strings/app_strings.dart';
+import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:delivery_app/utils/extension/base_extension.dart';
 
-// class PaymentScreen extends StatefulWidget {
-//   final MyParcelModel parcel;
-//   const PaymentScreen({super.key, required this.parcel});
+class PaymentScreen extends StatefulWidget {
+  final ParcelItem parcel;
+  const PaymentScreen({super.key, required this.parcel});
 
-//   @override
-//   State<PaymentScreen> createState() => _PaymentScreenState();
-// }
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
 
-// class _PaymentScreenState extends State<PaymentScreen> {
-//   String selectedPaymentMethod = 'online';
+class _PaymentScreenState extends State<PaymentScreen> {
+  String selectedPaymentMethod = 'online';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: AppColors.backgroundColor,
-//       appBar: AppBar(
-//         backgroundColor: AppColors.white,
-//         scrolledUnderElevation: 0,
-//         centerTitle: true,
-//         title: Text(AppStrings.paymentOption.tr),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 20),
-//         child: Column(
-//           children: [
-//             Expanded(
-//               child: SingleChildScrollView(
-//                 padding: EdgeInsets.all(16.w),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     // Parcel Info Card
-//                     Container(
-//                       padding: EdgeInsets.all(12.w),
-//                       decoration: BoxDecoration(
-//                         color: AppColors.white,
-//                         borderRadius: BorderRadius.circular(12.r),
-//                         boxShadow: [
-//                           BoxShadow(
-//                             color: Colors.grey.withOpacity(0.1),
-//                             spreadRadius: 1,
-//                             blurRadius: 4,
-//                             offset: const Offset(0, 2),
-//                           ),
-//                         ],
-//                       ),
-//                       child: Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           // Parcel Image
-//                           ClipRRect(
-//                             borderRadius: BorderRadius.circular(8.r),
-//                             child: Image.network(
-//                               widget.parcel.data.,
-//                               height: 80.h,
-//                               width: 80.w,
-//                               fit: BoxFit.cover,
-//                               errorBuilder: (context, error, stackTrace) {
-//                                 return Container(
-//                                   height: 80.h,
-//                                   width: 80.w,
-//                                   color: AppColors.grayTabBgColor,
-//                                   child: Icon(
-//                                     Icons.image,
-//                                     color: AppColors.grayTextSecondaryColor,
-//                                   ),
-//                                 );
-//                               },
-//                             ),
-//                           ),
-//                           Gap(12.w),
-//                           // Parcel Details
-//                           Expanded(
-//                             child: Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 _buildInfoRow(
-//                                   AppStrings.parcelId.tr,
-//                                   widget.parcel.parcelId,
-//                                 ),
-//                                 Gap(4.h),
-//                                 _buildInfoRow(
-//                                   AppStrings.parcelName.tr,
-//                                   widget.parcel.parcelName,
-//                                 ),
-//                                 Gap(4.h),
-//                                 _buildInfoRow(
-//                                   'Address',
-//                                   widget.parcel.handoverLocation,
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
+  @override
+  Widget build(BuildContext context) {
+    // Get the final price, default to 0 if null
+    final price = double.tryParse('${widget.parcel.finalPrice ?? 0}') ?? 0.0;
 
-//                     Gap(16.h),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: Text(AppStrings.paymentOption.tr),
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(left: 8.w, right: 8.w, bottom: 20.h),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Parcel Info Card
+                    Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Parcel Image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: SizedBox(
+                              height: 80.h,
+                              width: 80.w,
+                              child:
+                                  widget.parcel.parcelImages != null &&
+                                      widget.parcel.parcelImages!.isNotEmpty
+                                  ? CustomNetworkImage(
+                                      imageUrl:
+                                          widget.parcel.parcelImages!.first,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: AppColors.grayTabBgColor,
+                                      child: Icon(
+                                        Icons.inventory_2_outlined,
+                                        color: AppColors.grayTextSecondaryColor,
+                                        size: 32.sp,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          Gap(12.w),
+                          // Parcel Details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildInfoRow(
+                                  AppStrings.parcelId.tr,
+                                  widget.parcel.parcelId ?? 'N/A',
+                                ),
+                                Gap(4.h),
+                                _buildInfoRow(
+                                  AppStrings.parcelName.tr,
+                                  widget.parcel.parcelName ?? 'N/A',
+                                ),
+                                Gap(4.h),
+                                _buildInfoRow(
+                                  'Delivery Address',
+                                  widget.parcel.handoverLocation?.address ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-//                     // Total Amount
-//                     Text(
-//                       AppStrings.totalAmount.tr,
-//                       style: context.bodyMedium.copyWith(
-//                         fontWeight: FontWeight.w600,
-//                         color: AppColors.blackMainTextColor,
-//                       ),
-//                     ),
-//                     Gap(8.h),
-//                     Text(
-//                       '\$${widget.parcel.price.toStringAsFixed(2)}',
-//                       style: context.headlineMedium.copyWith(
-//                         fontWeight: FontWeight.w700,
-//                         color: AppColors.error,
-//                       ),
-//                     ),
+                    Gap(24.h),
 
-//                     Gap(24.h),
+                    // Total Amount Section
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStrings.totalAmount.tr,
+                            style: context.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grayTextSecondaryColor,
+                            ),
+                          ),
+                          Gap(8.h),
+                          Text(
+                            '\$${price.toStringAsFixed(2)}',
+                            style: context.headlineLarge.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-//                     // Payment System Selection
-//                     Text(
-//                       AppStrings.selectPaymentSystem.tr,
-//                       style: context.bodyMedium.copyWith(
-//                         fontWeight: FontWeight.w600,
-//                         color: AppColors.blackMainTextColor,
-//                       ),
-//                     ),
-//                     Gap(12.h),
+                    Gap(24.h),
 
-//                     // Online Payment Option
-//                     Container(
-//                       decoration: BoxDecoration(
-//                         color: AppColors.white,
-//                         borderRadius: BorderRadius.circular(8.r),
-//                         border: Border.all(
-//                           color: selectedPaymentMethod == 'online'
-//                               ? AppColors.primaryColor
-//                               : AppColors.linesDarkColor,
-//                         ),
-//                       ),
-//                       child: RadioListTile<String>(
-//                         value: 'online',
-//                         groupValue: selectedPaymentMethod,
-//                         onChanged: (value) {
-//                           setState(() {
-//                             selectedPaymentMethod = value!;
-//                           });
-//                         },
-//                         title: Text(
-//                           AppStrings.onlinePayment.tr,
-//                           style: context.bodyMedium.copyWith(
-//                             fontWeight: FontWeight.w500,
-//                             color: AppColors.blackMainTextColor,
-//                           ),
-//                         ),
-//                         activeColor: AppColors.primaryColor,
-//                         contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
+                    // Payment Method Selection
+                    Text(
+                      AppStrings.selectPaymentSystem.tr,
+                      style: context.titleMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.blackMainTextColor,
+                      ),
+                    ),
+                    Gap(12.h),
 
-//             CustomButton(
-//               onTap: () {
-//                 AppRouter.route.goNamed(
-//                   RoutePath.parcelOwnerNavScreen,
-//                   extra: 1,
-//                 );
-//               },
-//               text: AppStrings.proceedToPay.tr,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+                    // Online Payment Option
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: selectedPaymentMethod == 'online'
+                              ? AppColors.primaryColor
+                              : AppColors.linesDarkColor,
+                          width: selectedPaymentMethod == 'online' ? 2 : 1,
+                        ),
+                      ),
+                      child: RadioListTile<String>(
+                        value: 'online',
+                        groupValue: selectedPaymentMethod,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPaymentMethod = value!;
+                          });
+                        },
+                        title: Row(
+                          children: [
+                            Icon(
+                              Icons.credit_card,
+                              color: selectedPaymentMethod == 'online'
+                                  ? AppColors.primaryColor
+                                  : AppColors.grayTextSecondaryColor,
+                              size: 24.sp,
+                            ),
+                            Gap(12.w),
+                            Text(
+                              AppStrings.onlinePayment.tr,
+                              style: context.bodyLarge.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: selectedPaymentMethod == 'online'
+                                    ? AppColors.primaryColor
+                                    : AppColors.blackMainTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(left: 36.w, top: 4.h),
+                          child: Text(
+                            'Pay securely with Stripe',
+                            style: context.bodySmall.copyWith(
+                              color: AppColors.grayTextSecondaryColor,
+                            ),
+                          ),
+                        ),
+                        activeColor: AppColors.primaryColor,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                      ),
+                    ),
 
-//   Widget _buildInfoRow(String label, String value) {
-//     return RichText(
-//       text: TextSpan(
-//         children: [
-//           TextSpan(
-//             text: '$label: ',
-//             style: context.bodySmall.copyWith(
-//               fontWeight: FontWeight.w700,
-//               color: AppColors.primaryColor,
-//             ),
-//           ),
-//           TextSpan(
-//             text: value,
-//             style: context.bodySmall.copyWith(
-//               fontWeight: FontWeight.w400,
-//               color: AppColors.grayTextSecondaryColor,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+                    Gap(12.h),
+
+                    // Cash Payment Option (Disabled for design)
+                    Opacity(
+                      opacity: 0.5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: AppColors.linesDarkColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: RadioListTile<String>(
+                          value: 'cash',
+                          groupValue: selectedPaymentMethod,
+                          onChanged: null, // Disabled
+                          title: Row(
+                            children: [
+                              Icon(
+                                Icons.money,
+                                color: AppColors.grayTextSecondaryColor,
+                                size: 24.sp,
+                              ),
+                              Gap(12.w),
+                              Flexible(
+                                child: Text(
+                                  'Cash on Delivery',
+                                  style: context.bodyLarge.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.grayTextSecondaryColor,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Gap(8.w),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 2.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.grayTabBgColor,
+                                  borderRadius: BorderRadius.circular(4.r),
+                                ),
+                                child: Text(
+                                  'Coming Soon',
+                                  style: context.bodySmall.copyWith(
+                                    fontSize: 10.sp,
+                                    color: AppColors.grayTextSecondaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Padding(
+                            padding: EdgeInsets.only(left: 36.w, top: 4.h),
+                            child: Text(
+                              'Pay when you receive',
+                              style: context.bodySmall.copyWith(
+                                color: AppColors.grayTextSecondaryColor,
+                              ),
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Proceed to Pay Button
+            CustomButton(
+              onTap: () {
+                // TODO: Implement payment integration
+                // For now, just navigate back to home
+                AppRouter.route.goNamed(
+                  RoutePath.parcelOwnerNavScreen,
+                  extra: 1,
+                );
+              },
+              text: AppStrings.proceedToPay.tr,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return RichText(
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: context.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          TextSpan(
+            text: value,
+            style: context.bodySmall.copyWith(
+              fontWeight: FontWeight.w400,
+              color: AppColors.grayTextSecondaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

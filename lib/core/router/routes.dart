@@ -3,6 +3,7 @@ import 'package:delivery_app/features/auth/login/login_screen.dart';
 import 'package:delivery_app/features/auth/vendor_selection/vendor_selection_screen.dart';
 import 'package:delivery_app/features/driver/parcel_details/parcel_details_screen.dart';
 import 'package:delivery_app/features/driver/parcels/parcels_screen.dart';
+import 'package:delivery_app/features/parcel_owner/create_parcel/create_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_nav/parcel_owner_nav_screen.dart';
 import 'package:delivery_app/features/profile/edit_profile_screen.dart';
 import 'package:delivery_app/features/splash/splash_screen.dart';
@@ -31,7 +32,6 @@ import 'package:delivery_app/features/other/privacy_policy_screen.dart';
 import 'package:delivery_app/features/other/support_help_screen.dart';
 import 'package:delivery_app/features/other/terms_and_conditions_screen.dart';
 import 'package:delivery_app/features/parcel_owner/all_commuter/commuter_profile_screen.dart';
-import 'package:delivery_app/features/parcel_owner/create_parcel/create_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/refund/refund_screen.dart';
 import 'package:delivery_app/features/profile/profile_screen.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/create_details_parcel/create_details_parcel_screen.dart';
@@ -465,17 +465,17 @@ class AppRouter {
           );
         },
       ),
-      // GoRoute(
-      //   name: RoutePath.paymentScreen,
-      //   path: RoutePath.paymentScreen.addBasePath,
-      //   pageBuilder: (context, state) {
-      //     final parcel = state.extra as MyParcelModel;
-      //     return _buildPageWithAnimation(
-      //       child: PaymentScreen(parcel: parcel),
-      //       state: state,
-      //     );
-      //   },
-      // ),
+      GoRoute(
+        name: RoutePath.paymentScreen,
+        path: RoutePath.paymentScreen.addBasePath,
+        pageBuilder: (context, state) {
+          final parcel = state.extra as ParcelItem;
+          return _buildPageWithAnimation(
+            child: PaymentScreen(parcel: parcel),
+            state: state,
+          );
+        },
+      ),
       // GoRoute(
       //   name: RoutePath.bookingsScreen,
       //   path: RoutePath.bookingsScreen.addBasePath,

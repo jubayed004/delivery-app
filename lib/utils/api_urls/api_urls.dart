@@ -26,4 +26,6 @@ class ApiUrls {
       '$base/v1/parcel/reject-and-counter/$id';
   static String rejectFinalOffer({required String id}) =>
       '$base/v1/parcel/reject-price/$id';
+  static String acceptFinalOffer({required String id}) =>
+      '$base/v1/parcel/accept-price/$id';
 }
