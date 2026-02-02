@@ -8,6 +8,7 @@ import 'package:delivery_app/core/service/datasource/local/local_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:delivery_app/utils/multipart/multipart_body.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -86,7 +87,7 @@ class CommuterRegistrationController extends GetxController {
       method: 'POST',
       token: token,
     );
-    print(response.data);
+    AppConfig.logger.i(response.data);
     registerCommuterLoadingMethod(false);
 
     if (response.statusCode == 201) {

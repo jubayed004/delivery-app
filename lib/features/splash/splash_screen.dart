@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
       final role = await localService.getRole();
       if (role == "DRIVER") {
-        AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+        AppRouter.route.goNamed(RoutePath.driverNavScreen);
       } else {
         AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
       }

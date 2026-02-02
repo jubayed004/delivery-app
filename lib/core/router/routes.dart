@@ -3,6 +3,7 @@ import 'package:delivery_app/features/auth/login/login_screen.dart';
 import 'package:delivery_app/features/auth/vendor_selection/vendor_selection_screen.dart';
 import 'package:delivery_app/features/driver/parcel_details/parcel_details_screen.dart';
 import 'package:delivery_app/features/driver/parcels/parcels_screen.dart';
+import 'package:delivery_app/features/other/change_password_screen.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/create_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_nav/parcel_owner_nav_screen.dart';
 import 'package:delivery_app/features/profile/edit_profile_screen.dart';
@@ -173,13 +174,13 @@ class AppRouter {
       ),
 
       //=================Profile ===================
-      GoRoute(
-        name: RoutePath.profileScreen,
-        path: RoutePath.profileScreen.addBasePath,
-        pageBuilder: (context, state) {
-          return _buildPageWithAnimation(child: ProfileScreen(), state: state);
-        },
-      ),
+      // GoRoute(
+      //   name: RoutePath.profileScreen,
+      //   path: RoutePath.profileScreen.addBasePath,
+      //   pageBuilder: (context, state) {
+      //     return _buildPageWithAnimation(child: ProfileScreen(), state: state);
+      //   },
+      // ),
       GoRoute(
         name: RoutePath.editProfileScreen,
         path: RoutePath.editProfileScreen.addBasePath,
@@ -212,7 +213,7 @@ class AppRouter {
       ),
 
       //=============Setting==========
-      /*    GoRoute(
+      GoRoute(
         name: RoutePath.changePasswordScreen,
         path: RoutePath.changePasswordScreen.addBasePath,
         pageBuilder: (context, state) {
@@ -221,7 +222,7 @@ class AppRouter {
             state: state,
           );
         },
-      ),*/
+      ),
       GoRoute(
         name: RoutePath.customerReviewScreen,
         path: RoutePath.customerReviewScreen.addBasePath,

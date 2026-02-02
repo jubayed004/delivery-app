@@ -1,10 +1,10 @@
-/*
+import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:delivery_app/features/auth/controller/auth_controller.dart';
+import 'package:delivery_app/features/other/controller/other_controller.dart';
 import 'package:delivery_app/helper/validator/text_field_validator.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
@@ -21,13 +21,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController _oldPassword = TextEditingController();
   final TextEditingController _resetPassword = TextEditingController();
   final TextEditingController _resetConfirmPassword = TextEditingController();
-  final AuthController _auth = Get.find<AuthController>();
+  final OtherController _otherController = Get.put(OtherController());
 
   @override
   void dispose() {
     _resetConfirmPassword.dispose();
     _resetPassword.dispose();
     _oldPassword.dispose();
+    Get.delete<OtherController>();
     super.dispose();
   }
 
@@ -61,9 +62,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           isPassword: true,
                           controller: _oldPassword,
                           validator: TextFieldValidator.password(),
-                          onChanged: (value) {
-                            _auth.password.value = value;
-                          },
                         ),
                         Gap(16.h),
 
@@ -76,9 +74,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           isPassword: true,
                           controller: _resetPassword,
                           validator: TextFieldValidator.password(),
-                          onChanged: (value) {
-                            _auth.password.value = value;
-                          },
                         ),
                         Gap(16.h),
 
@@ -99,12 +94,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                 ),
               ),
-              */
-/*   CustomButton(
-                text: AppStrings.updatePassword.tr,
-                onTap: () => AppRouter.route.goNamed(RoutePath.navigationPage),
-              ),*/ /*
 
+              Obx(
+                () => CustomButton(
+                  isLoading: _otherController.changePasswordLoading.value,
+                  text: AppStrings.update.tr,
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      _otherController.changePassword(
+                        body: {
+                          "old_password": _oldPassword.text,
+                          "new_password": _resetPassword.text,
+                        },
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -112,4 +118,3 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 }
-*/

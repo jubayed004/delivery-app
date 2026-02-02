@@ -1,43 +1,60 @@
 class TermsConditionsModel {
-  final num? statusCode;
   final bool? success;
   final String? message;
   final Data? data;
 
-  TermsConditionsModel({
-    this.statusCode,
-    this.success,
-    this.message,
-    this.data,
-  });
+  TermsConditionsModel({this.success, this.message, this.data});
 
   factory TermsConditionsModel.fromJson(Map<String, dynamic> json) =>
       TermsConditionsModel(
-        statusCode: json["statusCode"]?.toInt(),
         success: json["success"],
         message: json["message"],
         data: json["data"] == null ? null : Data.fromJson(json["data"]),
       );
+
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "message": message,
+    "data": data?.toJson(),
+  };
 }
 
 class Data {
   final String? id;
-  final String? description;
+  final String? title;
+  final String? content;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final num? v;
+  final int? v;
 
-  Data({this.id, this.description, this.createdAt, this.updatedAt, this.v});
+  Data({
+    this.id,
+    this.title,
+    this.content,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["_id"],
-    description: json["description"],
-    createdAt: json["createdAt"] == null
+    title: json["title"],
+    content: json["content"],
+    createdAt: json["created_at"] == null
         ? null
-        : DateTime.parse(json["createdAt"]),
-    updatedAt: json["updatedAt"] == null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
         ? null
-        : DateTime.parse(json["updatedAt"]),
-    v: json["__v"]?.toInt(),
+        : DateTime.parse(json["updated_at"]),
+    v: json["__v"],
   );
+
+  Map<String, dynamic> toJson() => {
+    "_id": id,
+    "title": title,
+    "content": content,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "__v": v,
+  };
 }

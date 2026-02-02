@@ -7,8 +7,6 @@ class ApiUrls {
   static String register() => '$base/v1/auth/register';
   static String verifyOtp() => '$base/v1/auth/verify-otp';
   static String resendOtp() => '$base/v1/auth/resend-otp';
-  static String logout() => '$base/v1/auth/logout';
-  static String changePassword() => '$base/v1/auth/change-password';
   static String forgotPassword() => '$base/v1/auth/forget-password';
   static String resetPassword() => '$base/v1/auth/reset-password';
   // =========== Customer Api Urls ===========
@@ -28,4 +26,15 @@ class ApiUrls {
       '$base/v1/parcel/reject-price/$id';
   static String acceptFinalOffer({required String id}) =>
       '$base/v1/parcel/accept-price/$id';
+  //============== Settting===================
+
+  static String changePassword() => '$base/v1/auth/change-password';
+  static String termsConditions() => '$base/v1/settings/terms/get';
+  static String privacyPolicy() => '$base/v1/settings/privacy/get';
+  static String faq() => '$base/v1/settings/faq/get-all';
+  static String logout() => '$base/v1/auth/logout';
+
+  //============== Driver===================
+  static String getDriverInfo() => '$base/v1/driver/get-driver-info';
+  static String updateDriverInfo() => '$base/v1/driver/update-info';
 }

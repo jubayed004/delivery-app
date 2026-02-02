@@ -80,11 +80,12 @@ class LocalService {
     try {
       final prefs = await _prefs;
       final success = await prefs.setBool(LocalKeys.onboarding, isView);
-      if (!success)
+      if (!success) {
         AppLogger.log(
           "Failed to save onboarding status",
           type: AppLogType.error,
         );
+      }
       return success;
     } catch (e, stack) {
       AppLogger.log(
@@ -99,8 +100,9 @@ class LocalService {
     try {
       final prefs = await _prefs;
       final success = await prefs.setString(LocalKeys.languageKey, value);
-      if (!success)
+      if (!success) {
         AppLogger.log("Failed to save language", type: AppLogType.error);
+      }
       return success;
     } catch (e, stack) {
       AppLogger.log(
@@ -123,11 +125,12 @@ class LocalService {
       }
 
       final langSaved = await prefs.setString(LocalKeys.languageKey, lang);
-      if (!langSaved)
+      if (!langSaved) {
         AppLogger.log(
           "Language not restored after logout",
           type: AppLogType.warning,
         );
+      }
 
       AppLogger.log("User logged out successfully", type: AppLogType.success);
       return true;

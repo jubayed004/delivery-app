@@ -14,9 +14,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
+
+  @override
+  void initState() {
+    profileController.getProfile();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                       Gap(32.h),
                       ProfileSectionTitle(title: 'SETTINGS SECTION'.tr),
                       Gap(12.h),
-                      if (CommonController.to.isUser.value)
+                      if (CommonController.to.isUser.value == false)
                         ProfileMenuItem(
                           title: AppStrings.professionalInfo.tr,
                           onTap: () {
@@ -49,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
                             );
                           },
                         ),
-                      if (CommonController.to.isUser.value)
+                      if (CommonController.to.isUser.value == false)
                         ProfileMenuItem(
                           title: AppStrings.reviewsAndRatings.tr,
                           onTap: () {
@@ -78,20 +91,14 @@ class ProfileScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      if (!CommonController.to.isUser.value)
+                      if (CommonController.to.isUser.value == false)
                         ProfileMenuItem(
                           title: AppStrings.refund.tr,
                           onTap: () {
                             /*AppRouter.route.pushNamed(RoutePath.favoriteTrainerScreen)*/
                           },
                         ),
-                      if (!CommonController.to.isUser.value)
-                        ProfileMenuItem(
-                          title: AppStrings.faqs.tr,
-                          onTap: () {
-                            /*AppRouter.route.pushNamed(RoutePath.favoriteTrainerScreen)*/
-                          },
-                        ),
+
                       ProfileMenuItem(
                         title: AppStrings.notification.tr,
                         onTap: () {
@@ -132,8 +139,7 @@ class ProfileScreen extends StatelessWidget {
                                 'Are you sure you want to Logout your account?'
                                     .tr,
                             confirmButtonText: AppStrings.logOut.tr,
-                            onConfirm: () =>
-                                AppRouter.route.goNamed(RoutePath.loginScreen),
+                            onConfirm: () => profileController.logout(),
                           );
                         },
                       ),

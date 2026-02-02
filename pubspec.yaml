@@ -67,6 +67,7 @@ dependencies:
   geolocator: ^14.0.2
   map_location_picker: ^2.0.3
   jwt_decoder: ^2.0.1
+  flutter_widget_from_html: ^0.17.1
 
 
 

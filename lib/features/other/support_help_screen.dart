@@ -5,6 +5,9 @@ import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/enum/app_enum.dart';
+import 'package:delivery_app/share/widgets/no_internet/error_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_internet_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportHelpScreen extends StatefulWidget {
@@ -19,7 +22,9 @@ class _SupportHelpScreenState extends State<SupportHelpScreen> {
 
   @override
   void initState() {
-    /*   controller.getPrivacyPolicy();*/
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getFaq();
+    });
     super.initState();
   }
 
@@ -34,16 +39,15 @@ class _SupportHelpScreenState extends State<SupportHelpScreen> {
         centerTitle: true,
       ),
       body: Obx(() {
-        switch (controller.privacyLoading.value) {
+        switch (controller.faqLoading.value) {
           case ApiStatus.loading:
             return const LoadingWidget();
           case ApiStatus.internetError:
-          /*  return NoInternetCard(onTap: ()=>controller.getPrivacyPolicy());*/
-          case ApiStatus.noDataFound:
-            return Center(child: Text("No data found!".tr));
+            return NoInternetCard(onTap: () => controller.getFaq());
           case ApiStatus.error:
-          /*            return NoInternetCard(onTap: ()=>controller.getPrivacyPolicy());*/
-
+            return ErrorCard(onTap: () => controller.getFaq());
+          case ApiStatus.noDataFound:
+            return NoDataCard(onTap: () => controller.getFaq());
           case ApiStatus.completed:
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -82,20 +86,24 @@ class _SupportHelpScreenState extends State<SupportHelpScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildFaqTile(
-                    "How do I book a session?",
-                    "Choose a trainer: Find a trainer who fits your goals.",
-                  ),
-                  const SizedBox(height: 12),
-                  _buildFaqTile(
-                    "How does payment work?",
-                    "Payments are processed securely through the app.",
-                  ),
-                  const SizedBox(height: 12),
-                  _buildFaqTile(
-                    "Problems with my trainer?",
-                    "You can report issues directly to our support team.",
-                  ),
+                  if (controller.faqData.isEmpty)
+                    const SizedBox()
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.faqData.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.faqData[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildFaqTile(
+                            item['question'] ?? "",
+                            item['answer'] ?? "",
+                          ),
+                        );
+                      },
+                    ),
                   const SizedBox(height: 32),
 
                   // Contact Us Section

@@ -199,7 +199,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // ================== Sign In Section
+  // ================== Sign In Section===================
   RxBool signInLoading = false.obs;
   bool signInLoadingMethod(bool status) => signInLoading.value = status;
 
