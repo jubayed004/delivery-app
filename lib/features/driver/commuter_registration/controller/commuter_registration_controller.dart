@@ -27,11 +27,11 @@ class CommuterRegistrationController extends GetxController {
       imageQuality: 80,
     );
     if (image != null) {
-      if (imageType == 'numberPlate') {
+      if (imageType == 'number_plate_image') {
         numberPlateImage.value = image;
-      } else if (imageType == 'licence') {
+      } else if (imageType == 'license_image') {
         licenceImage.value = image;
-      } else if (imageType == 'car') {
+      } else if (imageType == 'vehicle_images') {
         if (carImages.length < 5) {
           carImages.add(image);
         }
@@ -44,11 +44,12 @@ class CommuterRegistrationController extends GetxController {
       carImages.removeAt(index);
     }
   }
+  //===================== registerCommuter =====================
 
   RxBool registerCommuterLoading = false.obs;
   bool registerCommuterLoadingMethod(bool status) =>
       registerCommuterLoading.value = status;
-  Future<void> registerCommuter({required String body}) async {
+  Future<void> registerCommuter({required Map<String, dynamic> body}) async {
     registerCommuterLoadingMethod(true);
     final token = await localService.getToken();
     final List<MultipartBody> multipart = [];
@@ -80,13 +81,30 @@ class CommuterRegistrationController extends GetxController {
       }
     }
 
-    final response = await apiClient.uploadMultipart(
-      fields: jsonDecode(body),
-      url: ApiUrls.register(),
-      files: multipart,
-      method: 'POST',
-      token: token,
-    );
+    if (multipart.isEmpty) {
+      final jsonBody = jsonDecode(body['data'] as String);
+      AppConfig.logger.i("Sending JSON body: $jsonBody");
+
+      final response = await apiClient.post(
+        url: ApiUrls.registerDriver(),
+        body: jsonBody,
+        token: token,
+      );
+
+      _handleResponse(response);
+    } else {
+      final response = await apiClient.uploadMultipart(
+        fields: body,
+        url: ApiUrls.registerDriver(),
+        files: multipart,
+        method: 'POST',
+        token: token,
+      );
+      _handleResponse(response);
+    }
+  }
+
+  void _handleResponse(response) {
     AppConfig.logger.i(response.data);
     registerCommuterLoadingMethod(false);
 
@@ -100,7 +118,7 @@ class CommuterRegistrationController extends GetxController {
       AppRouter.route.pushNamed(RoutePath.driverNavScreen);
     } else {
       registerCommuterLoadingMethod(false);
-      AppToast.error(message: response.data?["message"].toString() ?? "Error");
+      AppConfig.logger.e(response.data);
     }
     // try {
 

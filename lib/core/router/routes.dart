@@ -12,6 +12,7 @@ import 'package:delivery_app/utils/extension/base_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:delivery_app/features/auth/active/active_otp_screen.dart';
+import 'package:delivery_app/features/auth/admin_approval/admin_approval_screen.dart';
 import 'package:delivery_app/features/driver/commuter_registration/commuter_registration_screen.dart';
 import 'package:delivery_app/features/auth/forget/forget_password_screen.dart';
 import 'package:delivery_app/features/auth/reset/reset_password_screen.dart';
@@ -34,7 +35,7 @@ import 'package:delivery_app/features/other/support_help_screen.dart';
 import 'package:delivery_app/features/other/terms_and_conditions_screen.dart';
 import 'package:delivery_app/features/parcel_owner/all_commuter/commuter_profile_screen.dart';
 import 'package:delivery_app/features/parcel_owner/refund/refund_screen.dart';
-import 'package:delivery_app/features/profile/profile_screen.dart';
+
 import 'package:delivery_app/features/parcel_owner/create_parcel/create_details_parcel/create_details_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/edit_parcel/edit_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/details_my_parcel_screen.dart';
@@ -318,6 +319,16 @@ class AppRouter {
         pageBuilder: (context, state) {
           return _buildPageWithAnimation(
             child: CommuterRegistrationScreen(),
+            state: state,
+          );
+        },
+      ),
+      GoRoute(
+        name: RoutePath.adminApprovalScreen,
+        path: RoutePath.adminApprovalScreen.addBasePath,
+        pageBuilder: (context, state) {
+          return _buildPageWithAnimation(
+            child: const AdminApprovalScreen(),
             state: state,
           );
         },

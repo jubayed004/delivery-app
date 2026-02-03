@@ -1,9 +1,15 @@
 import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/core/router/routes.dart';
+import 'package:delivery_app/features/driver/driver_home/controller/driver_home_controller.dart';
+import 'package:delivery_app/features/driver/driver_home/model/driver_home_model.dart';
 import 'package:delivery_app/features/driver/driver_home/widgets/driver_header.dart';
 import 'package:delivery_app/features/driver/driver_home/widgets/driver_request_card.dart';
 import 'package:delivery_app/features/driver/driver_home/widgets/stat_card.dart';
+import 'package:delivery_app/features/profile/controller/profile_controller.dart';
 import 'package:delivery_app/helper/toast/toast_helper.dart';
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
+import 'package:delivery_app/share/widgets/no_internet/error_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
@@ -11,102 +17,142 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class DriverHomeScreen extends StatelessWidget {
+class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
+
+  @override
+  State<DriverHomeScreen> createState() => _DriverHomeScreenState();
+}
+
+class _DriverHomeScreenState extends State<DriverHomeScreen> {
+  final DriverHomeController controller = Get.find();
+  final ProfileController profileController = Get.find();
+  @override
+  void initState() {
+    super.initState();
+    controller.fetchPage(1);
+    profileController.getProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Header
-          DriverHeader(
-            userName: "Alvinoye",
-            profileImageUrl: 'https://i.pravatar.cc/300',
-            onNotificationTap: () {
-              AppRouter.route.pushNamed(RoutePath.driverNotificationScreen);
-            },
-          ),
-
-          // Body
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Stats Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StatCard(
-                          icon: Icons.map_outlined,
-                          title: AppStrings.activeRoutes.tr,
-                          iconColor: AppColors.primaryColor,
-                        ),
-                      ),
-                      Gap(16.w),
-                      Expanded(
-                        child: StatCard(
-                          icon: Icons.monetization_on_outlined,
-                          title: "${AppStrings.earning.tr} \$125",
-                          iconColor: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Gap(24.h),
-                  Text(
-                    AppStrings.yourRecentRequest.tr,
-                    style: context.headlineSmall.copyWith(
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.sp,
-                    ),
-                  ),
-                  Gap(16.h),
-                  ListView.separated(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 3,
-                    separatorBuilder: (context, index) => Gap(16.h),
-                    itemBuilder: (context, index) {
-                      return DriverRequestCard(
-                        parcelId: "112222",
-                        parcelName: "Electronics",
-                        size: "Small",
-                        price: "\$50.00",
-                        imageUrl:
-                            "https://static.vecteezy.com/system/resources/thumbnails/033/226/263/small/close-up-packing-cardboard-box-on-a-table-with-copyspace-against-background-ai-generated-photo.jpg",
-                        onImageTap: () {
-                          AppRouter.route.pushNamed(
-                            RoutePath.parcelDetailsScreen,
-                          );
-                        },
-                        onTrackTap: () {
-                          AppRouter.route.pushNamed(
-                            RoutePath.trackParcelScreen,
-                          );
-                        },
-                        onChatTap: () {
-                          AppRouter.route.pushNamed(RoutePath.chatScreen);
-                        },
-                        onAcceptTap: () {
-                          AppToast.success(message: "Accepted");
-                        },
-                        onRejectTap: () {
-                          AppToast.warning(message: "Rejected");
-                        },
-                      );
-                    },
-                  ),
-                ],
+      backgroundColor: AppColors.backgroundColor,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          controller.pagingController.refresh();
+        },
+        child: CustomScrollView(
+          slivers: [
+            // Header
+            SliverToBoxAdapter(
+              child: DriverHeader(
+                userName: profileController.profile.value.data?.fullName ?? "",
+                profileImageUrl:
+                    profileController.profile.value.data?.profilePicture ?? "",
+                onNotificationTap: () {
+                  AppRouter.route.pushNamed(RoutePath.driverNotificationScreen);
+                },
               ),
             ),
-          ),
-        ],
+
+            // Stats and Title
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Stats Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: StatCard(
+                            icon: Icons.map_outlined,
+                            title: AppStrings.activeRoutes.tr,
+                            iconColor: AppColors.primaryColor,
+                          ),
+                        ),
+                        Gap(16.w),
+                        Expanded(
+                          child: StatCard(
+                            icon: Icons.monetization_on_outlined,
+                            title: "${AppStrings.earning.tr} \$125",
+                            iconColor: AppColors.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gap(24.h),
+                    Text(
+                      AppStrings.yourRecentRequest.tr,
+                      style: context.headlineSmall.copyWith(
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.sp,
+                      ),
+                    ),
+                    Gap(10.h),
+                  ],
+                ),
+              ),
+            ),
+
+            // Pagination List
+            PagedSliverList<int, ParcelInformation>(
+              pagingController: controller.pagingController,
+              builderDelegate: PagedChildBuilderDelegate<ParcelInformation>(
+                itemBuilder: (context, item, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16.h,
+                      left: 16.w,
+                      right: 16.w,
+                    ),
+                    child: DriverRequestCard(
+                      parcelId: item.parcelId ?? "N/A",
+                      parcelName: item.parcelName ?? "N/A",
+                      size: item.size ?? "N/A",
+                      price: "\$${item.finalPrice ?? 0}",
+                      imageUrl:
+                          (item.parcelImages != null &&
+                              item.parcelImages!.isNotEmpty)
+                          ? item.parcelImages!.first
+                          : "",
+                      onImageTap: () {
+                        AppRouter.route.pushNamed(
+                          RoutePath.parcelDetailsScreen,
+                        );
+                      },
+                      onTrackTap: () {
+                        AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+                      },
+                      onChatTap: () {
+                        AppRouter.route.pushNamed(RoutePath.chatScreen);
+                      },
+                      onAcceptTap: () {
+                        // Implement Accept Logic Here
+                        AppToast.success(message: "Accepted");
+                      },
+                    ),
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (context) => ErrorCard(
+                  onTap: () => controller.pagingController.refresh(),
+                ),
+                noItemsFoundIndicatorBuilder: (context) => NoDataCard(
+                  onTap: () => controller.pagingController.refresh(),
+                ),
+                firstPageProgressIndicatorBuilder: (context) =>
+                    const LoadingWidget(),
+                newPageProgressIndicatorBuilder: (context) =>
+                    const LoadingWidget(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

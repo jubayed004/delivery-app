@@ -245,7 +245,8 @@ class _CommuterRegistrationScreenState
                               controller.numberPlateImage.value = null,
                         )
                       : ImagePickerBox(
-                          onTap: () => controller.pickImage('numberPlate'),
+                          onTap: () =>
+                              controller.pickImage('number_plate_image'),
                         ),
                 ),
                 Gap(16.h),
@@ -259,7 +260,7 @@ class _CommuterRegistrationScreenState
                           onRemove: () => controller.licenceImage.value = null,
                         )
                       : ImagePickerBox(
-                          onTap: () => controller.pickImage('licence'),
+                          onTap: () => controller.pickImage('license_image'),
                         ),
                 ),
                 Gap(16.h),
@@ -278,7 +279,7 @@ class _CommuterRegistrationScreenState
                       itemBuilder: (context, index) {
                         if (index == 0 && controller.carImages.length < 5) {
                           return ImagePickerBox(
-                            onTap: () => controller.pickImage('car'),
+                            onTap: () => controller.pickImage('vehicle_images'),
                           );
                         } else {
                           final imageIndex = controller.carImages.length < 5
@@ -302,48 +303,50 @@ class _CommuterRegistrationScreenState
                     text: AppStrings.update.tr,
                     onTap: () {
                       final body = {
-                        "driverInfo": {
-                          "from": {
-                            "address": selectedFromLocation.value.address,
-                            "latitude": selectedFromLocation
-                                .value
-                                .latLng
-                                .latitude
-                                .toString(),
-                            "longitude": selectedFromLocation
-                                .value
-                                .latLng
-                                .longitude
-                                .toString(),
+                        "data": jsonEncode({
+                          "driverInfo": {
+                            "from": {
+                              "address": selectedFromLocation.value.address,
+                              "latitude": selectedFromLocation
+                                  .value
+                                  .latLng
+                                  .latitude
+                                  .toString(),
+                              "longitude": selectedFromLocation
+                                  .value
+                                  .latLng
+                                  .longitude
+                                  .toString(),
+                            },
+                            "to": {
+                              "address": selectedToLocation.value.address,
+                              "latitude": selectedToLocation
+                                  .value
+                                  .latLng
+                                  .latitude
+                                  .toString(),
+                              "longitude": selectedToLocation
+                                  .value
+                                  .latLng
+                                  .longitude
+                                  .toString(),
+                            },
+                            "driver_license_number":
+                                _driverLicenceNumberController.text,
+                            "daily_commute_time":
+                                _dailyCommuteTimeController.text,
+                            "max_parcel_weight":
+                                _maxParcelWeightController.text,
                           },
-                          "to": {
-                            "address": selectedToLocation.value.address,
-                            "latitude": selectedToLocation.value.latLng.latitude
-                                .toString(),
-                            "longitude": selectedToLocation
-                                .value
-                                .latLng
-                                .longitude
-                                .toString(),
+                          "vehicle": {
+                            "vehicle_type": _selectedVehicleType.value ?? "",
+                            "vehicle_number": _carNumberController.text,
                           },
-                          "driver_license_number":
-                              _driverLicenceNumberController.text,
-                          "daily_commute_time":
-                              _dailyCommuteTimeController.text,
-                          "max_parcel_weight": _maxParcelWeightController.text,
-                          "notes": _notesController.text,
-                        },
-                        "vehicle": {
-                          "vehicle_type": _selectedVehicleType.value ?? "",
-                          "vehicle_number": _carNumberController.text,
-                          "number_plate_image":
-                              controller.numberPlateImage.value,
-                          "license_image": controller.licenceImage.value,
-                          "vehicle_images": controller.carImages,
-                        },
+                        }),
                       };
-                      final String data = jsonEncode(body);
-                      controller.registerCommuter(body: data);
+                      if (_formKey.currentState!.validate()) {
+                        controller.registerCommuter(body: body);
+                      }
                     },
                   ),
                 ),

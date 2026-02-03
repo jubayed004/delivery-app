@@ -27,149 +27,142 @@ class ParcelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: CustomNetworkImage(
-                  imageUrl: imageUrl,
-                  width: 100.w,
-                  height: 100.w,
-                  fit: BoxFit.cover,
-                ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: AppColors.primaryColor.withOpacity(0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-              Gap(12.w),
-              // Details
-              Expanded(
-                child: Column(
+            ],
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 12.r,
+              right: 12.r,
+              top: 24.r,
+              bottom: 12.r,
+            ),
+            child: Column(
+              children: [
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            "Parcel ID:$parcelId",
-                            style: context.bodyMedium.copyWith(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        _buildStatusBadge(status),
-                      ],
-                    ),
-                    Text(
-                      "Parcel Name: $parcelName",
-                      style: context.bodyMedium.copyWith(
-                        color: AppColors.secondPrimaryColor,
+                    // Image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: CustomNetworkImage(
+                        imageUrl: imageUrl,
+                        width: 100.w,
+                        height: 80.h,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Text(
-                      "Size: $size",
-                      style: context.bodyMedium.copyWith(
-                        color: AppColors.secondPrimaryColor,
-                      ),
-                    ),
-                    Text(
-                      "Price : \$$price",
-                      style: context.bodyMedium.copyWith(
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(width: 12.w),
+                    // Details
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDetailRow("Parcel ID", parcelId),
+                          _buildDetailRow("Parcel Name", parcelName),
+                          _buildDetailRow("Size", size),
+                          _buildDetailRow("Price", "\$$price"),
+                        ],
                       ),
                     ),
                   ],
                 ),
+                Gap(12.h),
+                // Actions
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: _buildActionButtons(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Status Badge - Positioned at top-right corner
+        Positioned(top: 0, right: 0, child: _buildStatusBadge(status)),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 4.h),
+      child: RichText(
+        text: TextSpan(
+          text: '$label: ',
+          style: TextStyle(
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 12.sp,
+          ),
+          children: [
+            TextSpan(
+              text: value,
+              style: TextStyle(
+                color: Colors.grey[700],
+                fontWeight: FontWeight.normal,
+                fontSize: 12.sp,
               ),
-            ],
-          ),
-          Gap(12.h),
-          // Actions
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: _buildActionButtons(context),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildStatusBadge(String status) {
+    Color badgeColor;
+    String statusText;
+
     if (status == "Ongoing") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-        decoration: BoxDecoration(
-          color: Colors.amber,
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-        child: Text(
-          "Ongoing Parcel",
-          style: TextStyle(color: Colors.white, fontSize: 10.sp),
-        ),
-      );
-    } else if (status == "Completed") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-        decoration: BoxDecoration(
-          color: Color(0xFF1B4D3E), // Dark Green
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-        child: Text(
-          "Completed",
-          style: TextStyle(color: Colors.white, fontSize: 10.sp),
-        ),
-      );
-    } else if (status == "Reject") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-        child: Text(
-          "Reject",
-          style: TextStyle(color: Colors.white, fontSize: 10.sp),
-        ),
-      );
+      badgeColor = AppColors.orangeSecondaryAccentColorNormal;
+      statusText = 'Ongoing Parcel';
     } else {
-      return GestureDetector(
-        onTap: () {},
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.red),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.location_on, color: Colors.red, size: 12.r),
-              Gap(4.w),
-              Text(
-                "Track Live",
-                style: TextStyle(color: Colors.red, fontSize: 10.sp),
-              ),
-            ],
-          ),
-        ),
-      );
+      // Completed
+      badgeColor = AppColors.success;
+      statusText = 'Completed';
     }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: badgeColor,
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(12.r),
+          bottomLeft: Radius.circular(12.r),
+        ),
+      ),
+      child: Text(
+        statusText,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildActionButtons(BuildContext context) {
     List<Widget> buttons = [];
+
+    // Chat button - available for both statuses
     buttons.add(
       _ActionButton(
         label: "Chat",
@@ -182,25 +175,9 @@ class ParcelCard extends StatelessWidget {
       ),
     );
     buttons.add(Gap(8.w));
-    if (status == "Pending") {
-      buttons.add(
-        _ActionButton(
-          label: "Accept",
-          color: AppColors.primaryColor,
-          textColor: Colors.white,
-          onTap: () {},
-        ),
-      );
-      buttons.add(Gap(8.w));
-      buttons.add(
-        _ActionButton(
-          label: "Reject",
-          color: Colors.red,
-          textColor: Colors.white,
-          onTap: () {},
-        ),
-      );
-    } else if (status == "Ongoing") {
+
+    // Ongoing specific buttons
+    if (status == "Ongoing") {
       buttons.add(
         _ActionButton(
           label: "Track Live",
@@ -210,11 +187,11 @@ class ParcelCard extends StatelessWidget {
           onTap: () {},
         ),
       );
-    } else if (status == "Completed") {
+      buttons.add(Gap(8.w));
       buttons.add(
         _ActionButton(
           label: "Confirm",
-          icon: Icons.logout,
+          icon: Icons.check_circle_outline,
           isOutlined: true,
           color: Colors.green,
           onTap: () {
@@ -223,6 +200,7 @@ class ParcelCard extends StatelessWidget {
         ),
       );
     }
+
     return buttons;
   }
 }

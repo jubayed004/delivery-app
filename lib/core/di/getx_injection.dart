@@ -1,3 +1,5 @@
+import 'package:delivery_app/features/driver/driver_home/controller/driver_home_controller.dart';
+import 'package:delivery_app/features/driver/parcels/controller/parcel_controller.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_home/controller/parcel_owner_home_controller.dart';
 import 'package:get/get.dart';
 import 'package:delivery_app/features/auth/controller/auth_controller.dart';
@@ -35,4 +37,10 @@ void initGetx() {
 
   //Parcel Owner Home
   Get.lazyPut(() => ParcelOwnerHomeController(), fenix: true);
+
+  //Driver
+  Get.lazyPut(() => ParcelController(), fenix: true);
+
+  //Driver Home
+  Get.lazyPut(() => DriverHomeController(), fenix: true);
 }

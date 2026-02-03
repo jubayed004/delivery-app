@@ -37,4 +37,7 @@ class ApiUrls {
   //============== Driver===================
   static String getDriverInfo() => '$base/v1/driver/get-driver-info';
   static String updateDriverInfo() => '$base/v1/driver/update-info';
+  static String registerDriver() => '$base/v1/driver/info';
+  static String getDriverParcels({required int page}) =>
+      '$base/v1/driver/available-for-driver?page=$page&limit=10';
 }

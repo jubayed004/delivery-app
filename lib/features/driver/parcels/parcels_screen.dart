@@ -18,7 +18,7 @@ class _ParcelsScreenState extends State<ParcelsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });
@@ -33,56 +33,86 @@ class _ParcelsScreenState extends State<ParcelsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Dark background as per design
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        title: Text("Parcels"),
+        title: const Text("Parcels"),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(66.h),
-          child: TabBar(
-            controller: _tabController,
-            padding: EdgeInsets.only(left: 16.w, right: 16.w),
-            dividerColor: Colors.transparent,
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
-            unselectedLabelStyle: context.textTheme.titleSmall,
-            tabs: [
-              _buildTab("Pending", 0),
-              _buildTab("Ongoing", 1),
-              _buildTab("Completed", 2),
-              _buildTab("Reject", 3),
-            ],
-          ),
-        ),
+        scrolledUnderElevation: 0,
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          ParcelList(status: "Pending"),
-          ParcelList(status: "Ongoing"),
-          ParcelList(status: "Completed"),
-          ParcelList(status: "Reject"),
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.backgroundColor,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              padding: EdgeInsets.all(4.w),
+              child: TabBar(
+                controller: _tabController,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor: AppColors.grayTextSecondaryColor,
+                labelStyle: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+                tabs: [_buildTab("Ongoing", 0), _buildTab("Completed", 1)],
+              ),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                ParcelList(status: "Ongoing"),
+                ParcelList(status: "Completed"),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildTab(String text, int index) {
+    final isSelected = _tabController.index == index;
     return Tab(
       child: Container(
-        padding: EdgeInsets.only(left: 8.w, right: 8.w),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         alignment: Alignment.center,
-        child: Text(text),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isSelected)
+              Icon(
+                index == 0 ? Icons.local_shipping : Icons.check_circle,
+                size: 18.sp,
+                color: Colors.white,
+              ),
+            if (isSelected) SizedBox(width: 6.w),
+            Flexible(child: Text(text, overflow: TextOverflow.ellipsis)),
+          ],
+        ),
       ),
     );
   }

@@ -27,6 +27,16 @@ class LocalService {
     return prefs.getString(LocalKeys.userId) ?? "";
   }
 
+  Future<String> getStatus() async {
+    final prefs = await _prefs;
+    return prefs.getString(LocalKeys.status) ?? "";
+  }
+
+  Future<bool> getIsProfileCompleted() async {
+    final prefs = await _prefs;
+    return prefs.getBool(LocalKeys.isProfileCompleted) ?? false;
+  }
+
   Future<bool> isViewOnboarding() async {
     final prefs = await _prefs;
     return prefs.getBool(LocalKeys.onboarding) ?? false;
@@ -107,6 +117,43 @@ class LocalService {
     } catch (e, stack) {
       AppLogger.log(
         "Error saving language: $e\n$stack",
+        type: AppLogType.error,
+      );
+      return false;
+    }
+  }
+
+  Future<bool> saveStatus(String status) async {
+    try {
+      final prefs = await _prefs;
+      final success = await prefs.setString(LocalKeys.status, status);
+      if (!success) {
+        AppLogger.log("Failed to save status", type: AppLogType.error);
+      }
+      return success;
+    } catch (e, stack) {
+      AppLogger.log("Error saving status: $e\n$stack", type: AppLogType.error);
+      return false;
+    }
+  }
+
+  Future<bool> saveIsProfileCompleted(bool isProfileCompleted) async {
+    try {
+      final prefs = await _prefs;
+      final success = await prefs.setBool(
+        LocalKeys.isProfileCompleted,
+        isProfileCompleted,
+      );
+      if (!success) {
+        AppLogger.log(
+          "Failed to save profile completed status",
+          type: AppLogType.error,
+        );
+      }
+      return success;
+    } catch (e, stack) {
+      AppLogger.log(
+        "Error saving profile completed status: $e\n$stack",
         type: AppLogType.error,
       );
       return false;

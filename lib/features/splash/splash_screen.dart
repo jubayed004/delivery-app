@@ -80,7 +80,19 @@ class _SplashScreenState extends State<SplashScreen>
       }
       final role = await localService.getRole();
       if (role == "DRIVER") {
-        AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        final status = await localService.getStatus();
+        final isProfileCompleted = await localService.getIsProfileCompleted();
+        print(status);
+        print(isProfileCompleted);
+        if (status == "PENDING") {
+          if (!isProfileCompleted) {
+            AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+          } else {
+            AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
+          }
+        } else {
+          AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        }
       } else {
         AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
       }

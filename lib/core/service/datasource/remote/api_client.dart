@@ -239,14 +239,19 @@ class ApiClient {
       }
 
       if (error.type == DioExceptionType.badResponse) {
+        String errorMessage = 'Unexpected server response.';
+        if (data is Map && data['message'] != null) {
+          errorMessage = data['message'].toString();
+        } else if (data is String) {
+          errorMessage = data;
+        } else if (data is List) {
+          errorMessage = data.join('\n');
+        }
+
         return Response(
           requestOptions: requestOptions,
           statusCode: statusCode,
-          data: {
-            'success': false,
-            'message': data['message'] ?? 'Unexpected server response.',
-            'data': data,
-          },
+          data: {'success': false, 'message': errorMessage, 'data': data},
         );
       }
 

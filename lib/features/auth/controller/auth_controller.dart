@@ -58,54 +58,55 @@ class AuthController extends GetxController {
     required String emailSignUp,
     required String passwordSignUp,
   }) async {
-    try {
-      signUpLoadingMethod(true);
-      final body = {
-        "full_name": nameSignUp.trim(),
-        "email": emailSignUp.trim(),
-        "password": passwordSignUp.trim(),
-        "role": CommonController.to.isUser.value ? "DRIVER" : "CUSTOMER",
-      };
+    signUpLoadingMethod(true);
+    final body = {
+      "full_name": nameSignUp.trim(),
+      "email": emailSignUp.trim(),
+      "password": passwordSignUp.trim(),
+      "role": CommonController.to.isUser.value ? "DRIVER" : "CUSTOMER",
+    };
 
-      AppConfig.logger.i(body);
+    AppConfig.logger.i(body);
 
-      final response = await apiClient.post(
-        url: ApiUrls.register(),
-        body: body,
+    final response = await apiClient.post(url: ApiUrls.register(), body: body);
+
+    AppConfig.logger.i(response.data);
+
+    if (response.statusCode == 201) {
+      signUpLoadingMethod(false);
+
+      AppToast.success(
+        message: response.data?['message'].toString() ?? "Success",
       );
 
-      AppConfig.logger.i(response.data);
-
-      if (response.statusCode == 201) {
-        signUpLoadingMethod(false);
-
-        AppToast.success(
-          message: response.data?['message'].toString() ?? "Success",
-        );
-
-        final token = response.data?['data']?['accessToken'] as String?;
-        if (token != null) {
-          await localService.saveToken(token: token);
-        }
-
-        final body = {
-          "email": emailSignUp,
-          "isSignUp": true,
-          "token": token ?? '',
-        };
-
-        AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
-      } else {
-        signUpLoadingMethod(false);
-        AppToast.error(
-          message: response.data?['message'].toString() ?? "Error",
-        );
+      final token = response.data?['data']?['accessToken'] as String?;
+      final status = response.data?['data']?['status'] as String?;
+      final isProfileCompleted =
+          response.data?['data']?['isProfileCompleted'] as bool?;
+      await localService.saveStatus(status ?? '');
+      await localService.saveIsProfileCompleted(isProfileCompleted ?? false);
+      if (token != null) {
+        await localService.saveToken(token: token);
       }
-    } catch (err) {
+
+      final body = {
+        "email": emailSignUp,
+        "isSignUp": true,
+        "token": token ?? '',
+      };
+
+      AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
+    } else {
       signUpLoadingMethod(false);
-      AppConfig.logger.e(err);
-      AppToast.error(message: "Something went wrong");
+      AppToast.error(message: response.data?['message'].toString() ?? "Error");
     }
+    // try {
+
+    // } catch (err) {
+    //   signUpLoadingMethod(false);
+    //   AppConfig.logger.e(err);
+    //   AppToast.error(message: "Something went wrong");
+    // }
   }
 
   // ===================== Verify OTP Section ===============
@@ -224,8 +225,11 @@ class AuthController extends GetxController {
         final data = response.data['data'];
         final token = data['accessToken']?.toString() ?? "";
         final refreshToken = data['refreshToken']?.toString() ?? "";
-        final userId = data['user']['id']?.toString() ?? "";
+        final userId = data['user']['_id']?.toString() ?? "";
         final role = data['user']['role']?.toString() ?? "";
+        final status = data['user']['status']?.toString() ?? "";
+        final isProfileCompleted =
+            data['user']['is_profile_completed'] as bool? ?? false;
 
         await localService.saveUserdata(
           token: token,
@@ -233,11 +237,21 @@ class AuthController extends GetxController {
           id: userId,
           role: role,
         );
+        await localService.saveStatus(status);
+        await localService.saveIsProfileCompleted(isProfileCompleted);
 
         if (role == "CUSTOMER") {
           AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
         } else {
-          AppRouter.route.goNamed(RoutePath.driverNavScreen);
+          if (status == "PENDING") {
+            if (!isProfileCompleted) {
+              AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+            } else {
+              AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
+            }
+          } else {
+            AppRouter.route.goNamed(RoutePath.driverNavScreen);
+          }
         }
       } else {
         signInLoadingMethod(false);
