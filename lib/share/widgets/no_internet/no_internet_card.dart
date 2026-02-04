@@ -31,7 +31,7 @@ class NoInternetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveTitle =
         title ??
-        "Oops,You re offline check your connection and give it another shot";
+        "Oops, You're offline check your connection and give it another shot";
     final effectiveSubtitle = subtitle ?? '';
     final effectiveButtonText = buttonText ?? "Try Again";
 

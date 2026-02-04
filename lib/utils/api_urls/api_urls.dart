@@ -40,4 +40,7 @@ class ApiUrls {
   static String registerDriver() => '$base/v1/driver/info';
   static String getDriverParcels({required int page}) =>
       '$base/v1/driver/available-for-driver?page=$page&limit=10';
+
+  static String getParcelDetails({required String id}) =>
+      '$base/v1/parcel/get/$id';
 }

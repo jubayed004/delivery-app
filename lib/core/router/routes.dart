@@ -287,8 +287,9 @@ class AppRouter {
         name: RoutePath.parcelDetailsScreen,
         path: RoutePath.parcelDetailsScreen.addBasePath,
         pageBuilder: (context, state) {
+          final parcelId = state.extra as String? ?? '';
           return _buildPageWithAnimation(
-            child: ParcelDetailsScreen(),
+            child: ParcelDetailsScreen(parcelId: parcelId),
             state: state,
           );
         },

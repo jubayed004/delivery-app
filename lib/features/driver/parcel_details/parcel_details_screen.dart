@@ -1,17 +1,49 @@
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
+import 'package:delivery_app/features/driver/parcel_details/controller/parcel_details_controller.dart';
+import 'package:delivery_app/helper/date_converter/date_converter.dart';
+import 'package:delivery_app/share/widgets/button/custom_button.dart';
+import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
+import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
+import 'package:delivery_app/share/widgets/no_internet/error_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_internet_card.dart';
+import 'package:delivery_app/utils/app_strings/app_strings.dart';
+import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:delivery_app/utils/enum/app_enum.dart';
+import 'package:delivery_app/utils/extension/base_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:delivery_app/core/router/route_path.dart';
-import 'package:delivery_app/core/router/routes.dart';
-import 'package:delivery_app/share/widgets/button/custom_button.dart';
-import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
-import 'package:delivery_app/utils/app_strings/app_strings.dart';
-import 'package:delivery_app/utils/color/app_colors.dart';
-import 'package:delivery_app/utils/extension/base_extension.dart';
 
-class ParcelDetailsScreen extends StatelessWidget {
-  const ParcelDetailsScreen({super.key});
+class ParcelDetailsScreen extends StatefulWidget {
+  final String parcelId;
+  const ParcelDetailsScreen({super.key, required this.parcelId});
+
+  @override
+  State<ParcelDetailsScreen> createState() => _ParcelDetailsScreenState();
+}
+
+class _ParcelDetailsScreenState extends State<ParcelDetailsScreen> {
+  final ParcelDetailsController controller = Get.put(ParcelDetailsController());
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.parcelId.isNotEmpty) {
+        controller.getParcelDetails(widget.parcelId);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ParcelDetailsController>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,159 +55,238 @@ class ParcelDetailsScreen extends StatelessWidget {
         backgroundColor: AppColors.white,
         scrolledUnderElevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
-          children: [
-            Gap(20.h),
-            // Parcel Image
-            CustomNetworkImage(
-              imageUrl:
-                  "https://static.vecteezy.com/system/resources/thumbnails/033/226/263/small/close-up-packing-cardboard-box-on-a-table-with-copyspace-against-background-ai-generated-photo.jpg", // Example parcel image
-              height: 200.h,
-              width: double.infinity,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            Gap(24.h),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          if (widget.parcelId.isNotEmpty) {
+            await controller.getParcelDetails(widget.parcelId);
+          }
+        },
+        child: CustomScrollView(
+          slivers: [
+            Obx(() {
+              switch (controller.loading.value) {
+                case ApiStatus.loading:
+                  return const SliverFillRemaining(
+                    child: Center(child: LoadingWidget()),
+                  );
 
-            // Details Card
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16.r),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.parcelId.tr,
-                    value: "112222",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: "${AppStrings.parcelName.tr}:",
-                    value: "Electronics",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.size.tr,
-                    value: "Small",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: "${AppStrings.weight.tr}:",
-                    value: "1k",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.price.tr,
-                    value: "\$50.00",
-                    valueColor: AppColors.redColor,
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.parcelPriority.tr,
-                    value: "Urgency",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.date.tr,
-                    value: "12 Aug25-15Aug25",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.time.tr,
-                    value: "Fri 28 at 11:30 am - 12:00pm",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.pickupLocation.tr,
-                    value: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
-                    isMultiLine: true,
-                  ),
-                  Gap(16.h),
-                  Text(
-                    'Sender details'.tr,
-                    style: context.titleMedium.copyWith(
-                      fontWeight: FontWeight.w600,
+                case ApiStatus.error:
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: ErrorCard(
+                        onTap: () {
+                          if (widget.parcelId.isNotEmpty) {
+                            controller.getParcelDetails(widget.parcelId);
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.receiverName.tr,
-                    value: "Chime Alozie",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.receiverPhone.tr,
-                    value: "12233333",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: "${"sender location".tr} :",
-                    value: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
-                    isMultiLine: true,
-                  ),
-                  Gap(16.h),
-                  Text(
-                    AppStrings.receiverDetails.tr,
-                    style: context.titleMedium.copyWith(
-                      fontWeight: FontWeight.w600,
+                  );
+
+                case ApiStatus.internetError:
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: NoInternetCard(
+                        onTap: () {
+                          if (widget.parcelId.isNotEmpty) {
+                            controller.getParcelDetails(widget.parcelId);
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.receiverName.tr,
-                    value: "Chime Alozie",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.receiverPhone.tr,
-                    value: "12233333",
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label:
-                        "${AppStrings.deliveryPoint.tr} :", // Closest match to "Deliver location"
-                    value: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
-                    isMultiLine: true,
-                  ),
-                  Gap(8.h),
-                  _buildDetailRow(
-                    context,
-                    label: AppStrings.senderRemarks.tr,
-                    value:
-                        "Integer turpis quam, laoreet id orci nec, ultrices lacinia nunc. Aliquam erat vo",
-                    isMultiLine: true,
-                  ),
-                ],
-              ),
-            ),
-            Gap(100.h), // Space for bottom button
+                  );
+
+                case ApiStatus.noDataFound:
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: NoDataCard(
+                        onTap: () {
+                          if (widget.parcelId.isNotEmpty) {
+                            controller.getParcelDetails(widget.parcelId);
+                          }
+                        },
+                        title: "No details found".tr,
+                      ),
+                    ),
+                  );
+
+                case ApiStatus.completed:
+                  final data = controller.parcelDetails.value;
+                  if (data == null) {
+                    return SliverFillRemaining(
+                      child: Center(
+                        child: NoDataCard(
+                          onTap: () {
+                            if (widget.parcelId.isNotEmpty) {
+                              controller.getParcelDetails(widget.parcelId);
+                            }
+                          },
+                          title: "No details found".tr,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Gap(20.h),
+                          // Parcel Image
+                          CustomNetworkImage(
+                            imageUrl:
+                                (data.parcelImages != null &&
+                                    data.parcelImages!.isNotEmpty)
+                                ? data.parcelImages!.first
+                                : "", // Use first image or placeholder
+                            height: 200.h,
+                            width: double.infinity,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          Gap(24.h),
+
+                          // Details Card
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(16.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.parcelId.tr,
+                                  value: data.parcelId ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: "${AppStrings.parcelName.tr}:",
+                                  value: data.parcelName ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.size.tr,
+                                  value: data.size ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: "${AppStrings.weight.tr}:",
+                                  value: "${data.weight ?? 0} kg",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.price.tr,
+                                  value: "\$${data.finalPrice ?? 0}",
+                                  valueColor: AppColors.redColor,
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.parcelPriority.tr,
+                                  value: data.priority ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.date.tr,
+                                  value: data.date != null
+                                      ? DateConverter.formatDate(
+                                          dateTime: data.date,
+                                        )
+                                      : "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.time.tr,
+                                  value: data.time ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.pickupLocation.tr,
+                                  value: data.pickupLocation?.address ?? "N/A",
+                                  isMultiLine: true,
+                                ),
+                                Gap(16.h),
+                                Text(
+                                  'Sender details'.tr,
+                                  style: context.titleMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.receiverName.tr,
+                                  value: data.userId?.fullName ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.receiverPhone.tr,
+                                  value: data.userId?.phoneNumber ?? "N/A",
+                                ),
+                                Gap(16.h),
+                                Text(
+                                  AppStrings.receiverDetails.tr,
+                                  style: context.titleMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.receiverName.tr,
+                                  value: data.receiverName ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.receiverPhone.tr,
+                                  value: data.receiverPhone ?? "N/A",
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: "${AppStrings.deliveryPoint.tr} :",
+                                  value:
+                                      data.handoverLocation?.address ?? "N/A",
+                                  isMultiLine: true,
+                                ),
+                                Gap(8.h),
+                                _buildDetailRow(
+                                  context,
+                                  label: AppStrings.senderRemarks.tr,
+                                  value: data.senderRemarks ?? "N/A",
+                                  isMultiLine: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Gap(100.h), // Space for bottom button
+                        ],
+                      ),
+                    ),
+                  );
+              }
+            }),
           ],
         ),
       ),

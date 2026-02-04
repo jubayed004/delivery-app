@@ -10,6 +10,7 @@ import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:delivery_app/share/widgets/no_internet/error_card.dart';
 import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
+import 'package:delivery_app/share/widgets/no_internet/no_internet_card.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
@@ -32,7 +33,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   @override
   void initState() {
     super.initState();
-    controller.fetchPage(1);
+    controller.pagingController.refresh();
     profileController.getProfile();
   }
 
@@ -47,14 +48,21 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         child: CustomScrollView(
           slivers: [
             // Header
-            SliverToBoxAdapter(
-              child: DriverHeader(
-                userName: profileController.profile.value.data?.fullName ?? "",
-                profileImageUrl:
-                    profileController.profile.value.data?.profilePicture ?? "",
-                onNotificationTap: () {
-                  AppRouter.route.pushNamed(RoutePath.driverNotificationScreen);
-                },
+            Obx(
+              () => SliverToBoxAdapter(
+                child: DriverHeader(
+                  userName:
+                      profileController.profile.value.data?.fullName ??
+                      "Alviniloyun",
+                  profileImageUrl:
+                      profileController.profile.value.data?.profilePicture ??
+                      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                  onNotificationTap: () {
+                    AppRouter.route.pushNamed(
+                      RoutePath.driverNotificationScreen,
+                    );
+                  },
+                ),
               ),
             ),
 
@@ -124,6 +132,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       onImageTap: () {
                         AppRouter.route.pushNamed(
                           RoutePath.parcelDetailsScreen,
+                          extra: item.id,
                         );
                       },
                       onTrackTap: () {
@@ -139,7 +148,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     ),
                   );
                 },
-                firstPageErrorIndicatorBuilder: (context) => ErrorCard(
+                firstPageErrorIndicatorBuilder: (context) => NoInternetCard(
                   onTap: () => controller.pagingController.refresh(),
                 ),
                 noItemsFoundIndicatorBuilder: (context) => NoDataCard(
