@@ -61,7 +61,7 @@ class _ParcelsScreenState extends State<ParcelsScreen>
                   borderRadius: BorderRadius.circular(8.r),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primaryColor.withOpacity(0.3),
+                      color: AppColors.primaryColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

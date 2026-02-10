@@ -287,7 +287,18 @@ class AppRouter {
         name: RoutePath.parcelDetailsScreen,
         path: RoutePath.parcelDetailsScreen.addBasePath,
         pageBuilder: (context, state) {
-          final parcelId = state.extra as String? ?? '';
+          final extra = state.extra;
+          String parcelId;
+
+          if (extra is String) {
+            parcelId = extra;
+          } else if (extra is Map<String, dynamic>) {
+            parcelId = extra['_id'] ?? extra['id'] ?? '';
+          } else {
+            // Handle DriverParcelItem or any object with an 'id' property
+            parcelId = (extra as dynamic).id ?? '';
+          }
+
           return _buildPageWithAnimation(
             child: ParcelDetailsScreen(parcelId: parcelId),
             state: state,

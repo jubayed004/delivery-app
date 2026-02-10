@@ -131,7 +131,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       onImageTap: () {
                         AppRouter.route.pushNamed(
                           RoutePath.parcelDetailsScreen,
-                          extra: item.id,
+                          extra: item,
                         );
                       },
                       onTrackTap: () {

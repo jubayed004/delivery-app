@@ -11,7 +11,7 @@ class ParcelDetailsController extends GetxController {
   final ApiClient _apiClient = sl();
   final loading = ApiStatus.loading.obs;
   void loadingMethod(ApiStatus status) => loading.value = status;
-  var parcelDetails = Rxn<Data>();
+  var parcelDetails = Rxn<ParcelDetailsData>();
   Future<void> getParcelDetails(String id) async {
     loadingMethod(ApiStatus.loading);
     try {

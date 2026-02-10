@@ -14,6 +14,7 @@ class ParcelCard extends StatelessWidget {
   final String size;
   final String price;
   final String imageUrl;
+  final VoidCallback onTap;
 
   const ParcelCard({
     super.key,
@@ -23,6 +24,7 @@ class ParcelCard extends StatelessWidget {
     required this.size,
     required this.price,
     required this.imageUrl,
+    required this.onTap,
   });
 
   @override
@@ -53,33 +55,36 @@ class ParcelCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: CustomNetworkImage(
-                        imageUrl: imageUrl,
-                        width: 100.w,
-                        height: 80.h,
-                        fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: onTap,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Image
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: CustomNetworkImage(
+                          imageUrl: imageUrl,
+                          width: 100.w,
+                          height: 80.h,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 12.w),
-                    // Details
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildDetailRow("Parcel ID", parcelId),
-                          _buildDetailRow("Parcel Name", parcelName),
-                          _buildDetailRow("Size", size),
-                          _buildDetailRow("Price", "\$$price"),
-                        ],
+                      SizedBox(width: 12.w),
+                      // Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDetailRow("Parcel ID", parcelId),
+                            _buildDetailRow("Parcel Name", parcelName),
+                            _buildDetailRow("Size", size),
+                            _buildDetailRow("Price", "\$$price"),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Gap(12.h),
                 // Actions
