@@ -61,8 +61,9 @@ class LocalService {
           await prefs.setString(LocalKeys.userId, id) &&
           await prefs.setString(LocalKeys.role, role);
 
-      if (!success)
+      if (!success) {
         AppLogger.log("Failed to save user data", type: AppLogType.error);
+      }
       return success;
     } catch (e, stack) {
       AppLogger.log(
@@ -77,8 +78,9 @@ class LocalService {
     try {
       final prefs = await _prefs;
       final success = await prefs.setString(LocalKeys.token, token);
-      if (!success)
+      if (!success) {
         AppLogger.log("Failed to save token", type: AppLogType.error);
+      }
       return success;
     } catch (e, stack) {
       AppLogger.log("Error saving token: $e\n$stack", type: AppLogType.error);

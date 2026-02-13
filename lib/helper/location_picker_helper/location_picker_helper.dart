@@ -29,7 +29,6 @@ Future<void> openLocationPicker({
                 ),
                 address,
               );
-
               if (isFromField) {
                 fromLocation.value = location;
                 fromController.text = address;

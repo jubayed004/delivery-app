@@ -295,7 +295,6 @@ class AppRouter {
           } else if (extra is Map<String, dynamic>) {
             parcelId = extra['_id'] ?? extra['id'] ?? '';
           } else {
-            // Handle DriverParcelItem or any object with an 'id' property
             parcelId = (extra as dynamic).id ?? '';
           }
 
