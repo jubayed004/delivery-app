@@ -12,4 +12,9 @@ class CustomPrinter extends LogPrinter {
     final message = event.message;
     return [color!('$emoji $className : $message')];
   }
+
+
+
+
+
 }

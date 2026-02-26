@@ -1,3 +1,4 @@
+import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
@@ -17,6 +18,7 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<NetworkChecker>(() => NetworkChecker());
   sl.registerLazySingleton<LocalService>(() => LocalService());
+  sl.registerLazySingleton<SocketApi>(() => SocketApi());
   sl.registerLazySingleton<ApiClient>(
     () => ApiClient(
       dio: sl<Dio>(),

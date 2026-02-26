@@ -8,6 +8,7 @@ import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+
 class MyParcelController extends GetxController {
   final RxList<ParcelItem> parcels = <ParcelItem>[].obs;
 
@@ -27,6 +28,7 @@ class MyParcelController extends GetxController {
   final PagingController<int, ParcelItem> completedController =
       PagingController(firstPageKey: 1);
   final PagingController<int, ParcelItem> rejectedController = PagingController(
+
     firstPageKey: 1,
   );
 

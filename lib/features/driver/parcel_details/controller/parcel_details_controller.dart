@@ -8,14 +8,14 @@ import 'package:delivery_app/utils/enum/app_enum.dart';
 import 'package:get/get.dart';
 
 class ParcelDetailsController extends GetxController {
-  final ApiClient _apiClient = sl();
+  final ApiClient apiClient = sl();
   final loading = ApiStatus.loading.obs;
   void loadingMethod(ApiStatus status) => loading.value = status;
   var parcelDetails = Rxn<ParcelDetailsData>();
   Future<void> getParcelDetails(String id) async {
     loadingMethod(ApiStatus.loading);
     try {
-      final response = await _apiClient.get(
+      final response = await apiClient.get(
         url: ApiUrls.getParcelDetails(id: id),
       );
 
