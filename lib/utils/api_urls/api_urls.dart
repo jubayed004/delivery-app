@@ -2,7 +2,7 @@ import 'package:delivery_app/utils/config/app_config.dart';
 
 class ApiUrls {
   static const base = AppConfig.baseURL;
-  static socketUrl({required String id}) => 'http://13.50.247.46?id=$id';
+  static String socketUrl() => 'https://whxmt66k-5000.inc1.devtunnels.ms';
   static String login() => '$base/v1/auth/login';
   static String register() => '$base/v1/auth/register';
   static String verifyOtp() => '$base/v1/auth/verify-otp';
@@ -26,6 +26,9 @@ class ApiUrls {
       '$base/v1/parcel/reject-price/$id';
   static String acceptFinalOffer({required String id}) =>
       '$base/v1/parcel/accept-price/$id';
+  static String getParcelOwnerReview({required int pageKey}) =>
+      '$base/v1/review/get?page=$pageKey&limit=10';
+  static String createReview() => '$base/v1/review/create';
   //============== Settting===================
 
   static String changePassword() => '$base/v1/auth/change-password';
@@ -43,4 +46,18 @@ class ApiUrls {
 
   static String getParcelDetails({required String id}) =>
       '$base/v1/parcel/get/$id';
+
+  static String getConversation({required int pageKey}) =>
+      '$base/v1/chat/my-chats?page=$pageKey&limit=10';
+
+  static String getMessageForChat({required int pageKey, required String id}) =>
+      '$base/v1/chat/messages/$id?page=$pageKey&limit=10';
+
+  static String sendMessage() => '$base/v1/chat/send';
+  static String readTheMessage({required String id}) =>
+      '$base/v1/chat/mark-as-read/$id';
+  static String getNotification({required int pageKey}) =>
+      '$base/v1/notifications/get-all?page=$pageKey&limit=10';
+
+  static String chatInitiateP2P() => '$base/v1/chat/initiate-p2p';
 }

@@ -1,4 +1,6 @@
 import 'package:delivery_app/core/di/injection.dart';
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
@@ -7,7 +9,6 @@ import 'package:delivery_app/utils/api_urls/api_urls.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-
 
 class MyParcelController extends GetxController {
   final RxList<ParcelItem> parcels = <ParcelItem>[].obs;
@@ -28,7 +29,6 @@ class MyParcelController extends GetxController {
   final PagingController<int, ParcelItem> completedController =
       PagingController(firstPageKey: 1);
   final PagingController<int, ParcelItem> rejectedController = PagingController(
-
     firstPageKey: 1,
   );
 
@@ -180,6 +180,7 @@ class MyParcelController extends GetxController {
       }
     } catch (e) {
       completedController.error = e;
+      AppConfig.logger.e(e.toString());
       AppToast.error(message: e.toString());
     } finally {
       isLoadingCompleted(false);
@@ -211,6 +212,42 @@ class MyParcelController extends GetxController {
       AppToast.error(message: e.toString());
     } finally {
       isLoadingRejected(false);
+    }
+  }
+
+  //=================== chat with driver ===================
+
+  final loadingChatWithDriver = false.obs;
+  void loadingChatWithDriverMethod(bool status) =>
+      loadingChatWithDriver.value = status;
+  Future<void> chatInitiateP2P({
+    required String id,
+    required dynamic parcel,
+  }) async {
+    try {
+      loadingChatWithDriverMethod(true);
+      final response = await apiClient.post(
+        url: ApiUrls.chatInitiateP2P(),
+        body: {"recipientId": id},
+      );
+      AppConfig.logger.i("id: $id");
+      AppConfig.logger.i(
+        "ApiUrls.chatInitiateP2P(): ${ApiUrls.chatInitiateP2P()}",
+      );
+      AppConfig.logger.i("response.data: ${response.data}");
+      if (response.statusCode == 200) {
+        loadingChatWithDriverMethod(false);
+        final chatId = response.data["data"]["_id"];
+        AppConfig.logger.i("chat Room Id: $chatId");
+        AppRouter.route.pushNamed(RoutePath.chatScreen, extra: chatId);
+        return;
+      } else {
+        loadingChatWithDriverMethod(false);
+        AppConfig.logger.e(response.data);
+      }
+    } catch (e) {
+      loadingChatWithDriverMethod(false);
+      AppToast.error(message: e.toString());
     }
   }
 

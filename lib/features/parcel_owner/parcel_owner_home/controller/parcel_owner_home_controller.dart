@@ -2,6 +2,7 @@ import 'package:delivery_app/core/di/injection.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_home/model/parcel_owner_home_model.dart';
+import 'package:delivery_app/features/profile/controller/profile_controller.dart';
 import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ParcelOwnerHomeController extends GetxController {
+  final ProfileController profileController = Get.find<ProfileController>();
   final ApiClient apiClient = sl();
   final LocalService localService = sl();
 

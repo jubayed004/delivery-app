@@ -19,10 +19,9 @@ import 'package:delivery_app/features/auth/reset/reset_password_screen.dart';
 import 'package:delivery_app/features/auth/sign_up/sign_up_screen.dart';
 import 'package:delivery_app/features/auth/verify_otp/verify_otp_screen.dart';
 import 'package:delivery_app/features/chat/chat_screen.dart';
-import 'package:delivery_app/features/chat/video_call_screen.dart';
 import 'package:delivery_app/features/driver/customer_review/customer_review_screen.dart';
 import 'package:delivery_app/features/driver/driver_nav/driver_nav_screen.dart';
-import 'package:delivery_app/features/driver/driver_notification/driver_notification_screen.dart';
+import 'package:delivery_app/features/notification/view/notification_screen.dart';
 import 'package:delivery_app/features/driver/parcel_details/parcel_otp_screen.dart';
 import 'package:delivery_app/features/driver/parcel_details/transaction_screen.dart';
 import 'package:delivery_app/features/driver/professional_info/professional_info_edit_screen.dart';
@@ -269,20 +268,34 @@ class AppRouter {
         name: RoutePath.chatScreen,
         path: RoutePath.chatScreen.addBasePath,
         pageBuilder: (context, state) {
-          return _buildPageWithAnimation(child: ChatScreen(), state: state);
-        },
-      ),
-      GoRoute(
-        name: RoutePath.audioCallScreen,
-        path: RoutePath.audioCallScreen.addBasePath,
-        pageBuilder: (context, state) {
+          final extra = state.extra;
+          String chatId = '';
+          if (extra != null) {
+            if (extra is String) {
+              chatId = extra;
+            } else if (extra is Map<String, dynamic>) {
+              chatId = extra['id'] ?? extra['_id'] ?? '';
+            } else {
+              chatId = (extra as dynamic).id ?? '';
+            }
+          }
           return _buildPageWithAnimation(
-            child: AudioCallScreen(),
+            child: ChatScreen(id: chatId),
             state: state,
           );
         },
       ),
 
+      // GoRoute(
+      //   name: RoutePath.audioCallScreen,
+      //   path: RoutePath.audioCallScreen.addBasePath,
+      //   pageBuilder: (context, state) {
+      //     return _buildPageWithAnimation(
+      //       child: AudioCallScreen(),
+      //       state: state,
+      //     );
+      //   },
+      // ),
       GoRoute(
         name: RoutePath.parcelDetailsScreen,
         path: RoutePath.parcelDetailsScreen.addBasePath,
@@ -305,11 +318,11 @@ class AppRouter {
         },
       ),
       GoRoute(
-        name: RoutePath.driverNotificationScreen,
-        path: RoutePath.driverNotificationScreen.addBasePath,
+        name: RoutePath.notificationScreen,
+        path: RoutePath.notificationScreen.addBasePath,
         pageBuilder: (context, state) {
           return _buildPageWithAnimation(
-            child: DriverNotificationScreen(),
+            child: NotificationScreen(),
             state: state,
           );
         },

@@ -9,13 +9,14 @@ import 'package:delivery_app/share/widgets/custom_buttom_sheet/custom_buttom_she
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/common_controller/common_controller.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({super.key});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     profileController.getProfile();
+    AppConfig.logger.i(CommonController.to.isUser.value);
     super.initState();
   }
 
@@ -53,57 +55,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Gap(32.h),
                       ProfileSectionTitle(title: 'SETTINGS SECTION'.tr),
                       Gap(12.h),
-                      if (CommonController.to.isUser.value == false)
-                        ProfileMenuItem(
-                          title: AppStrings.professionalInfo.tr,
-                          onTap: () {
-                            AppRouter.route.pushNamed(
-                              RoutePath.professionalInfoScreen,
-                            );
-                          },
-                        ),
-                      if (CommonController.to.isUser.value == false)
-                        ProfileMenuItem(
-                          title: AppStrings.reviewsAndRatings.tr,
-                          onTap: () {
-                            AppRouter.route.pushNamed(
-                              RoutePath.customerReviewScreen,
-                            );
-                          },
-                        ),
-                      /* if(CommonController.to.isSeller.value)
-                      ProfileMenuItem(title: AppStrings.adPromotional.tr, onTap: (){*/
-                      /*AppRouter.route.pushNamed(RoutePath.personalInformationScreen)*/
-                      /*}),*/
-                      ProfileMenuItem(
-                        title: AppStrings.accountSetting.tr,
-                        onTap: () {
-                          AppRouter.route.pushNamed(
-                            RoutePath.passwordAndSecurityScreen,
-                          );
-                        },
-                      ),
-                      ProfileMenuItem(
-                        title: AppStrings.supportHelp.tr,
-                        onTap: () {
-                          AppRouter.route.pushNamed(
-                            RoutePath.supportHelpScreen,
-                          );
-                        },
-                      ),
-                      if (CommonController.to.isUser.value == false)
-                        ProfileMenuItem(
-                          title: AppStrings.refund.tr,
-                          onTap: () {
-                            /*AppRouter.route.pushNamed(RoutePath.favoriteTrainerScreen)*/
-                          },
-                        ),
+                      Obx(() {
+                        final isCustomer =
+                            profileController.profile.value.data?.role ==
+                            "CUSTOMER";
+                        return Column(
+                          children: [
+                            if (!isCustomer) // Only for non-customers (e.g., DRIVER)
+                              ProfileMenuItem(
+                                title: AppStrings.professionalInfo.tr,
+                                onTap: () {
+                                  AppRouter.route.pushNamed(
+                                    RoutePath.professionalInfoScreen,
+                                  );
+                                },
+                              ),
+                            if (!isCustomer)
+                              ProfileMenuItem(
+                                title: AppStrings.reviewsAndRatings.tr,
+                                onTap: () {
+                                  AppRouter.route.pushNamed(
+                                    RoutePath.customerReviewScreen,
+                                  );
+                                },
+                              ),
+                            ProfileMenuItem(
+                              title: AppStrings.accountSetting.tr,
+                              onTap: () {
+                                AppRouter.route.pushNamed(
+                                  RoutePath.passwordAndSecurityScreen,
+                                );
+                              },
+                            ),
+                            ProfileMenuItem(
+                              title: AppStrings.supportHelp.tr,
+                              onTap: () {
+                                AppRouter.route.pushNamed(
+                                  RoutePath.supportHelpScreen,
+                                );
+                              },
+                            ),
+                            if (!isCustomer)
+                              ProfileMenuItem(
+                                title: AppStrings.refund.tr,
+                                onTap: () {
+                                  /*AppRouter.route.pushNamed(RoutePath.favoriteTrainerScreen)*/
+                                },
+                              ),
+                          ],
+                        );
+                      }),
 
                       ProfileMenuItem(
                         title: AppStrings.notification.tr,
                         onTap: () {
                           AppRouter.route.pushNamed(
-                            RoutePath.driverNotificationScreen,
+                            RoutePath.notificationScreen,
                           );
                         },
                         isLast: true,

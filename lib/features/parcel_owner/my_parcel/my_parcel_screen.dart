@@ -104,7 +104,10 @@ class _MyParcelScreenState extends State<MyParcelScreen> {
                     }
                   },
                   onChatTap: () {
-                    AppRouter.route.pushNamed(RoutePath.chatScreen);
+                    controller.chatInitiateP2P(
+                      id: item.acceptedBy?.id ?? "",
+                      parcel: item,
+                    );
                   },
                   onReviewTap: () {
                     AppRouter.route.pushNamed(

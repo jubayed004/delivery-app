@@ -23,31 +23,42 @@ class SocketApi {
     }
 
     final LocalService localService = sl<LocalService>();
+    String token = await localService.getToken();
     String id = await localService.getUserId();
-    if (id.isEmpty || id == "null") {
-      debugPrint('Socket Connected >>>>>>>>>>>> FALSE userId.isEmpty <<<<<<<<<<<<');
+    if (token.isEmpty || token == "null" || id.isEmpty || id == "null") {
+      debugPrint(
+        'Socket Connected >>>>>>>>>>>> FALSE token/userId empty <<<<<<<<<<<<',
+      );
       return;
     }
 
+    debugPrint('Socket token: $token, userId: $id');
+
     _socket = io.io(
-      ApiUrls.socketUrl(id: id),
+      ApiUrls.socketUrl(),
       io.OptionBuilder()
           .setTransports(['websocket'])
           .enableAutoConnect()
           .setReconnectionDelay(2000)
           .setReconnectionAttempts(0)
           .setTimeout(5000)
+          .setExtraHeaders({'Authorization': 'Bearer $token'})
+          .setAuth({'userId': id})
           .build(),
     );
 
-    debugPrint('$id=============> Socket initialization, connected: ${_socket?.connected}');
+    debugPrint(
+      '$id=============> Socket initialization, connected: ${_socket?.connected}',
+    );
 
     // Listen for socket connection
     _socket?.onConnect((_) {
       _socket?.on('pong', (data) {
         debugPrint('Received pong from server');
       });
-      debugPrint('==============>>>>>>> Socket Connected ${_socket?.connected} ===============<<<<<<<');
+      debugPrint(
+        '==============>>>>>>> Socket Connected ${_socket?.connected} ===============<<<<<<<',
+      );
     });
 
     _socket?.on('unauthorized', (dynamic data) {

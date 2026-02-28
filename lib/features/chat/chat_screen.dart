@@ -1,22 +1,44 @@
+import 'package:delivery_app/features/chat/model/chat_model.dart';
+import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:delivery_app/core/router/route_path.dart';
-import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/chat/controller/chat_controller.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String id;
+  const ChatScreen({super.key, required this.id});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final controller = Get.put(ChatController(), permanent: false);
+  final pagingController = PagingController<int, ChatMessage>(firstPageKey: 1);
+  final scrollController = ScrollController();
+  final messageController = TextEditingController();
+  late final ChatController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ChatController(), permanent: false);
+    pagingController.addPageRequestListener((pageKey) {
+      // Assuming chat id is passed or hardcoded for now, based on user's code
+      controller.getChatList(
+        pageKey: pageKey,
+        id: widget.id,
+        pagingController: pagingController,
+      );
+    });
+  }
+
   @override
   void dispose() {
+    pagingController.dispose();
+    scrollController.dispose();
+    messageController.dispose();
     super.dispose();
     Get.delete<ChatController>();
   }
@@ -28,18 +50,10 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
         scrolledUnderElevation: 0,
-
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*     const CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://i.pravatar.cc/150?img=5',
-              ), // Placeholder image
-              radius: 20,
-            ),
-            const SizedBox(width: 12),*/
             Text(
               "Ann Smith",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -52,12 +66,6 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           Row(
             children: [
-              IconButton(
-                onPressed: () {
-                  AppRouter.route.pushNamed(RoutePath.audioCallScreen);
-                },
-                icon: Icon(Iconsax.call5, size: 20, color: Colors.green),
-              ),
               IconButton(
                 icon: const Icon(
                   Icons.more_horiz,
@@ -72,19 +80,16 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Obx(() {
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: controller.messages.length,
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  if (message.isSystem) {
-                    return _buildSystemMessage(context, message);
-                  }
-                  return _buildMessageBubble(context, message);
+            child: PagedListView<int, ChatMessage>(
+              pagingController: pagingController,
+              padding: const EdgeInsets.all(16),
+              reverse: true,
+              builderDelegate: PagedChildBuilderDelegate<ChatMessage>(
+                itemBuilder: (context, item, index) {
+                  return _buildMessageBubble(context, item);
                 },
-              );
-            }),
+              ),
+            ),
           ),
           _buildMessageInput(context, controller),
         ],
@@ -92,72 +97,55 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildSystemMessage(BuildContext context, ChatMessage message) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          message.text,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppColors.grayTextSecondaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildMessageBubble(BuildContext context, ChatMessage message) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: message.isSender
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
-            ),
-            decoration: BoxDecoration(
-              color: message.isSender
-                  ? AppColors.primaryColor
-                  : AppColors.bgSecondaryButtonColor,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(16),
-                topRight: const Radius.circular(16),
-                bottomLeft: Radius.circular(message.isSender ? 16 : 0),
-                bottomRight: Radius.circular(message.isSender ? 0 : 16),
+    return Obx(() {
+      final bool isSender = message.senderId?.id == controller.userId.value;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          crossAxisAlignment: isSender
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
+              decoration: BoxDecoration(
+                color: isSender
+                    ? AppColors.primaryColor
+                    : AppColors.bgSecondaryButtonColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isSender ? 16 : 0),
+                  bottomRight: Radius.circular(isSender ? 0 : 16),
+                ),
+              ),
+              child: Text(
+                message.content ?? "",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isSender
+                      ? AppColors.white
+                      : AppColors.blackMainTextColor,
+                ),
               ),
             ),
-            child: Text(
-              message.text,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: message.isSender
-                    ? AppColors.white
-                    : AppColors.blackMainTextColor,
+            const SizedBox(height: 4),
+            Text(
+              "", // Formatting time based on message.createdAt can be done if needed
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.grayTextSecondaryColor,
               ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            message.time,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.grayTextSecondaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildMessageInput(BuildContext context, ChatController controller) {
-    final textController = TextEditingController();
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -167,22 +155,25 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: textController,
-              decoration: InputDecoration(
-                hintText: "Enter message...",
-                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.grayTextSecondaryColor,
-                ),
-                border: InputBorder.none,
-              ),
+            child: CustomTextField(
+              controller: messageController,
+              hintText: "Enter message...",
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send, color: AppColors.primaryColor),
             onPressed: () {
-              controller.sendMessage(textController.text);
-              textController.clear();
+              Map<String, String> body = {
+                "chat_id": widget.id,
+                "content": messageController.text,
+              };
+              if (messageController.text.isNotEmpty) {
+                controller.sendMessage(
+                  body: body,
+                  pagingController: pagingController,
+                );
+                messageController.clear();
+              }
             },
           ),
         ],

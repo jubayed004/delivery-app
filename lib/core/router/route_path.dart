@@ -28,7 +28,7 @@ class RoutePath {
   static const String chatScreen = 'chatScreen';
   static const String audioCallScreen = 'audioCallScreen';
   static const String parcelDetailsScreen = 'parcelDetailsScreen';
-  static const String driverNotificationScreen = 'driverNotificationScreen';
+  static const String notificationScreen = 'notificationScreen';
   static const String commuterRegistrationScreen = 'commuterRegistrationScreen';
   static const String parcelOwnerNavScreen = 'parcelOwnerNavScreen';
   static const String supportHelpScreen = 'supportHelpScreen';

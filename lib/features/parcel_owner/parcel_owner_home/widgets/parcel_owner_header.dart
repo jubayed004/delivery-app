@@ -1,3 +1,6 @@
+import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/router/routes.dart';
+import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -6,7 +9,16 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ParcelOwnerHeader extends StatelessWidget {
-  const ParcelOwnerHeader({super.key});
+  final String name;
+  final String imageUrl;
+  final String greeting;
+
+  const ParcelOwnerHeader({
+    super.key,
+    required this.name,
+    required this.imageUrl,
+    this.greeting = "Welcome back!",
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +38,13 @@ class ParcelOwnerHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 28.r,
-            backgroundImage: const NetworkImage(
-              "https://i.pravatar.cc/150?img=12",
-            ),
+          CustomNetworkImage(
+            imageUrl: imageUrl.isNotEmpty
+                ? imageUrl
+                : "https://i.pravatar.cc/150?img=12",
+            borderRadius: BorderRadius.circular(28.r),
+            width: 56.w,
+            height: 56.w,
           ),
           Gap(12.w),
           Expanded(
@@ -38,26 +52,31 @@ class ParcelOwnerHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Hello Alvinoye",
+                  "Hello $name",
                   style: context.titleLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  "Welcome back!",
+                  greeting,
                   style: context.bodyMedium.copyWith(color: Colors.white70),
                 ),
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(8.r),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: () {
+              AppRouter.route.pushNamed(RoutePath.notificationScreen);
+            },
+            child: Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: .1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Iconsax.notification, color: Colors.white),
             ),
-            child: const Icon(Iconsax.notification, color: Colors.white),
           ),
         ],
       ),

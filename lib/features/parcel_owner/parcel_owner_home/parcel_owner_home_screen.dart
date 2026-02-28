@@ -1,6 +1,5 @@
 import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:delivery_app/share/widgets/network_image/custom_network_image.dart';
-
 import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +17,11 @@ import 'package:delivery_app/features/parcel_owner/parcel_owner_home/model/parce
 
 class ParcelOwnerHomeScreen extends StatelessWidget {
   ParcelOwnerHomeScreen({super.key});
-  final ParcelOwnerHomeController controller = Get.find();
+  final controller = Get.find<ParcelOwnerHomeController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundColor,
       body: RefreshIndicator(
         onRefresh: () async {
           controller.refreshAllData();
@@ -31,7 +30,16 @@ class ParcelOwnerHomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             // Header Section
-            SliverToBoxAdapter(child: const ParcelOwnerHeader()),
+            SliverToBoxAdapter(
+              child: Obx(() {
+                final profileData =
+                    controller.profileController.profile.value.data;
+                return ParcelOwnerHeader(
+                  name: profileData?.fullName ?? "Guest",
+                  imageUrl: profileData?.profilePicture ?? "",
+                );
+              }),
+            ),
 
             // Main Content
             SliverPadding(

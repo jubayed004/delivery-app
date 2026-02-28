@@ -9,8 +9,11 @@ import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
+import 'package:delivery_app/features/parcel_owner/parcel_owner_review/controller/parcel_owner_review_controller.dart';
+
 class ReviewDialog extends StatefulWidget {
-  const ReviewDialog({super.key});
+  final String parcelId;
+  const ReviewDialog({super.key, required this.parcelId});
 
   @override
   State<ReviewDialog> createState() => _ReviewDialogState();
@@ -94,7 +97,18 @@ class _ReviewDialogState extends State<ReviewDialog> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          AppRouter.route.pop();
+                          if (_rating.value == 0) {
+                            return;
+                          }
+                          final controller =
+                              Get.find<ParcelOwnerReviewController>(
+                                tag: widget.parcelId,
+                              );
+                          controller.createReview(
+                            parcelId: widget.parcelId,
+                            rating: _rating.value.toDouble(),
+                            feedback: _feedbackController.text,
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(

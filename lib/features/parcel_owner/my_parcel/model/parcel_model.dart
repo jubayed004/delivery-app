@@ -44,11 +44,11 @@ class Data {
 class ParcelItem {
   final String? id;
   final String? parcelId;
-  final UserId? userId;
+  final AcceptedBy? userId;
   final String? parcelName;
   final String? size;
   final String? vehicleType;
-  final double? weight;
+  final num? weight;
   final Location? pickupLocation;
   final Location? handoverLocation;
   final String? priority;
@@ -59,11 +59,11 @@ class ParcelItem {
   final String? receiverPhone;
   final String? senderRemarks;
   final String? status;
-  final dynamic finalPrice;
+  final num? finalPrice;
   final String? priceStatus;
   final dynamic rejectionReason;
-  final dynamic acceptedBy;
-  final dynamic acceptedAt;
+  final AcceptedBy? acceptedBy;
+  final DateTime? acceptedAt;
   final dynamic completedAt;
   final dynamic stripeCheckoutSessionId;
   final DateTime? createdAt;
@@ -103,11 +103,13 @@ class ParcelItem {
   factory ParcelItem.fromJson(Map<String, dynamic> json) => ParcelItem(
     id: json["_id"],
     parcelId: json["parcel_id"],
-    userId: json["user_id"] == null ? null : UserId.fromJson(json["user_id"]),
+    userId: json["user_id"] == null
+        ? null
+        : AcceptedBy.fromJson(json["user_id"]),
     parcelName: json["parcel_name"],
     size: json["size"],
     vehicleType: json["vehicle_type"],
-    weight: json["weight"]?.toDouble(),
+    weight: json["weight"],
     pickupLocation: json["pickup_location"] == null
         ? null
         : Location.fromJson(json["pickup_location"]),
@@ -127,8 +129,12 @@ class ParcelItem {
     finalPrice: json["final_price"],
     priceStatus: json["price_status"],
     rejectionReason: json["rejection_reason"],
-    acceptedBy: json["accepted_by"],
-    acceptedAt: json["accepted_at"],
+    acceptedBy: json["accepted_by"] == null
+        ? null
+        : AcceptedBy.fromJson(json["accepted_by"]),
+    acceptedAt: json["accepted_at"] == null
+        ? null
+        : DateTime.parse(json["accepted_at"]),
     completedAt: json["completed_at"],
     stripeCheckoutSessionId: json["stripe_checkout_session_id"],
     createdAt: json["createdAt"] == null
@@ -164,13 +170,95 @@ class ParcelItem {
     "final_price": finalPrice,
     "price_status": priceStatus,
     "rejection_reason": rejectionReason,
-    "accepted_by": acceptedBy,
-    "accepted_at": acceptedAt,
+    "accepted_by": acceptedBy?.toJson(),
+    "accepted_at": acceptedAt?.toIso8601String(),
     "completed_at": completedAt,
     "stripe_checkout_session_id": stripeCheckoutSessionId,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
     "id": datumId,
+  };
+}
+
+class AcceptedBy {
+  final String? address;
+  final String? id;
+  final String? fullName;
+  final String? email;
+  final String? role;
+  final String? status;
+  final String? profilePicture;
+  final bool? isProfileCompleted;
+  final bool? isVerified;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? passwordChangedAt;
+  final int? v;
+  final dynamic blockedBy;
+  final String? phoneNumber;
+  final String? acceptedById;
+
+  AcceptedBy({
+    this.address,
+    this.id,
+    this.fullName,
+    this.email,
+    this.role,
+    this.status,
+    this.profilePicture,
+    this.isProfileCompleted,
+    this.isVerified,
+    this.createdAt,
+    this.updatedAt,
+    this.passwordChangedAt,
+    this.v,
+    this.blockedBy,
+    this.phoneNumber,
+    this.acceptedById,
+  });
+
+  factory AcceptedBy.fromJson(Map<String, dynamic> json) => AcceptedBy(
+    address: json["address"],
+    id: json["_id"],
+    fullName: json["full_name"],
+    email: json["email"],
+    role: json["role"],
+    status: json["status"],
+    profilePicture: json["profile_picture"],
+    isProfileCompleted: json["is_profile_completed"],
+    isVerified: json["is_verified"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+    passwordChangedAt: json["password_changed_at"] == null
+        ? null
+        : DateTime.parse(json["password_changed_at"]),
+    v: json["__v"],
+    blockedBy: json["blocked_by"],
+    phoneNumber: json["phone_number"],
+    acceptedById: json["id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "address": address,
+    "_id": id,
+    "full_name": fullName,
+    "email": email,
+    "role": role,
+    "status": status,
+    "profile_picture": profilePicture,
+    "is_profile_completed": isProfileCompleted,
+    "is_verified": isVerified,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "password_changed_at": passwordChangedAt?.toIso8601String(),
+    "__v": v,
+    "blocked_by": blockedBy,
+    "phone_number": phoneNumber,
+    "id": acceptedById,
   };
 }
 
@@ -191,84 +279,6 @@ class Location {
     "address": address,
     "latitude": latitude,
     "longitude": longitude,
-  };
-}
-
-class UserId {
-  final String? id;
-  final String? fullName;
-  final String? email;
-  final String? role;
-  final String? status;
-  final String? profilePicture;
-  final bool? isProfileCompleted;
-  final bool? isVerified;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final DateTime? passwordChangedAt;
-  final int? v;
-  final String? address;
-  final String? phoneNumber;
-  final String? userIdId;
-
-  UserId({
-    this.id,
-    this.fullName,
-    this.email,
-    this.role,
-    this.status,
-    this.profilePicture,
-    this.isProfileCompleted,
-    this.isVerified,
-    this.createdAt,
-    this.updatedAt,
-    this.passwordChangedAt,
-    this.v,
-    this.address,
-    this.phoneNumber,
-    this.userIdId,
-  });
-
-  factory UserId.fromJson(Map<String, dynamic> json) => UserId(
-    id: json["_id"],
-    fullName: json["full_name"],
-    email: json["email"],
-    role: json["role"],
-    status: json["status"],
-    profilePicture: json["profile_picture"],
-    isProfileCompleted: json["is_profile_completed"],
-    isVerified: json["is_verified"],
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null
-        ? null
-        : DateTime.parse(json["updated_at"]),
-    passwordChangedAt: json["password_changed_at"] == null
-        ? null
-        : DateTime.parse(json["password_changed_at"]),
-    v: json["__v"],
-    address: json["address"],
-    phoneNumber: json["phone_number"],
-    userIdId: json["id"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "_id": id,
-    "full_name": fullName,
-    "email": email,
-    "role": role,
-    "status": status,
-    "profile_picture": profilePicture,
-    "is_profile_completed": isProfileCompleted,
-    "is_verified": isVerified,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-    "password_changed_at": passwordChangedAt?.toIso8601String(),
-    "__v": v,
-    "address": address,
-    "phone_number": phoneNumber,
-    "id": userIdId,
   };
 }
 

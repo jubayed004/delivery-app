@@ -106,14 +106,12 @@ class ProfileController extends GetxController {
         loadingLogoutMethod(false);
         AppToast.success(message: response.data["message"].toString());
         AppRouter.route.goNamed(RoutePath.loginScreen);
-        return;
       } else {
         loadingLogoutMethod(false);
-        AppToast.error(message: response.data["message"].toString());
       }
     } catch (e) {
       loadingLogoutMethod(false);
-      AppToast.error(message: e.toString());
+      AppConfig.logger.e(e.toString());
     }
   }
 
