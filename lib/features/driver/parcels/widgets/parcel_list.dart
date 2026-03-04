@@ -9,15 +9,20 @@ import 'package:delivery_app/features/driver/parcels/controller/parcel_controlle
 import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart';
 import 'package:delivery_app/features/driver/parcels/widgets/parcel_card.dart';
 
-class ParcelList extends StatelessWidget {
+class ParcelList extends StatefulWidget {
   final String status;
 
   const ParcelList({super.key, required this.status});
 
   @override
+  State<ParcelList> createState() => _ParcelListState();
+}
+
+class _ParcelListState extends State<ParcelList> {
+  final controller = Get.find<ParcelController>();
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ParcelController());
-    final pagingController = status == "Ongoing"
+    final pagingController = widget.status == "Ongoing"
         ? controller.ongoingController
         : controller.completedController;
 
@@ -33,21 +38,30 @@ class ParcelList extends StatelessWidget {
                 top: index == 0 ? 16.r : 0,
                 bottom: 16.r,
               ),
-              child: ParcelCard(
-                onTap: () {
-                  AppRouter.route.pushNamed(
-                    RoutePath.parcelDetailsScreen,
-                    extra: item,
-                  );
-                },
-                status: status,
-                parcelId: item.parcelId ?? '',
-                parcelName: item.parcelName ?? '',
-                size: item.size ?? '',
-                price: item.finalPrice?.toString() ?? '0',
-                imageUrl: item.parcelImages?.isNotEmpty == true
-                    ? item.parcelImages!.first
-                    : '',
+              child: Obx(
+                () => ParcelCard(
+                  parcelMainId: item.id ?? '',
+                  onTap: () {
+                    AppRouter.route.pushNamed(
+                      RoutePath.parcelDetailsScreen,
+                      extra: item,
+                    );
+                  },
+                  onChatTap: () {
+                    controller.chatInitiateP2P(
+                      recipientId: item.userId?.id ?? '',
+                    );
+                  },
+                  isLoadingChat: controller.loadingChatWithCustomer.value,
+                  status: widget.status,
+                  parcelId: item.parcelId ?? '',
+                  parcelName: item.parcelName ?? '',
+                  size: item.size ?? '',
+                  price: item.finalPrice?.toString() ?? '0',
+                  imageUrl: item.parcelImages?.isNotEmpty == true
+                      ? item.parcelImages!.first
+                      : '',
+                ),
               ),
             ),
             firstPageErrorIndicatorBuilder: (context) => Center(
@@ -91,7 +105,7 @@ class ParcelList extends StatelessWidget {
                   Icon(Icons.inbox_outlined, size: 64.sp, color: Colors.grey),
                   Gap(16.h),
                   Text(
-                    'No $status parcels',
+                    'No ${widget.status} parcels',
                     style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                   ),
                 ],

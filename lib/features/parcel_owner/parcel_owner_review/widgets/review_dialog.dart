@@ -100,10 +100,12 @@ class _ReviewDialogState extends State<ReviewDialog> {
                           if (_rating.value == 0) {
                             return;
                           }
-                          final controller =
-                              Get.find<ParcelOwnerReviewController>(
-                                tag: widget.parcelId,
-                              );
+                          print("parcelId: ${widget.parcelId}");
+                          final controller = Get.put(
+                            ParcelOwnerReviewController(
+                              parcelId: widget.parcelId,
+                            ),
+                          );
                           controller.createReview(
                             parcelId: widget.parcelId,
                             rating: _rating.value.toDouble(),

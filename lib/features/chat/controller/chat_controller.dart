@@ -1,17 +1,15 @@
 import 'dart:io';
-
-import 'package:delivery_app/core/di/injection.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
-import 'package:delivery_app/features/chat/model/chat_model.dart' as model;
+import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:delivery_app/features/chat/model/chat_model.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
-import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:delivery_app/utils/multipart/multipart_body.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:delivery_app/core/di/injection.dart';
 
 class ChatController extends GetxController {
   final ApiClient apiClient = sl<ApiClient>();
@@ -19,6 +17,18 @@ class ChatController extends GetxController {
 
   var isLoading = false;
   var chatModel = ChatModel().obs;
+  RxString userId = "".obs;
+
+  final ImagePicker _picker = ImagePicker();
+  RxList<XFile> selectedImages = <XFile>[].obs;
+
+  void getUserId() async {
+    try {
+      userId.value = await localService.getUserId();
+    } catch (e) {
+      debugPrint('Error getting userId: $e');
+    }
+  }
 
   Future<void> getChatList({
     required int pageKey,
@@ -27,17 +37,16 @@ class ChatController extends GetxController {
   }) async {
     if (isLoading) return;
     isLoading = true;
+
     try {
       final response = await apiClient.get(
         url: ApiUrls.getMessageForChat(pageKey: pageKey, id: id),
       );
-      AppConfig.logger.i("id: $id");
-      AppConfig.logger.i(response.data);
+
       if (response.statusCode == 200) {
         final newData = ChatModel.fromJson(response.data);
-        if (pageKey == 1) {
-          chatModel.value = newData;
-        }
+        if (pageKey == 1) chatModel.value = newData;
+
         final newItems = newData.data ?? [];
         if (newItems.isEmpty) {
           pagingController.appendLastPage(newItems);
@@ -45,45 +54,34 @@ class ChatController extends GetxController {
           pagingController.appendPage(newItems, pageKey + 1);
         }
       } else {
-        pagingController.error = 'An error occurred';
+        pagingController.error = 'Error fetching messages';
       }
     } catch (e) {
-      AppConfig.logger.e("Error in getChatList: $e");
-      pagingController.error = 'An error occurred';
+      debugPrint('Error in getChatList: $e');
+      pagingController.error = 'Error fetching messages';
     } finally {
       isLoading = false;
     }
   }
 
-  final ImagePicker _picker = ImagePicker();
-  RxList<XFile> selectedImages = <XFile>[].obs;
-
-  Future<void> pickImage() async {
+  Future<void> pickImages() async {
     selectedImages.clear();
-    List<XFile> images = await _picker.pickMultiImage(
-      imageQuality: 50,
-      limit: 6,
-    );
-    if (images.isNotEmpty) {
-      selectedImages.addAll(images);
-    }
+    final images = await _picker.pickMultiImage(imageQuality: 50, limit: 6);
+    if (images.isNotEmpty) selectedImages.addAll(images);
   }
 
   Future<void> pickCameraImage() async {
     selectedImages.clear();
-    XFile? image = await _picker.pickImage(
+    final image = await _picker.pickImage(
       source: ImageSource.camera,
       imageQuality: 50,
     );
-    if (image != null) {
-      selectedImages.add(image);
-    }
+    if (image != null) selectedImages.add(image);
   }
 
   void removeImage(int index) {
-    if (index >= 0 && index < selectedImages.length) {
+    if (index >= 0 && index < selectedImages.length)
       selectedImages.removeAt(index);
-    }
   }
 
   Future<UploadImage> sendMessage({
@@ -93,13 +91,10 @@ class ChatController extends GetxController {
     final token = await localService.getToken();
     try {
       List<MultipartBody> multipartBody = [];
-
-      if (selectedImages.isNotEmpty) {
-        for (var image in selectedImages) {
-          multipartBody.add(
-            MultipartBody(fieldKey: "attachments", file: File(image.path)),
-          );
-        }
+      for (var img in selectedImages) {
+        multipartBody.add(
+          MultipartBody(fieldKey: 'attachments', file: File(img.path)),
+        );
       }
 
       final response = await apiClient.uploadMultipart(
@@ -109,53 +104,37 @@ class ChatController extends GetxController {
         token: token,
         fields: body,
       );
-      AppConfig.logger.d(response.data);
+
       if (response.statusCode == 201) {
-        final responseData = UploadImage.fromJson(response.data);
-
-        // // Optimistically add to the beginning of the list to show immediately
-        // if (pagingController != null && responseData.data != null) {
-        //   final originalSender = responseData.data!.senderId;
-        //   model.SenderId? convertedSender;
-
-        //   if (originalSender != null) {
-        //     convertedSender = model.SenderId(
-        //       id: originalSender.id,
-        //       fullName: originalSender.fullName,
-        //       profilePicture: originalSender.profilePicture,
-        //       senderIdId: originalSender.senderIdId,
-        //     );
-        //   }
-
-        //   final newChatMessage = model.ChatMessage(
-        //     id: responseData.data!.id,
-        //     content: responseData.data!.content,
-        //     createdAt: responseData.data!.createdAt,
-        //     senderId: convertedSender,
-        //   );
-
-        //   final itemList = pagingController.itemList ?? [];
-        //   pagingController.itemList = [newChatMessage, ...itemList];
-        // }
-
-        return responseData;
-      } else {
-        return UploadImage();
+        selectedImages.clear();
+        return UploadImage.fromJson(response.data);
       }
     } catch (e) {
-      AppConfig.logger.e("Error sending message: $e");
-      return UploadImage();
+      debugPrint('Error sending message: $e');
     }
+    return UploadImage();
   }
 
-  RxString userId = "".obs;
+  void listenForNewMessages({
+    required String chatId,
+    required PagingController<int, ChatMessage> pagingController,
+  }) {
+    SocketApi.socket?.off('new_message');
 
-  void getUserId() async {
-    try {
-      userId.value = await localService.getUserId();
-    } catch (e) {
-      AppConfig.logger.e("Error getting user ID: $e");
-    }
+    // join chat room first
+    SocketApi.socket?.emit('join_chat', chatId);
+
+    SocketApi.socket?.on('new_message', (data) {
+      final newMessage = ChatMessage.fromJson(data);
+
+      if (newMessage.chatId == chatId) {
+        final currentMessages = pagingController.itemList ?? [];
+
+        if (!currentMessages.any((msg) => msg.id == newMessage.id)) {
+          pagingController.itemList = [newMessage, ...currentMessages];
+        }
+      }
+    });
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_location_picker/map_location_picker.dart';
 import 'package:delivery_app/features/driver/commuter_registration/models/record_location.dart';
 
@@ -16,7 +15,7 @@ Future<void> openLocationPicker({
     MaterialPageRoute(
       builder: (context) => MapLocationPicker(
         config: MapLocationPickerConfig(
-          apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+          apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
           initialPosition: const LatLng(37.422, -122.084),
           onNext: (result) {
             if (result != null) {
@@ -24,8 +23,8 @@ Future<void> openLocationPicker({
                   result.formattedAddress ?? "Address not available";
               final location = RecordLocation(
                 LatLng(
-                  result.geometry.location.lat,
-                  result.geometry.location.lng,
+                  result.geometry?.location.lat ?? 0,
+                  result.geometry?.location.lng ?? 0,
                 ),
                 address,
               );
@@ -43,7 +42,7 @@ Future<void> openLocationPicker({
           },
         ),
         searchConfig: const SearchConfig(
-          apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+          apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
           searchHintText: "Search for a location",
         ),
       ),

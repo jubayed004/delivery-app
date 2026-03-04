@@ -29,6 +29,8 @@ class ApiUrls {
   static String getParcelOwnerReview({required int pageKey}) =>
       '$base/v1/review/get?page=$pageKey&limit=10';
   static String createReview() => '$base/v1/review/create';
+  static String getReview({required String id}) => '$base/v1/review/get/$id';
+  static String verifyParcelOtp() => '$base/v1/driver/parcel/verify-otp';
   //============== Settting===================
 
   static String changePassword() => '$base/v1/auth/change-password';

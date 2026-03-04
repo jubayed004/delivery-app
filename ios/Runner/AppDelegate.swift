@@ -10,7 +10,7 @@ import GoogleMaps  // <-- Add Google Maps
   ) -> Bool {
 
     // Provide your Google Maps API Key
-    GMSServices.provideAPIKey("AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4")
+    GMSServices.provideAPIKey("AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts")
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

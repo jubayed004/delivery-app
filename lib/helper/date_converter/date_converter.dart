@@ -62,10 +62,12 @@ class DateConverter {
     if (diff.inHours < 24) return '${diff.inHours} hr ago';
     if (diff.inDays == 1) return 'Yesterday';
     if (diff.inDays < 7) return '${diff.inDays} days ago';
-    if (diff.inDays < 30)
+    if (diff.inDays < 30) {
       return '${(diff.inDays / 7).floor()} week${diff.inDays >= 14 ? 's' : ''} ago';
-    if (diff.inDays < 365)
+    }
+    if (diff.inDays < 365) {
       return '${(diff.inDays / 30).floor()} month${diff.inDays >= 60 ? 's' : ''} ago';
+    }
 
     return '${(diff.inDays / 365).floor()} year${diff.inDays >= 730 ? 's' : ''} ago';
   }

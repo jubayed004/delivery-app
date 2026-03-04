@@ -8,6 +8,7 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ParcelCard extends StatelessWidget {
+  final String parcelMainId;
   final String status;
   final String parcelId;
   final String parcelName;
@@ -15,9 +16,12 @@ class ParcelCard extends StatelessWidget {
   final String price;
   final String imageUrl;
   final VoidCallback onTap;
+  final VoidCallback onChatTap;
+  final bool isLoadingChat;
 
   const ParcelCard({
     super.key,
+    required this.parcelMainId,
     required this.status,
     required this.parcelId,
     required this.parcelName,
@@ -25,6 +29,8 @@ class ParcelCard extends StatelessWidget {
     required this.price,
     required this.imageUrl,
     required this.onTap,
+    required this.onChatTap,
+    this.isLoadingChat = false,
   });
 
   @override
@@ -35,10 +41,12 @@ class ParcelCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: AppColors.primaryColor.withOpacity(0.2)),
+            border: Border.all(
+              color: AppColors.primaryColor.withValues(alpha: 0.2),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.grey.withValues(alpha: 0.1),
                 spreadRadius: 1,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
@@ -170,13 +178,11 @@ class ParcelCard extends StatelessWidget {
     // Chat button - available for both statuses
     buttons.add(
       _ActionButton(
-        label: "Chat",
-        icon: Icons.chat_bubble_outline,
+        label: isLoadingChat ? "Loading..." : "Chat",
+        icon: isLoadingChat ? Icons.hourglass_empty : Icons.chat_bubble_outline,
         isOutlined: true,
         color: AppColors.primaryColor,
-        onTap: () {
-          AppRouter.route.pushNamed(RoutePath.chatScreen);
-        },
+        onTap: isLoadingChat ? () {} : onChatTap,
       ),
     );
     buttons.add(Gap(8.w));
@@ -200,7 +206,11 @@ class ParcelCard extends StatelessWidget {
           isOutlined: true,
           color: Colors.green,
           onTap: () {
-            AppRouter.route.pushNamed(RoutePath.transactionScreen);
+            print("parcelMainId: $parcelMainId");
+            AppRouter.route.pushNamed(
+              RoutePath.parcelOtpScreen,
+              extra: parcelMainId,
+            );
           },
         ),
       );
@@ -214,7 +224,6 @@ class _ActionButton extends StatelessWidget {
   final String label;
   final IconData? icon;
   final Color color;
-  final Color? textColor;
   final bool isOutlined;
   final VoidCallback onTap;
 
@@ -222,7 +231,6 @@ class _ActionButton extends StatelessWidget {
     required this.label,
     this.icon,
     required this.color,
-    this.textColor,
     this.isOutlined = false,
     required this.onTap,
   });
@@ -243,13 +251,13 @@ class _ActionButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 16.r, color: isOutlined ? color : textColor),
+              Icon(icon, size: 16.r, color: isOutlined ? color : Colors.white),
               Gap(4.w),
             ],
             Text(
               label,
               style: context.bodyMedium.copyWith(
-                color: isOutlined ? color : (textColor ?? Colors.white),
+                color: isOutlined ? color : Colors.white,
                 fontWeight: FontWeight.w500,
               ),
             ),

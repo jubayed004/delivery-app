@@ -280,7 +280,7 @@ class AppRouter {
             }
           }
           return _buildPageWithAnimation(
-            child: ChatScreen(id: chatId),
+            child: ChatScreen(chatId: chatId),
             state: state,
           );
         },
@@ -386,8 +386,20 @@ class AppRouter {
         name: RoutePath.parcelOtpScreen,
         path: RoutePath.parcelOtpScreen.addBasePath,
         pageBuilder: (context, state) {
+          final extra = state.extra;
+          String parcelId;
+
+          if (extra == null) {
+            parcelId = '';
+          } else if (extra is String) {
+            parcelId = extra;
+          } else if (extra is Map<String, dynamic>) {
+            parcelId = extra['_id'] ?? extra['id'] ?? '';
+          } else {
+            parcelId = (extra as dynamic).id ?? '';
+          }
           return _buildPageWithAnimation(
-            child: ParcelOtpScreen(),
+            child: ParcelOtpScreen(parcelId: parcelId),
             state: state,
           );
         },
@@ -455,8 +467,18 @@ class AppRouter {
         name: RoutePath.parcelOwnerReviewScreen,
         path: RoutePath.parcelOwnerReviewScreen.addBasePath,
         pageBuilder: (context, state) {
+          final extra = state.extra;
+          String parcelId;
+
+          if (extra is String) {
+            parcelId = extra;
+          } else if (extra is Map<String, dynamic>) {
+            parcelId = extra['_id'] ?? extra['id'] ?? '';
+          } else {
+            parcelId = (extra as dynamic).id ?? '';
+          }
           return _buildPageWithAnimation(
-            child: const ParcelOwnerReviewScreen(),
+            child: ParcelOwnerReviewScreen(parcelId: parcelId),
             state: state,
           );
         },

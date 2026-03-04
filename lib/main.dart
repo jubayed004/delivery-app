@@ -1,3 +1,4 @@
+import 'package:delivery_app/core/service/datasource/remote/app_permission_service.dart';
 import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,7 @@ void main() async {
   DeviceUtils.lockDevicePortrait();
   initGetx();
   await initDependencies();
+  await AppPermissionService.requestAllPermissions();
   await SocketApi.init();
   Map<String, Map<String, String>>? languages =
       await LanguageController.getLanguages();

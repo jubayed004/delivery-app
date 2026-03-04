@@ -1,4 +1,5 @@
 import 'package:delivery_app/core/router/route_path.dart';
+import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:delivery_app/features/chatList/controller/chat_list_controller.dart';
 import 'package:delivery_app/features/chatList/model/chat_list_model.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
@@ -18,17 +19,38 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  late final ChatListController _controller;
+  final ChatListController _controller = Get.find<ChatListController>();
 
   @override
   void initState() {
     super.initState();
-    _controller = Get.put(ChatListController());
+
+    _controller.pagingController.refresh();
+    listenApi();
+  }
+
+  Future<void> listenApi() async {
+    await SocketApi.init();
+    SocketApi.socket?.on('connect', (_) {
+      debugPrint("====> Socket Connected — registering chat_list listener");
+      _registerChatListListener();
+    });
+    if (SocketApi.socket?.connected == true) {
+      _registerChatListListener();
+    }
+  }
+
+  void _registerChatListListener() {
+    _controller.listenForChatListUpdates(
+      pagingController: _controller.pagingController,
+    );
   }
 
   @override
   void dispose() {
     Get.delete<ChatListController>();
+    SocketApi.socket?.off('new_message');
+
     super.dispose();
   }
 
@@ -41,80 +63,90 @@ class _ChatListScreenState extends State<ChatListScreen> {
         centerTitle: true,
         title: const Text("Chat"),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            sliver: PagedSliverList<int, ConversationItems>(
-              pagingController: _controller.pagingController,
-              builderDelegate: PagedChildBuilderDelegate<ConversationItems>(
-                itemBuilder: (context, item, index) => _ChatTile(item: item),
-                firstPageProgressIndicatorBuilder: (_) => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                newPageProgressIndicatorBuilder: (_) => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                noItemsFoundIndicatorBuilder: (_) => Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 80.h),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: 48.r,
-                          color: Colors.grey.shade400,
-                        ),
-                        Gap(12.h),
-                        Text(
-                          'No conversations yet',
-                          style: context.titleSmall.copyWith(
-                            color: AppColors.grayTextSecondaryColor,
-                          ),
-                        ),
-                      ],
+      body: FutureBuilder(
+        future: _controller.localService.getUserId(),
+        builder: (_, AsyncSnapshot<String> id) {
+          if (!id.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                sliver: PagedSliverList<int, ConversationItems>(
+                  pagingController: _controller.pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<ConversationItems>(
+                    itemBuilder: (context, item, index) =>
+                        _ChatTile(item: item, controller: _controller),
+                    firstPageProgressIndicatorBuilder: (_) => const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                  ),
-                ),
-                firstPageErrorIndicatorBuilder: (_) => Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 80.h),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48.r,
-                          color: Colors.redAccent,
+                    newPageProgressIndicatorBuilder: (_) => const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    noItemsFoundIndicatorBuilder: (_) => Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 80.h),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline,
+                              size: 48.r,
+                              color: Colors.grey.shade400,
+                            ),
+                            Gap(12.h),
+                            Text(
+                              'No conversations yet',
+                              style: context.titleSmall.copyWith(
+                                color: AppColors.grayTextSecondaryColor,
+                              ),
+                            ),
+                          ],
                         ),
-                        Gap(12.h),
-                        Text(
-                          'Failed to load chats',
-                          style: context.titleSmall.copyWith(
-                            color: AppColors.grayTextSecondaryColor,
-                          ),
+                      ),
+                    ),
+                    firstPageErrorIndicatorBuilder: (_) => Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 80.h),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 48.r,
+                              color: Colors.redAccent,
+                            ),
+                            Gap(12.h),
+                            Text(
+                              'Failed to load chats',
+                              style: context.titleSmall.copyWith(
+                                color: AppColors.grayTextSecondaryColor,
+                              ),
+                            ),
+                            Gap(12.h),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  _controller.pagingController.refresh(),
+                              child: const Text('Retry'),
+                            ),
+                          ],
                         ),
-                        Gap(12.h),
-                        ElevatedButton(
-                          onPressed: () =>
-                              _controller.pagingController.refresh(),
-                          child: const Text('Retry'),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -124,8 +156,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
 // Chat Tile Widget
 // ─────────────────────────────────────────────
 class _ChatTile extends StatelessWidget {
-  const _ChatTile({required this.item});
+  const _ChatTile({required this.item, required this.controller});
   final ConversationItems item;
+  final ChatListController controller;
 
   String get _otherName {
     final participants = item.participants ?? [];
@@ -155,7 +188,6 @@ class _ChatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Last Message: $_lastMessage");
     final nameStyle = context.titleMedium;
     final messageStyle = context.titleSmall.copyWith(
       fontWeight: FontWeight.w500,
@@ -169,6 +201,10 @@ class _ChatTile extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        // Mark conversation as read when opening it
+        if (item.id != null) {
+          controller.readTheMessage(chatId: item.id!);
+        }
         context.pushNamed(RoutePath.chatScreen, extra: item);
       },
       child: Container(
@@ -190,7 +226,7 @@ class _ChatTile extends StatelessWidget {
                       width: 50.r,
                       height: 50.r,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _AvatarPlaceholder(),
+                      errorBuilder: (_, e, s) => _AvatarPlaceholder(),
                     )
                   : _AvatarPlaceholder(),
             ),

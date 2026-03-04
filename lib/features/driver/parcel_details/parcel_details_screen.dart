@@ -298,7 +298,10 @@ class _ParcelDetailsScreenState extends State<ParcelDetailsScreen> {
           width: double.infinity,
           child: CustomButton(
             onTap: () {
-              AppRouter.route.pushNamed(RoutePath.transactionScreen);
+              AppRouter.route.pushNamed(
+                RoutePath.parcelOtpScreen,
+                extra: widget.parcelId,
+              );
             },
             text: AppStrings.confirm.tr,
           ),

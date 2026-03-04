@@ -60,8 +60,9 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "OTP is required";
       if (trimmed.length != 6) return "OTP must be 6 digits";
-      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed))
+      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed)) {
         return "OTP must contain only numbers";
+      }
       return null;
     };
   }
@@ -185,8 +186,9 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Description is required";
-      if (trimmed.length < minLength)
+      if (trimmed.length < minLength) {
         return "Description must be at least $minLength characters";
+      }
       return null;
     };
   }
@@ -221,13 +223,15 @@ class TextFieldValidator {
       final month = int.tryParse(dateParts[1]);
       final year = int.tryParse(dateParts[2]);
 
-      if (day == null || month == null || year == null)
+      if (day == null || month == null || year == null) {
         return "Invalid date format";
+      }
 
       try {
         final date = DateTime(year, month, day);
-        if (date.isAfter(DateTime.now()))
+        if (date.isAfter(DateTime.now())) {
           return "Date of birth cannot be in the future";
+        }
       } catch (e) {
         return "Invalid date of birth";
       }

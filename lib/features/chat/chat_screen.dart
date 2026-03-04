@@ -1,3 +1,4 @@
+import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:delivery_app/features/chat/model/chat_model.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,8 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String id;
-  const ChatScreen({super.key, required this.id});
+  final String chatId;
+  const ChatScreen({super.key, required this.chatId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -18,20 +19,36 @@ class _ChatScreenState extends State<ChatScreen> {
   final pagingController = PagingController<int, ChatMessage>(firstPageKey: 1);
   final scrollController = ScrollController();
   final messageController = TextEditingController();
-  late final ChatController controller;
+  final controller = Get.find<ChatController>();
 
   @override
   void initState() {
     super.initState();
-    controller = Get.put(ChatController(), permanent: false);
+
+    _initializeSocketAndController();
     pagingController.addPageRequestListener((pageKey) {
       // Assuming chat id is passed or hardcoded for now, based on user's code
       controller.getChatList(
         pageKey: pageKey,
-        id: widget.id,
+        id: widget.chatId,
         pagingController: pagingController,
       );
     });
+  }
+
+  Future<void> _initializeSocketAndController() async {
+    try {
+      debugPrint("Socket 1");
+      await SocketApi.init();
+      debugPrint("Socket 2");
+      controller.listenForNewMessages(
+        pagingController: pagingController,
+        chatId: widget.chatId,
+      );
+      debugPrint("Socket 3");
+    } catch (e) {
+      debugPrint("Socket Error Chat Screen Try Catch $e");
+    }
   }
 
   @override
@@ -40,7 +57,6 @@ class _ChatScreenState extends State<ChatScreen> {
     scrollController.dispose();
     messageController.dispose();
     super.dispose();
-    Get.delete<ChatController>();
   }
 
   @override
@@ -164,7 +180,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.send, color: AppColors.primaryColor),
             onPressed: () {
               Map<String, String> body = {
-                "chat_id": widget.id,
+                "chat_id": widget.chatId,
                 "content": messageController.text,
               };
               if (messageController.text.isNotEmpty) {

@@ -1,3 +1,4 @@
+import 'package:delivery_app/features/chatList/controller/chat_list_controller.dart';
 import 'package:delivery_app/features/driver/driver_home/controller/driver_home_controller.dart';
 import 'package:delivery_app/features/driver/parcels/controller/parcel_controller.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_home/controller/parcel_owner_home_controller.dart';
@@ -25,7 +26,7 @@ void initGetx() {
 
   //Chat
   Get.lazyPut(() => ChatController(), fenix: true);
-
+  Get.lazyPut(() => ChatListController(), fenix: true);
   //Driver
   Get.lazyPut(() => TrackParcelController(), fenix: true);
   //Parcel Owner

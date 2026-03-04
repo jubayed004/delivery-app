@@ -265,7 +265,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                     context: context,
                     initialTime: TimeOfDay.now(),
                   );
-                  if (picked != null) {
+                  if (picked != null && context.mounted) {
                     _timeController.text = picked.format(context);
                   }
                 },
@@ -367,14 +367,14 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
       MaterialPageRoute(
         builder: (context) => MapLocationPicker(
           config: MapLocationPickerConfig(
-            apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+            apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
             initialPosition: const LatLng(37.422, -122.084),
             onNext: (result) {
               if (result != null) {
                 targetNotifier.value = RecordLocation(
                   LatLng(
-                    result.geometry.location.lat,
-                    result.geometry.location.lng,
+                    result.geometry?.location.lat ?? 0,
+                    result.geometry?.location.lng ?? 0,
                   ),
                   result.formattedAddress ?? "Address not available",
                 );
@@ -385,7 +385,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
             },
           ),
           searchConfig: const SearchConfig(
-            apiKey: "AIzaSyAszXC1be8aJ37eHuNcBm_-O1clWkPUwV4",
+            apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
             searchHintText: "Search for a location",
           ),
         ),

@@ -12,7 +12,7 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class MyParcelScreen extends StatefulWidget {
-  MyParcelScreen({super.key});
+  const MyParcelScreen({super.key});
 
   @override
   State<MyParcelScreen> createState() => _MyParcelScreenState();
@@ -112,6 +112,7 @@ class _MyParcelScreenState extends State<MyParcelScreen> {
                   onReviewTap: () {
                     AppRouter.route.pushNamed(
                       RoutePath.parcelOwnerReviewScreen,
+                      extra: item,
                     );
                   },
                   onRefundTap: () {

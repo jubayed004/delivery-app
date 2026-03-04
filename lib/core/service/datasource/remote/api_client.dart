@@ -38,7 +38,6 @@ class ApiClient {
     required String url,
     Map<String, dynamic>? queryParams,
     String? token,
-    bool skipLogoutOn401 = false,
   }) async {
     if (!await _hasConnection()) {
       return _buildErrorResponse('No internet connection');
@@ -53,7 +52,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      return _handleDioError(e, skipLogoutOn401: skipLogoutOn401);
+      return _handleDioError(e);
     }
   }
 
@@ -192,10 +191,7 @@ class ApiClient {
     );
   }
 
-  Future<Response> _handleDioError(
-    dynamic error, {
-    bool skipLogoutOn401 = false,
-  }) async {
+  Future<Response> _handleDioError(dynamic error) async {
     if (error is Response) return error;
 
     if (error is DioException) {
@@ -204,12 +200,10 @@ class ApiClient {
       final data = error.response?.data ?? {};
 
       if (statusCode == 401) {
-        if (!skipLogoutOn401) {
           try {
             await localService.logOut();
             AppRouter.route.goNamed(RoutePath.loginScreen);
           } catch (_) {}
-        }
         return Response(
           requestOptions: requestOptions,
           statusCode: 401,
