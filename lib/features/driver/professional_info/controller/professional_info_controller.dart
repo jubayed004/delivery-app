@@ -115,7 +115,7 @@ class ProfessionalInfoController extends GetxController {
       final jsonBody = jsonDecode(body['data'] as String);
       AppConfig.logger.i("Sending JSON body: $jsonBody");
 
-      final response = await apiClient.put(
+      final response = await apiClient.patch(
         url: ApiUrls.updateDriverInfo(),
         body: jsonBody,
         token: token,

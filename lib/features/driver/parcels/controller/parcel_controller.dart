@@ -95,12 +95,17 @@ class ParcelController extends GetxController {
 
   //=================== chat with Customer ===================
 
-  final loadingChatWithCustomer = false.obs;
-  void loadingChatWithCustomerMethod(bool status) =>
-      loadingChatWithCustomer.value = status;
-  Future<void> chatInitiateP2P({required String recipientId}) async {
+  // Per-parcel loading state: key = parcel id, value = isLoading
+  final RxMap<String, bool> chatLoadingMap = <String, bool>{}.obs;
+
+  bool isChatLoading(String parcelId) => chatLoadingMap[parcelId] == true;
+
+  Future<void> chatInitiateP2P({
+    required String recipientId,
+    required String parcelId,
+  }) async {
     try {
-      loadingChatWithCustomerMethod(true);
+      chatLoadingMap[parcelId] = true;
       final response = await apiClient.post(
         url: ApiUrls.chatInitiateP2P(),
         body: {"recipientId": recipientId},
@@ -111,17 +116,17 @@ class ParcelController extends GetxController {
       );
       AppConfig.logger.i("response.data: ${response.data}");
       if (response.statusCode == 200) {
-        loadingChatWithCustomerMethod(false);
+        chatLoadingMap[parcelId] = false;
         final chatId = response.data["data"]["_id"];
         AppConfig.logger.i("chat Room Id: $chatId");
         AppRouter.route.pushNamed(RoutePath.chatScreen, extra: chatId);
         return;
       } else {
-        loadingChatWithCustomerMethod(false);
+        chatLoadingMap[parcelId] = false;
         AppConfig.logger.e(response.data);
       }
     } catch (e) {
-      loadingChatWithCustomerMethod(false);
+      chatLoadingMap[parcelId] = false;
       AppToast.error(message: e.toString());
     }
   }

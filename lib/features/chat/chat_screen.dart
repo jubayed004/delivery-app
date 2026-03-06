@@ -115,7 +115,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageBubble(BuildContext context, ChatMessage message) {
     return Obx(() {
-      final bool isSender = message.senderId?.id == controller.userId.value;
+      final senderId = message.senderId?.id ?? message.senderId?.senderIdId;
+      final bool isSender = senderId == controller.userId.value;
+
+      debugPrint(
+        "Message senderId: $senderId | controller userId: ${controller.userId.value}",
+      );
+
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: Column(

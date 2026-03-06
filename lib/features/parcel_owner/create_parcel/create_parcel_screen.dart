@@ -45,7 +45,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
       TextEditingController();
   final TextEditingController _senderRemarksController =
       TextEditingController();
-  final TextEditingController _vehicleTypeController = TextEditingController();
+  //final TextEditingController _vehicleTypeController = TextEditingController();
 
   final selectedPickupLocation = ValueNotifier<RecordLocation>(
     RecordLocation(LatLng(0.0, 0.0), ""),
@@ -56,7 +56,8 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
 
   final ValueNotifier<String?> _selectedSize = ValueNotifier(null);
   final ValueNotifier<String?> _selectedPriority = ValueNotifier(null);
-
+  final ValueNotifier<String?> _selectedVehicleType = ValueNotifier(null);
+  final List<String> _vehicleTypes = ['Car', 'Bike', 'Truck', 'Van'];
   @override
   void dispose() {
     _nameController.dispose();
@@ -68,7 +69,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
     _receiverNameController.dispose();
     _receiverPhoneController.dispose();
     _senderRemarksController.dispose();
-    _vehicleTypeController.dispose();
+    //_vehicleTypeController.dispose();
     _selectedSize.dispose();
     _selectedPriority.dispose();
     super.dispose();
@@ -125,14 +126,31 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                 },
               ),
               Gap(16.h),
-              CustomTextField(
-                controller: _vehicleTypeController,
-                title: "Vehicle Type",
-                hintText: "Enter vehicle type",
-                fillColor: Colors.white,
-                validator: TextFieldValidator.requiredField(
-                  label: "Vehicle Type",
-                ),
+              // CustomTextField(
+              //   controller: _vehicleTypeController,
+              //   title: "Vehicle Type",
+              //   hintText: "Enter vehicle type",
+              //   fillColor: Colors.white,
+              //   validator: TextFieldValidator.requiredField(
+              //     label: "Vehicle Type",
+              //   ),
+              // ),
+              CustomAlignText(text: "Vehicle Type"),
+              Gap(12.h),
+              ValueListenableBuilder<String?>(
+                valueListenable: _selectedVehicleType,
+                builder: (context, value, child) {
+                  return CustomDropdownField<String>(
+                    value: value,
+                    hintText: "select vehicle type",
+                    items: _vehicleTypes,
+                    onChanged: (val) => _selectedVehicleType.value = val,
+                    fillColor: Colors.white,
+                    validator: TextFieldValidator.requiredField(
+                      label: "Vehicle Type",
+                    ),
+                  );
+                },
               ),
               Gap(16.h),
 
@@ -317,7 +335,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
                       "data": jsonEncode({
                         "parcel_name": _nameController.text,
                         "size": _selectedSize.value ?? "",
-                        "vehicle_type": _vehicleTypeController.text,
+                        "vehicle_type": _selectedVehicleType.value ?? "",
                         "weight": _weightController.text.isNotEmpty
                             ? double.parse(_weightController.text)
                             : 0.0,

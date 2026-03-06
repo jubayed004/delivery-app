@@ -2,10 +2,12 @@ import 'package:delivery_app/core/router/route_path.dart';
 import 'package:delivery_app/features/auth/login/login_screen.dart';
 import 'package:delivery_app/features/auth/vendor_selection/vendor_selection_screen.dart';
 import 'package:delivery_app/features/driver/parcel_details/parcel_details_screen.dart';
+import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart';
 import 'package:delivery_app/features/driver/parcels/parcels_screen.dart';
 import 'package:delivery_app/features/other/change_password_screen.dart';
 import 'package:delivery_app/features/parcel_owner/create_parcel/create_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_nav/parcel_owner_nav_screen.dart';
+import 'package:delivery_app/features/parcel_owner/track_parcel_owner/track_parcel_owner_screen.dart';
 import 'package:delivery_app/features/profile/edit_profile_screen.dart';
 import 'package:delivery_app/features/splash/splash_screen.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
@@ -41,6 +43,8 @@ import 'package:delivery_app/features/parcel_owner/my_parcel/details_my_parcel_s
 import 'package:delivery_app/features/parcel_owner/payment/payment_screen.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_review/parcel_owner_review_screen.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
+import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart'
+    show DriverParcelItem;
 
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -415,8 +419,16 @@ class AppRouter {
         name: RoutePath.trackParcelScreen,
         path: RoutePath.trackParcelScreen.addBasePath,
         pageBuilder: (context, state) {
+          final extra = state.extra;
+          final DriverParcelItem parcel;
+
+          if (extra is Map<String, dynamic>) {
+            parcel = DriverParcelItem.fromJson(extra);
+          } else {
+            parcel = extra as DriverParcelItem;
+          }
           return _buildPageWithAnimation(
-            child: TrackParcelScreen(),
+            child: TrackParcelScreen(parcelItem: parcel),
             state: state,
           );
         },
@@ -530,6 +542,24 @@ class AppRouter {
           final parcel = state.extra as ParcelItem;
           return _buildPageWithAnimation(
             child: PaymentScreen(parcel: parcel),
+            state: state,
+          );
+        },
+      ),
+      GoRoute(
+        name: RoutePath.trackParcelOwnerScreen,
+        path: RoutePath.trackParcelOwnerScreen.addBasePath,
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          final ParcelItem parcel;
+
+          if (extra is Map<String, dynamic>) {
+            parcel = ParcelItem.fromJson(extra);
+          } else {
+            parcel = extra as ParcelItem;
+          }
+          return _buildPageWithAnimation(
+            child: TrackParcelOwnerScreen(parcelItem: parcel),
             state: state,
           );
         },

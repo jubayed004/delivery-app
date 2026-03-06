@@ -133,7 +133,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         );
                       },
                       onTrackTap: () {
-                        AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+                        AppRouter.route.pushNamed(
+                          RoutePath.trackParcelScreen,
+                          extra: item,
+                        );
                       },
                       onChatTap: () {
                         AppRouter.route.pushNamed(RoutePath.chatScreen);

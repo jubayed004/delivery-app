@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:delivery_app/core/custom_assets/assets.gen.dart';
-import 'package:delivery_app/core/router/route_path.dart';
-import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/chatList/chatList_screen.dart';
 import 'package:delivery_app/features/parcel_owner/my_parcel/my_parcel_screen.dart';
 import 'package:delivery_app/features/parcel_owner/parcel_owner_home/parcel_owner_home_screen.dart';
@@ -106,9 +103,6 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
                 title: const Text('Profile'),
               ),
             ],
-            hasNotch: true,
-            fabLocation: StylishBarFabLocation.center,
-            notchStyle: NotchStyle.circle,
             currentIndex: selected,
             onTap: (index) {
               if (index == selected) return;
@@ -118,17 +112,16 @@ class _ParcelOwnerNavScreenState extends State<ParcelOwnerNavScreen> {
         },
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
-        },
-        backgroundColor: AppColors.primaryColor,
-        shape: const CircleBorder(),
-        child: Assets.icons.box.svg(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+      //   },
+      //   backgroundColor: AppColors.primaryColor,
+      //   shape: const CircleBorder(),
+      //   child: Assets.icons.box.svg(),
+      // ),
 
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: ValueListenableBuilder<int>(
         valueListenable: selectedIndex,
         builder: (context, selected, _) {

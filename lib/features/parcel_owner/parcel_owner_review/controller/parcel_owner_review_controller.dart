@@ -29,9 +29,7 @@ class ParcelOwnerReviewController extends GetxController {
   Future<void> getReviews() async {
     try {
       status.value = ApiStatus.loading;
-      final response = await apiClient.get(
-        url: ApiUrls.getReview(id: parcelId),
-      );
+      final response = await apiClient.get(url: ApiUrls.getReview());
       AppConfig.logger.i(response.data);
 
       if (response.statusCode == 200) {

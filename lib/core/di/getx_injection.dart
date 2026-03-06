@@ -28,7 +28,7 @@ void initGetx() {
   Get.lazyPut(() => ChatController(), fenix: true);
   Get.lazyPut(() => ChatListController(), fenix: true);
   //Driver
-  Get.lazyPut(() => TrackParcelController(), fenix: true);
+
   //Parcel Owner
   Get.lazyPut(() => MyParcelController(), fenix: true);
   Get.lazyPut(() => RefundController(), fenix: true);

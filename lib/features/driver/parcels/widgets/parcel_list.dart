@@ -26,94 +26,103 @@ class _ParcelListState extends State<ParcelList> {
         ? controller.ongoingController
         : controller.completedController;
 
-    return CustomScrollView(
-      slivers: [
-        PagedSliverList<int, DriverParcelItem>(
-          pagingController: pagingController,
-          builderDelegate: PagedChildBuilderDelegate<DriverParcelItem>(
-            itemBuilder: (context, item, index) => Padding(
-              padding: EdgeInsets.only(
-                left: 16.r,
-                right: 16.r,
-                top: index == 0 ? 16.r : 0,
-                bottom: 16.r,
+    return RefreshIndicator(
+      onRefresh: () async {
+        pagingController.refresh();
+      },
+      child: CustomScrollView(
+        slivers: [
+          PagedSliverList<int, DriverParcelItem>(
+            pagingController: pagingController,
+            builderDelegate: PagedChildBuilderDelegate<DriverParcelItem>(
+              itemBuilder: (context, item, index) => Padding(
+                padding: EdgeInsets.only(
+                  left: 16.r,
+                  right: 16.r,
+                  top: index == 0 ? 16.r : 0,
+                  bottom: 16.r,
+                ),
+                child: Obx(
+                  () => ParcelCard(
+                    parcelMainId: item.id ?? '',
+                    parcelItem: item,
+                    onTap: () {
+                      AppRouter.route.pushNamed(
+                        RoutePath.parcelDetailsScreen,
+                        extra: item,
+                      );
+                    },
+                    onChatTap: () {
+                      controller.chatInitiateP2P(
+                        recipientId: item.userId?.id ?? '',
+                        parcelId: item.id ?? '',
+                      );
+                    },
+                    isLoadingChat:
+                        controller.chatLoadingMap[item.id ?? ''] == true,
+                    status: widget.status,
+                    parcelId: item.parcelId ?? '',
+                    parcelName: item.parcelName ?? '',
+                    size: item.size ?? '',
+                    price: item.finalPrice?.toString() ?? '0',
+                    imageUrl: item.parcelImages?.isNotEmpty == true
+                        ? item.parcelImages!.first
+                        : '',
+                  ),
+                ),
               ),
-              child: Obx(
-                () => ParcelCard(
-                  parcelMainId: item.id ?? '',
-                  onTap: () {
-                    AppRouter.route.pushNamed(
-                      RoutePath.parcelDetailsScreen,
-                      extra: item,
-                    );
-                  },
-                  onChatTap: () {
-                    controller.chatInitiateP2P(
-                      recipientId: item.userId?.id ?? '',
-                    );
-                  },
-                  isLoadingChat: controller.loadingChatWithCustomer.value,
-                  status: widget.status,
-                  parcelId: item.parcelId ?? '',
-                  parcelName: item.parcelName ?? '',
-                  size: item.size ?? '',
-                  price: item.finalPrice?.toString() ?? '0',
-                  imageUrl: item.parcelImages?.isNotEmpty == true
-                      ? item.parcelImages!.first
-                      : '',
+              firstPageErrorIndicatorBuilder: (context) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 48.sp, color: Colors.red),
+                    Gap(16.h),
+                    Text(
+                      'Error loading parcels',
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                    Gap(8.h),
+                    ElevatedButton(
+                      onPressed: () => pagingController.refresh(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+              newPageErrorIndicatorBuilder: (context) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Error loading more parcels',
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
+                    Gap(8.h),
+                    TextButton(
+                      onPressed: () =>
+                          pagingController.retryLastFailedRequest(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+              noItemsFoundIndicatorBuilder: (context) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.inbox_outlined, size: 64.sp, color: Colors.grey),
+                    Gap(16.h),
+                    Text(
+                      'No ${widget.status} parcels',
+                      style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
             ),
-            firstPageErrorIndicatorBuilder: (context) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 48.sp, color: Colors.red),
-                  Gap(16.h),
-                  Text(
-                    'Error loading parcels',
-                    style: TextStyle(fontSize: 16.sp),
-                  ),
-                  Gap(8.h),
-                  ElevatedButton(
-                    onPressed: () => pagingController.refresh(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-            newPageErrorIndicatorBuilder: (context) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Error loading more parcels',
-                    style: TextStyle(fontSize: 14.sp),
-                  ),
-                  Gap(8.h),
-                  TextButton(
-                    onPressed: () => pagingController.retryLastFailedRequest(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-            noItemsFoundIndicatorBuilder: (context) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.inbox_outlined, size: 64.sp, color: Colors.grey),
-                  Gap(16.h),
-                  Text(
-                    'No ${widget.status} parcels',
-                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

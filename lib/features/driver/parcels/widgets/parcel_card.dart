@@ -1,3 +1,4 @@
+import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -8,6 +9,7 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class ParcelCard extends StatelessWidget {
+  final DriverParcelItem parcelItem;
   final String parcelMainId;
   final String status;
   final String parcelId;
@@ -21,6 +23,7 @@ class ParcelCard extends StatelessWidget {
 
   const ParcelCard({
     super.key,
+    required this.parcelItem,
     required this.parcelMainId,
     required this.status,
     required this.parcelId,
@@ -195,7 +198,12 @@ class ParcelCard extends StatelessWidget {
           icon: Icons.location_on,
           isOutlined: true,
           color: Colors.red,
-          onTap: () {},
+          onTap: () {
+            AppRouter.route.pushNamed(
+              RoutePath.trackParcelScreen,
+              extra: parcelItem,
+            );
+          },
         ),
       );
       buttons.add(Gap(8.w));

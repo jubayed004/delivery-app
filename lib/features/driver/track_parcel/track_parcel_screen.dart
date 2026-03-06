@@ -1,3 +1,4 @@
+import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -9,18 +10,20 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 import 'package:delivery_app/utils/extension/base_extension.dart';
 
 class TrackParcelScreen extends StatefulWidget {
-  const TrackParcelScreen({super.key});
+  final DriverParcelItem parcelItem;
+  const TrackParcelScreen({super.key, required this.parcelItem});
 
   @override
   State<TrackParcelScreen> createState() => _TrackParcelScreenState();
 }
 
 class _TrackParcelScreenState extends State<TrackParcelScreen> {
-  final controller = Get.put(TrackParcelController());
+  late final TrackParcelController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = Get.put(TrackParcelController(parcelItem: widget.parcelItem));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showDetailsBottomSheet(context);
     });
@@ -55,16 +58,16 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Estimated Delivery
+                // Parcel Info
                 Text(
-                  "Estimated Delivery",
+                  "Parcel Info",
                   style: context.bodyMedium.copyWith(
                     color: AppColors.grayTextSecondaryColor,
                   ),
                 ),
                 Gap(4.h),
                 Text(
-                  "9:35 PM",
+                  widget.parcelItem.parcelName ?? 'N/A',
                   style: context.headlineMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -76,33 +79,55 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
                 _buildProgressBar(context),
                 Gap(24.h),
 
-                // Waiting Customer (Pickup)
+                // Pickup Location
                 Text(
-                  "Waiting Customer",
+                  "Pickup Location",
                   style: context.titleMedium.copyWith(
                     color: AppColors.grayTextSecondaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Gap(16.h),
-                _buildPersonRow(
-                  context,
-                  name: "John Doe",
-                  imageUrl: "https://i.pravatar.cc/150?img=11",
-                  locationLabel: "Pickup Location",
-                  address: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
+                Gap(8.h),
+                RichText(
+                  text: TextSpan(
+                    style: context.bodySmall.copyWith(color: Colors.black87),
+                    children: [
+                      TextSpan(
+                        text:
+                            widget.parcelItem.pickupLocation?.address ?? 'N/A',
+                        style: context.bodySmall.copyWith(
+                          color: AppColors.grayTextSecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 Gap(24.h),
 
-                // Deliver Location (Receiver)
-                _buildPersonRow(
-                  context,
-                  name: "Floyd Miles",
-                  imageUrl: "https://i.pravatar.cc/150?img=3",
-                  locationLabel: "Deliver Location",
-                  address: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
-                  isReceiver: true,
+                // Handover Location
+                Text(
+                  "Handover Location",
+                  style: context.titleMedium.copyWith(
+                    color: AppColors.grayTextSecondaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Gap(8.h),
+                RichText(
+                  text: TextSpan(
+                    style: context.bodySmall.copyWith(color: Colors.black87),
+                    children: [
+                      TextSpan(
+                        text:
+                            widget.parcelItem.handoverLocation?.address ??
+                            'N/A',
+                        style: context.bodySmall.copyWith(
+                          color: AppColors.grayTextSecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Gap(20.h),
               ],
@@ -123,8 +148,7 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
             child: Obx(() {
               return GoogleMap(
                 mapType: MapType.normal,
-                initialCameraPosition:
-                    TrackParcelController.initialCameraPosition,
+                initialCameraPosition: controller.initialCameraPosition,
                 markers: controller.markers.toSet(),
                 polylines: controller.polylines.toSet(),
                 myLocationEnabled: true,
@@ -133,7 +157,9 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
                 mapToolbarEnabled: true,
                 zoomControlsEnabled: true,
                 onMapCreated: (GoogleMapController mapController) {
-                  controller.googleMapController.complete(mapController);
+                  if (!controller.googleMapController.isCompleted) {
+                    controller.googleMapController.complete(mapController);
+                  }
                 },
               );
             }),
@@ -175,7 +201,7 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 40.w), // Balance the back button space
+                SizedBox(width: 40.w),
               ],
             ),
           ),
@@ -246,82 +272,6 @@ class _TrackParcelScreenState extends State<TrackParcelScreen> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildPersonRow(
-    BuildContext context, {
-    required String name,
-    required String imageUrl,
-    required String locationLabel,
-    required String address,
-    bool isReceiver = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(radius: 24.r, backgroundImage: NetworkImage(imageUrl)),
-            Gap(12.w),
-            Expanded(
-              child: Text(
-                name,
-                style: context.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            _buildActionButton(context, icon: Icons.call, label: "Call"),
-            Gap(8.w),
-            _buildActionButton(
-              context,
-              icon: Icons.chat_bubble_outline,
-              label: "Chat",
-            ),
-          ],
-        ),
-        Gap(8.h),
-        RichText(
-          text: TextSpan(
-            text: "$locationLabel: ",
-            style: context.bodySmall.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-            children: [
-              TextSpan(
-                text: address,
-                style: context.bodySmall.copyWith(
-                  fontWeight: FontWeight.normal,
-                  color: AppColors.grayTextSecondaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor,
-        borderRadius: BorderRadius.circular(5.r),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white, size: 16.sp),
-          Gap(4.w),
-          Text(label, style: context.labelMedium.copyWith(color: Colors.white)),
-        ],
-      ),
     );
   }
 }

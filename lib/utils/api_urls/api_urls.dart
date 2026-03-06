@@ -27,9 +27,9 @@ class ApiUrls {
   static String acceptFinalOffer({required String id}) =>
       '$base/v1/parcel/accept-price/$id';
   static String getParcelOwnerReview({required int pageKey}) =>
-      '$base/v1/review/get?page=$pageKey&limit=10';
+      '$base/v1/review/get-driver-review?page=$pageKey&limit=10';
   static String createReview() => '$base/v1/review/create';
-  static String getReview({required String id}) => '$base/v1/review/get/$id';
+  static String getReview() => '$base/v1/review/get-customer-review';
   static String verifyParcelOtp() => '$base/v1/driver/parcel/verify-otp';
   //============== Settting===================
 

@@ -1,5 +1,4 @@
 import 'package:delivery_app/core/di/injection.dart';
-import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/core/service/datasource/remote/api_client.dart';
 import 'package:delivery_app/features/driver/parcel_details/model/parcel_details_model.dart';
 import 'package:delivery_app/helper/toast/toast_helper.dart';
@@ -19,9 +18,7 @@ class ParcelDetailsController extends GetxController {
       final response = await apiClient.get(
         url: ApiUrls.getParcelDetails(id: id),
       );
-
       AppConfig.logger.d(response.data);
-
       if (response.statusCode == 200) {
         final parcelDetailsModel = ParcelDetailsModel.fromJson(response.data);
         parcelDetails.value = parcelDetailsModel.data;

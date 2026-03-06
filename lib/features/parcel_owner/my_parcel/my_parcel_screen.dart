@@ -119,7 +119,10 @@ class _MyParcelScreenState extends State<MyParcelScreen> {
                     AppRouter.route.pushNamed(RoutePath.refundScreen);
                   },
                   onTrackLiveTap: () {
-                    AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+                    AppRouter.route.pushNamed(
+                      RoutePath.trackParcelOwnerScreen,
+                      extra: item,
+                    );
                   },
                 ),
               ),

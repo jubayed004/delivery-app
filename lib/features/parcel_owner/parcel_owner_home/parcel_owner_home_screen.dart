@@ -229,7 +229,6 @@ class ParcelOwnerHomeScreen extends StatelessWidget {
     );
   }
 
-  // Build Ongoing Parcels (Active Parcels)
   Widget _buildOngoingParcels() {
     return Obx(() {
       if (controller.isSingleLoading.value) {

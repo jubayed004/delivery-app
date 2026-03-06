@@ -125,6 +125,7 @@ class ChatController extends GetxController {
     SocketApi.socket?.emit('join_chat', chatId);
 
     SocketApi.socket?.on('new_message', (data) {
+      debugPrint("Socket new_message payload: $data");
       final newMessage = ChatMessage.fromJson(data);
 
       if (newMessage.chatId == chatId) {
@@ -138,8 +139,13 @@ class ChatController extends GetxController {
   }
 
   @override
-  void onReady() {
+  void onInit() {
+    super.onInit();
     getUserId();
+  }
+
+  @override
+  void onReady() {
     super.onReady();
   }
 

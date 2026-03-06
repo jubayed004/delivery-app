@@ -49,7 +49,10 @@ class ActiveParcelCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+                        AppRouter.route.pushNamed(
+                          RoutePath.trackParcelOwnerScreen,
+                          extra: activeParcel,
+                        );
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(

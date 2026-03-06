@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart';
+import 'package:delivery_app/features/parcel_owner/my_parcel/model/parcel_model.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
 
-class TrackParcelController extends GetxController {
-  final DriverParcelItem parcelItem;
+class TrackParcelOwnerController extends GetxController {
+  final ParcelItem parcelItem;
 
-  TrackParcelController({required this.parcelItem});
+  TrackParcelOwnerController({required this.parcelItem});
 
   final Completer<GoogleMapController> googleMapController =
       Completer<GoogleMapController>();

@@ -82,9 +82,6 @@ class _DriverNavScreenState extends State<DriverNavScreen> {
                 title: const Text('Profile'),
               ),
             ],
-            hasNotch: true,
-            fabLocation: StylishBarFabLocation.center,
-            notchStyle: NotchStyle.circle,
             currentIndex: selected,
             onTap: (index) {
               if (index == selected) return;
@@ -95,17 +92,16 @@ class _DriverNavScreenState extends State<DriverNavScreen> {
         },
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
-        },
-        backgroundColor: AppColors.primaryColor,
-        shape: const CircleBorder(),
-        child: Assets.icons.box.svg(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     AppRouter.route.pushNamed(RoutePath.trackParcelScreen);
+      //   },
+      //   backgroundColor: AppColors.primaryColor,
+      //   shape: const CircleBorder(),
+      //   child: Assets.icons.box.svg(),
+      // ),
 
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
         child: PageView(
           controller: controller,
