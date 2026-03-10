@@ -18,6 +18,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:delivery_app/features/driver/parcels/model/parcel_model.dart' as driver_parcel;
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -133,9 +134,46 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         );
                       },
                       onTrackTap: () {
+                        final driverParcelItem = driver_parcel.DriverParcelItem(
+                          id: item.id,
+                          parcelId: item.parcelId,
+                          parcelName: item.parcelName,
+                          size: item.size,
+                          vehicleType: item.vehicleType,
+                          weight: item.weight,
+                          pickupLocation: item.pickupLocation != null ? driver_parcel.Location(
+                            address: item.pickupLocation!.address,
+                            latitude: item.pickupLocation!.latitude,
+                            longitude: item.pickupLocation!.longitude,
+                          ) : null,
+                          handoverLocation: item.handoverLocation != null ? driver_parcel.Location(
+                            address: item.handoverLocation!.address,
+                            latitude: item.handoverLocation!.latitude,
+                            longitude: item.handoverLocation!.longitude,
+                          ) : null,
+                          priority: item.priority,
+                          date: item.date,
+                          time: item.time,
+                          parcelImages: item.parcelImages,
+                          receiverName: item.receiverName,
+                          receiverPhone: item.receiverPhone,
+                          senderRemarks: item.senderRemarks,
+                          status: item.status,
+                          finalPrice: item.finalPrice,
+                          priceStatus: item.priceStatus,
+                          rejectionReason: item.rejectionReason,
+                          acceptedBy: item.acceptedBy,
+                          acceptedAt: item.acceptedAt,
+                          completedAt: item.completedAt,
+                          stripeCheckoutSessionId: item.stripeCheckoutSessionId,
+                          createdAt: item.createdAt,
+                          updatedAt: item.updatedAt,
+                          datumId: item.id,
+                        );
+
                         AppRouter.route.pushNamed(
                           RoutePath.trackParcelScreen,
-                          extra: item,
+                          extra: driverParcelItem,
                         );
                       },
                       onChatTap: () {

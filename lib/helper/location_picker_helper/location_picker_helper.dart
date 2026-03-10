@@ -15,7 +15,7 @@ Future<void> openLocationPicker({
     MaterialPageRoute(
       builder: (context) => MapLocationPicker(
         config: MapLocationPickerConfig(
-          apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
+          apiKey: "AIzaSyDZqCZMjhwfqoGdhvvZJ6_1zc3-UbZUvIo",
           initialPosition: const LatLng(37.422, -122.084),
           onNext: (result) {
             if (result != null) {
@@ -42,7 +42,7 @@ Future<void> openLocationPicker({
           },
         ),
         searchConfig: const SearchConfig(
-          apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
+          apiKey: "AIzaSyDZqCZMjhwfqoGdhvvZJ6_1zc3-UbZUvIo",
           searchHintText: "Search for a location",
         ),
       ),
