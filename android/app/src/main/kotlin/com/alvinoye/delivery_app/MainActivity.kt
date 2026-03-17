@@ -1,4 +1,4 @@
-package com.delivery_app.delivery_app
+package com.alvinoye.delivery_app
 
 import io.flutter.embedding.android.FlutterActivity
 

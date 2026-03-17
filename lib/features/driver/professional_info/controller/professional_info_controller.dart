@@ -122,6 +122,7 @@ class ProfessionalInfoController extends GetxController {
       );
 
       _handleUpdateResponse(response);
+      AppConfig.logger.i(body);
     } else {
       final response = await apiClient.uploadMultipart(
         fields: body,

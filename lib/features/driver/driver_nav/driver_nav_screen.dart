@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:delivery_app/core/custom_assets/assets.gen.dart';
-import 'package:delivery_app/core/router/route_path.dart';
-import 'package:delivery_app/core/router/routes.dart';
 import 'package:delivery_app/features/chatList/chatList_screen.dart';
 import 'package:delivery_app/features/driver/driver_home/driver_home_screen.dart';
 import 'package:delivery_app/features/driver/parcels/parcels_screen.dart';

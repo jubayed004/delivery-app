@@ -31,15 +31,19 @@ class SocketApi {
     _socket = io.io(
       ApiUrls.socketUrl(),
       io.OptionBuilder()
-          .setTransports(['websocket'])
+          .setTransports(['websocket', 'polling'])
           .enableAutoConnect()
           .setReconnectionDelay(2000)
-          .setReconnectionAttempts(0)
-          .setTimeout(5000)
+          .setReconnectionAttempts(5)
+          .setTimeout(10000)
           .setExtraHeaders({'Authorization': 'Bearer $token'})
           .setAuth({'userId': id})
           .build(),
     );
+
+    // Explicitly connect — required even when enableAutoConnect() is set
+    _socket?.connect();
+
     debugPrint(
       '$id=============> Socket initialization, connected: ${_socket?.connected}',
     );

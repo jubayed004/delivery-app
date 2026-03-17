@@ -6,7 +6,6 @@ import 'package:delivery_app/features/driver/driver_home/widgets/driver_header.d
 import 'package:delivery_app/features/driver/driver_home/widgets/driver_request_card.dart';
 import 'package:delivery_app/features/driver/driver_home/widgets/stat_card.dart';
 import 'package:delivery_app/features/profile/controller/profile_controller.dart';
-import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:delivery_app/share/widgets/loading/loading_widget.dart';
 import 'package:delivery_app/share/widgets/no_internet/no_data_card.dart';
 import 'package:delivery_app/share/widgets/no_internet/no_internet_card.dart';
@@ -117,72 +116,74 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       left: 16.w,
                       right: 16.w,
                     ),
-                    child: DriverRequestCard(
-                      parcelId: item.parcelId ?? "N/A",
-                      parcelName: item.parcelName ?? "N/A",
-                      size: item.size ?? "N/A",
-                      price: "\$${item.finalPrice ?? 0}",
-                      imageUrl:
-                          (item.parcelImages != null &&
-                              item.parcelImages!.isNotEmpty)
-                          ? item.parcelImages!.first
-                          : "",
-                      onImageTap: () {
-                        AppRouter.route.pushNamed(
-                          RoutePath.parcelDetailsScreen,
-                          extra: item,
-                        );
-                      },
-                      onTrackTap: () {
-                        final driverParcelItem = driver_parcel.DriverParcelItem(
-                          id: item.id,
-                          parcelId: item.parcelId,
-                          parcelName: item.parcelName,
-                          size: item.size,
-                          vehicleType: item.vehicleType,
-                          weight: item.weight,
-                          pickupLocation: item.pickupLocation != null ? driver_parcel.Location(
-                            address: item.pickupLocation!.address,
-                            latitude: item.pickupLocation!.latitude,
-                            longitude: item.pickupLocation!.longitude,
-                          ) : null,
-                          handoverLocation: item.handoverLocation != null ? driver_parcel.Location(
-                            address: item.handoverLocation!.address,
-                            latitude: item.handoverLocation!.latitude,
-                            longitude: item.handoverLocation!.longitude,
-                          ) : null,
-                          priority: item.priority,
-                          date: item.date,
-                          time: item.time,
-                          parcelImages: item.parcelImages,
-                          receiverName: item.receiverName,
-                          receiverPhone: item.receiverPhone,
-                          senderRemarks: item.senderRemarks,
-                          status: item.status,
-                          finalPrice: item.finalPrice,
-                          priceStatus: item.priceStatus,
-                          rejectionReason: item.rejectionReason,
-                          acceptedBy: item.acceptedBy,
-                          acceptedAt: item.acceptedAt,
-                          completedAt: item.completedAt,
-                          stripeCheckoutSessionId: item.stripeCheckoutSessionId,
-                          createdAt: item.createdAt,
-                          updatedAt: item.updatedAt,
-                          datumId: item.id,
-                        );
+                    child: Obx(
+                      () => DriverRequestCard(
+                        parcelId: item.parcelId ?? "N/A",
+                        parcelName: item.parcelName ?? "N/A",
+                        size: item.size ?? "N/A",
+                        price: "\$${item.finalPrice ?? 0}",
+                        imageUrl:
+                            (item.parcelImages != null &&
+                                item.parcelImages!.isNotEmpty)
+                            ? item.parcelImages!.first
+                            : "",
+                        isLoading: controller.acceptLoadingMap[item.id ?? ''] == true,
+                        onImageTap: () {
+                          AppRouter.route.pushNamed(
+                            RoutePath.parcelDetailsScreen,
+                            extra: item,
+                          );
+                        },
+                        onTrackTap: () {
+                          final driverParcelItem = driver_parcel.DriverParcelItem(
+                            id: item.id,
+                            parcelId: item.parcelId,
+                            parcelName: item.parcelName,
+                            size: item.size,
+                            vehicleType: item.vehicleType,
+                            weight: item.weight,
+                            pickupLocation: item.pickupLocation != null ? driver_parcel.Location(
+                              address: item.pickupLocation!.address,
+                              latitude: item.pickupLocation!.latitude,
+                              longitude: item.pickupLocation!.longitude,
+                            ) : null,
+                            handoverLocation: item.handoverLocation != null ? driver_parcel.Location(
+                              address: item.handoverLocation!.address,
+                              latitude: item.handoverLocation!.latitude,
+                              longitude: item.handoverLocation!.longitude,
+                            ) : null,
+                            priority: item.priority,
+                            date: item.date,
+                            time: item.time,
+                            parcelImages: item.parcelImages,
+                            receiverName: item.receiverName,
+                            receiverPhone: item.receiverPhone,
+                            senderRemarks: item.senderRemarks,
+                            status: item.status,
+                            finalPrice: item.finalPrice,
+                            priceStatus: item.priceStatus,
+                            rejectionReason: item.rejectionReason,
+                            acceptedBy: item.acceptedBy,
+                            acceptedAt: item.acceptedAt,
+                            completedAt: item.completedAt,
+                            stripeCheckoutSessionId: item.stripeCheckoutSessionId,
+                            createdAt: item.createdAt,
+                            updatedAt: item.updatedAt,
+                            datumId: item.id,
+                          );
 
-                        AppRouter.route.pushNamed(
-                          RoutePath.trackParcelScreen,
-                          extra: driverParcelItem,
-                        );
-                      },
-                      onChatTap: () {
-                        AppRouter.route.pushNamed(RoutePath.chatScreen);
-                      },
-                      onAcceptTap: () {
-                        // Implement Accept Logic Here
-                        AppToast.success(message: "Accepted");
-                      },
+                          AppRouter.route.pushNamed(
+                            RoutePath.trackParcelScreen,
+                            extra: driverParcelItem,
+                          );
+                        },
+                        onChatTap: () {
+                          AppRouter.route.pushNamed(RoutePath.chatScreen);
+                        },
+                        onAcceptTap: () {
+                          controller.acceptParcel(id: item.id ?? "");
+                        },
+                      ),
                     ),
                   );
                 },

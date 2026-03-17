@@ -24,8 +24,8 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final ProfileController profileController = Get.find();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController name = TextEditingController();
-  TextEditingController number = TextEditingController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController number = TextEditingController();
 
   @override
   void initState() {

@@ -17,8 +17,9 @@ void main() async {
   DeviceUtils.lockDevicePortrait();
   initGetx();
   await initDependencies();
-  await AppPermissionService.requestAllPermissions();
   await SocketApi.init();
+  await AppPermissionService.requestAllPermissions();
+
   Map<String, Map<String, String>>? languages =
       await LanguageController.getLanguages();
 

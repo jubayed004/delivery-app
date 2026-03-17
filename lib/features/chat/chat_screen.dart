@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:delivery_app/core/service/datasource/remote/socket_service.dart';
 import 'package:delivery_app/features/chat/model/chat_model.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:delivery_app/features/chat/controller/chat_controller.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
@@ -20,14 +23,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final scrollController = ScrollController();
   final messageController = TextEditingController();
   final controller = Get.find<ChatController>();
+  final RxBool isSending = false.obs;
 
   @override
   void initState() {
     super.initState();
-
     _initializeSocketAndController();
     pagingController.addPageRequestListener((pageKey) {
-      // Assuming chat id is passed or hardcoded for now, based on user's code
       controller.getChatList(
         pageKey: pageKey,
         id: widget.chatId,
@@ -38,16 +40,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _initializeSocketAndController() async {
     try {
-      debugPrint("Socket 1");
       await SocketApi.init();
-      debugPrint("Socket 2");
       controller.listenForNewMessages(
         pagingController: pagingController,
         chatId: widget.chatId,
       );
-      debugPrint("Socket 3");
     } catch (e) {
-      debugPrint("Socket Error Chat Screen Try Catch $e");
+      debugPrint("Socket Error Chat Screen: $e");
     }
   }
 
@@ -59,46 +58,160 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  void _showImageSourceSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+                Gap(20.h),
+                Text(
+                  "Select Image Source",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.blackMainTextColor,
+                  ),
+                ),
+                Gap(20.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _sourceOption(
+                        icon: Icons.photo_library_rounded,
+                        label: "Gallery",
+                        color: AppColors.primaryColor,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await controller.pickImages();
+                        },
+                      ),
+                    ),
+                    Gap(16.w),
+                    Expanded(
+                      child: _sourceOption(
+                        icon: Icons.camera_alt_rounded,
+                        label: "Camera",
+                        color: Colors.orange,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await controller.pickCameraImage();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Gap(12.h),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _sourceOption({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 16.h),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 32.sp),
+            Gap(8.h),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sendMessage() async {
+    final hasText = messageController.text.trim().isNotEmpty;
+    final hasImages = controller.selectedImages.isNotEmpty;
+
+    if (!hasText && !hasImages) return;
+
+    isSending.value = true;
+    final Map<String, String> body = {
+      "chat_id": widget.chatId,
+      "content": messageController.text.trim(),
+    };
+    messageController.clear();
+
+    await controller.sendMessage(
+      body: body,
+      pagingController: pagingController,
+    );
+
+    isSending.value = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: Colors.white,
         scrolledUnderElevation: 0,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Ann Smith",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.blackMainTextColor,
-              ),
-            ),
-          ],
+        elevation: 0.5,
+        shadowColor: Colors.grey.withValues(alpha: 0.2),
+        title: Text(
+          "Chat",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.sp,
+            color: AppColors.blackMainTextColor,
+          ),
         ),
+        centerTitle: true,
         actions: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.more_horiz,
-                  color: AppColors.blackMainTextColor,
-                ),
-                onPressed: () {},
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.more_horiz, color: AppColors.blackMainTextColor),
+            onPressed: () {},
           ),
         ],
       ),
       body: Column(
         children: [
+          // Messages List
           Expanded(
             child: PagedListView<int, ChatMessage>(
               pagingController: pagingController,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               reverse: true,
               builderDelegate: PagedChildBuilderDelegate<ChatMessage>(
                 itemBuilder: (context, item, index) {
@@ -107,7 +220,122 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-          _buildMessageInput(context, controller),
+
+          // Image Preview Strip
+          Obx(() {
+            if (controller.selectedImages.isEmpty) return const SizedBox.shrink();
+            return Container(
+              height: 90.h,
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.selectedImages.length,
+                separatorBuilder: (_, __) => Gap(8.w),
+                itemBuilder: (context, index) {
+                  final img = controller.selectedImages[index];
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.r),
+                        child: Image.file(
+                          File(img.path),
+                          width: 70.w,
+                          height: 70.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 2,
+                        right: 2,
+                        child: GestureDetector(
+                          onTap: () => controller.removeImage(index),
+                          child: Container(
+                            padding: EdgeInsets.all(2.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close, size: 12.sp, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          }),
+
+          // Input Bar
+          _buildInputBar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: AppColors.backgroundsLinesColor),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Image picker button
+          GestureDetector(
+            onTap: _showImageSourceSheet,
+            child: Container(
+              padding: EdgeInsets.all(10.r),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.image_outlined,
+                color: AppColors.primaryColor,
+                size: 22.sp,
+              ),
+            ),
+          ),
+          Gap(8.w),
+
+          // Text Field
+          Expanded(
+            child: CustomTextField(
+              controller: messageController,
+              hintText: "Type a message...",
+            ),
+          ),
+          Gap(8.w),
+
+          // Send button
+          Obx(() => GestureDetector(
+            onTap: isSending.value ? null : _sendMessage,
+            child: Container(
+              padding: EdgeInsets.all(11.r),
+              decoration: BoxDecoration(
+                color: isSending.value
+                    ? AppColors.primaryColor.withValues(alpha: 0.5)
+                    : AppColors.primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: isSending.value
+                  ? SizedBox(
+                      width: 20.r,
+                      height: 20.r,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Icon(Icons.send_rounded, color: Colors.white, size: 20.sp),
+            ),
+          )),
         ],
       ),
     );
@@ -118,88 +346,71 @@ class _ChatScreenState extends State<ChatScreen> {
       final senderId = message.senderId?.id ?? message.senderId?.senderIdId;
       final bool isSender = senderId == controller.userId.value;
 
-      debugPrint(
-        "Message senderId: $senderId | controller userId: ${controller.userId.value}",
-      );
+      final hasImages =
+          message.attachments != null && message.attachments!.isNotEmpty;
 
       return Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: 12.h),
         child: Column(
-          crossAxisAlignment: isSender
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
+          crossAxisAlignment:
+              isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.75,
+            // Image attachments
+            if (hasImages)
+              Wrap(
+                spacing: 6.w,
+                runSpacing: 6.h,
+                alignment: isSender ? WrapAlignment.end : WrapAlignment.start,
+                children: message.attachments!.map((url) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: Image.network(
+                      url.toString(),
+                      width: 160.w,
+                      height: 160.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 160.w,
+                        height: 160.h,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              decoration: BoxDecoration(
-                color: isSender
-                    ? AppColors.primaryColor
-                    : AppColors.bgSecondaryButtonColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(16),
-                  topRight: const Radius.circular(16),
-                  bottomLeft: Radius.circular(isSender ? 16 : 0),
-                  bottomRight: Radius.circular(isSender ? 0 : 16),
+
+            // Text bubble (only if there's text)
+            if (message.content != null && message.content!.isNotEmpty) ...[
+              if (hasImages) Gap(4.h),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.72,
                 ),
-              ),
-              child: Text(
-                message.content ?? "",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                decoration: BoxDecoration(
                   color: isSender
-                      ? AppColors.white
-                      : AppColors.blackMainTextColor,
+                      ? AppColors.primaryColor
+                      : AppColors.bgSecondaryButtonColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                    bottomLeft: Radius.circular(isSender ? 16.r : 0),
+                    bottomRight: Radius.circular(isSender ? 0 : 16.r),
+                  ),
+                ),
+                child: Text(
+                  message.content!,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isSender ? Colors.white : AppColors.blackMainTextColor,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "", // Formatting time based on message.createdAt can be done if needed
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.grayTextSecondaryColor,
-              ),
-            ),
+            ],
           ],
         ),
       );
     });
-  }
-
-  Widget _buildMessageInput(BuildContext context, ChatController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        border: Border(top: BorderSide(color: AppColors.backgroundsLinesColor)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: CustomTextField(
-              controller: messageController,
-              hintText: "Enter message...",
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send, color: AppColors.primaryColor),
-            onPressed: () {
-              Map<String, String> body = {
-                "chat_id": widget.chatId,
-                "content": messageController.text,
-              };
-              if (messageController.text.isNotEmpty) {
-                controller.sendMessage(
-                  body: body,
-                  pagingController: pagingController,
-                );
-                messageController.clear();
-              }
-            },
-          ),
-        ],
-      ),
-    );
   }
 }

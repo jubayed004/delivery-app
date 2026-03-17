@@ -17,6 +17,7 @@ class DriverRequestCard extends StatelessWidget {
   final VoidCallback onTrackTap;
   final VoidCallback onChatTap;
   final VoidCallback onAcceptTap;
+  final bool isLoading;
 
   const DriverRequestCard({
     super.key,
@@ -29,6 +30,7 @@ class DriverRequestCard extends StatelessWidget {
     required this.onTrackTap,
     required this.onChatTap,
     required this.onAcceptTap,
+    this.isLoading = false,
   });
 
   @override
@@ -177,7 +179,7 @@ class DriverRequestCard extends StatelessWidget {
                   // Accept Button
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onAcceptTap,
+                      onPressed: isLoading ? null : onAcceptTap,
                       style: context.buttonStyle.copyWith(
                         padding: WidgetStatePropertyAll(
                           EdgeInsets.symmetric(vertical: 0.h),
@@ -188,12 +190,21 @@ class DriverRequestCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      child: Text(
-                        AppStrings.accept.tr,
-                        style: context.labelMedium.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 18.r,
+                              height: 18.r,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              AppStrings.accept.tr,
+                              style: context.labelMedium.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                 ],

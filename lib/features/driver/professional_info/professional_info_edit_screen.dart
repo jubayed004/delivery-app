@@ -321,6 +321,7 @@ class _ProfessionalInfoEditScreenState
                     isLoading: controller.updateDriverInfoLoading.value,
                     text: AppStrings.update.tr,
                     onTap: () {
+                
                       final body = {
                         "data": jsonEncode({
                           "driverInfo": {
@@ -363,6 +364,7 @@ class _ProfessionalInfoEditScreenState
                           },
                         }),
                       };
+                      print(body);
                       if (_formKey.currentState!.validate()) {
                         controller.updateDriverInfo(body: body);
                       }

@@ -61,5 +61,7 @@ class ApiUrls {
   static String getNotification({required int pageKey}) =>
       '$base/v1/notifications/get-all?page=$pageKey&limit=10';
 
+
   static String chatInitiateP2P() => '$base/v1/chat/initiate-p2p';
+  static String acceptParcel({required String id}) => '$base/v1/driver/accept-parcel/$id';
 }

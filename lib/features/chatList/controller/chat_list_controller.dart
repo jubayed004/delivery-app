@@ -5,7 +5,6 @@ import 'package:delivery_app/core/service/datasource/remote/socket_service.dart'
 import 'package:delivery_app/features/chatList/model/chat_list_model.dart';
 import 'package:delivery_app/utils/api_urls/api_urls.dart';
 import 'package:delivery_app/utils/config/app_config.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 

@@ -80,8 +80,9 @@ class ChatController extends GetxController {
   }
 
   void removeImage(int index) {
-    if (index >= 0 && index < selectedImages.length)
+    if (index >= 0 && index < selectedImages.length) {
       selectedImages.removeAt(index);
+    }
   }
 
   Future<UploadImage> sendMessage({
