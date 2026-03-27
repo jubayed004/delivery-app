@@ -44,6 +44,7 @@ Future<void> openLocationPicker({
         searchConfig: const SearchConfig(
           apiKey: "AIzaSyDZqCZMjhwfqoGdhvvZJ6_1zc3-UbZUvIo",
           searchHintText: "Search for a location",
+          
         ),
       ),
     ),

@@ -231,7 +231,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.selectedImages.length,
-                separatorBuilder: (_, __) => Gap(8.w),
+                separatorBuilder: (_, _) => Gap(8.w),
                 itemBuilder: (context, index) {
                   final img = controller.selectedImages[index];
                   return Stack(

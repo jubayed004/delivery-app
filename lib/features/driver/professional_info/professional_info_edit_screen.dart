@@ -5,6 +5,7 @@ import 'package:delivery_app/features/driver/commuter_registration/widgets/image
 import 'package:delivery_app/features/driver/professional_info/controller/professional_info_controller.dart';
 import 'package:delivery_app/helper/location_picker_helper/location_picker_helper.dart';
 import 'package:delivery_app/features/driver/commuter_registration/widgets/selected_image_box.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -294,7 +295,7 @@ class _ProfessionalInfoEditScreenState
                       itemCount: controller.carImages.length < 5
                           ? controller.carImages.length + 1
                           : 5,
-                      separatorBuilder: (_, __) => Gap(16.w),
+                      separatorBuilder: (_, _) => Gap(16.w),
                       itemBuilder: (context, index) {
                         if (index == 0 && controller.carImages.length < 5) {
                           return ImagePickerBox(
@@ -364,7 +365,7 @@ class _ProfessionalInfoEditScreenState
                           },
                         }),
                       };
-                      print(body);
+                      AppConfig.logger.i(body);
                       if (_formKey.currentState!.validate()) {
                         controller.updateDriverInfo(body: body);
                       }
