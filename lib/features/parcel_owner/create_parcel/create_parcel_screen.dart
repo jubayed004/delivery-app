@@ -386,7 +386,7 @@ class _CreateParcelScreenState extends State<CreateParcelScreen> {
         builder: (context) => MapLocationPicker(
           config: MapLocationPickerConfig(
             apiKey: "AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts",
-            initialPosition: const LatLng(37.422, -122.084),
+            initialPosition: const LatLng(-22.3285, 24.6849),
             onNext: (result) {
               if (result != null) {
                 targetNotifier.value = RecordLocation(

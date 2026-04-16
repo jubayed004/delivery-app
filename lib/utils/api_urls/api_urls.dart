@@ -43,8 +43,12 @@ class ApiUrls {
   static String getDriverInfo() => '$base/v1/driver/get-driver-info';
   static String updateDriverInfo() => '$base/v1/driver/update-info';
   static String registerDriver() => '$base/v1/driver/info';
-  static String getDriverParcels({required int page}) =>
-      '$base/v1/driver/available-for-driver?page=$page&limit=10';
+  static String getDriverParcels({
+    required int page,
+    required double currentLat,
+    required double currentLng,
+  }) =>
+      '$base/v1/driver/available-for-driver?page=$page&limit=10&currentLat=$currentLat&currentLng=$currentLng';
 
   static String getParcelDetails({required String id}) =>
       '$base/v1/parcel/get/$id';

@@ -37,7 +37,7 @@ class SocketApi {
           .setReconnectionAttempts(5)
           .setTimeout(10000)
           .setExtraHeaders({'Authorization': 'Bearer $token'})
-          .setAuth({'userId': id})
+          .setAuth({'userId': id, 'accessToken': token})
           .build(),
     );
 

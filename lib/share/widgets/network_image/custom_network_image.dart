@@ -90,6 +90,9 @@ class CustomNetworkImage extends StatelessWidget {
         child: child,
       ),
       placeholder: (context, url) => LoadingWidget(),
+      errorListener: (error) {
+        debugPrint('Image load error: $error');
+      },
       errorWidget: (context, url, error) {
         return errorWidget ??
             Container(

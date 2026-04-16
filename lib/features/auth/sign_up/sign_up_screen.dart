@@ -1,4 +1,5 @@
 import 'package:delivery_app/features/auth/controller/auth_controller.dart';
+import 'package:delivery_app/helper/toast/toast_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,6 +27,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailSignUp = TextEditingController();
   final TextEditingController passwordSignUp = TextEditingController();
   final TextEditingController confirmPasswordSignUp = TextEditingController();
+  bool _isTermsAccepted = false;
   @override
   void dispose() {
     nameSignUp.dispose();
@@ -108,6 +111,81 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   isPassword: true,
                   validator: TextFieldValidator.password(),
                 ),
+                Gap(14),
+
+                /// ---------- Terms & Conditions ----------
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Checkbox(
+                        value: _isTermsAccepted,
+                        activeColor: AppColors.greenTextColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        onChanged: (val) {
+                          setState(() => _isTermsAccepted = val ?? false);
+                        },
+                      ),
+                    ),
+                    Gap(8),
+                    Expanded(
+                      child: Wrap(
+                        children: [
+                          Text(
+                            'I agree to the ',
+                            style: context.textTheme.bodySmall,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              AppRouter.route.pushNamed(
+                                RoutePath.termsAndConditionsScreen,
+                              );
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text('Terms & Conditions'),
+                                  content: const SingleChildScrollView(
+                                    child: Text(
+                                      'By using this application, you agree to our Terms and Conditions. '
+                                      'You must be at least 18 years old to use this service. '
+                                      'We reserve the right to modify these terms at any time. '
+                                      'Your continued use of the app constitutes acceptance of any changes.',
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Close',
+                                        style: TextStyle(
+                                          color: AppColors.greenTextColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Terms & Conditions',
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.greenTextColor,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.greenTextColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
                 Gap(24),
 
                 /// ---------- Register Button ----------
@@ -116,6 +194,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isLoading: _auth.signUpLoading.value,
                     text: AppStrings.signUp.tr,
                     onTap: () {
+                      if (!_isTermsAccepted) {
+                        AppToast.error(
+                          message:
+                              'Please accept the Terms & Conditions to continue.',
+                        );
+                        return;
+                      }
                       if (formKey.currentState!.validate()) {
                         _auth.signUp(
                           nameSignUp: nameSignUp.text,

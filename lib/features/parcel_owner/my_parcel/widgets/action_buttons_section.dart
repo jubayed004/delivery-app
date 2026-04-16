@@ -28,8 +28,8 @@ class ActionButtonsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Don't show buttons if parcel status is PENDING
-    if (parcelStatus?.toUpperCase() == "PENDING") {
+    // Don't show buttons if parcel status is PENDING or ONGOING
+    if (parcelStatus?.toUpperCase() == "PENDING" || parcelStatus?.toUpperCase() == "ONGOING") {
       return const SizedBox.shrink();
     }
 

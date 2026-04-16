@@ -15,4 +15,13 @@ import GoogleMaps  // <-- Add Google Maps
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+
+  // Required for Facebook Login to receive the OAuth token callback
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    return super.application(app, open: url, options: options)
+  }
 }

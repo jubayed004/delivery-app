@@ -84,5 +84,38 @@
 
         <!-- Notification Permission (handled at runtime; no plist key required for iOS, but included for clarity) -->
 
+        <!-- ===== Facebook Login Configuration ===== -->
+        <!-- Replace YOUR_FACEBOOK_APP_ID and YOUR_FACEBOOK_CLIENT_TOKEN with real values -->
+        <!-- from https://developers.facebook.com/ > Your App > Settings > Basic -->
+        <key>FacebookAppID</key>
+        <string>YOUR_FACEBOOK_APP_ID</string>
+
+        <key>FacebookClientToken</key>
+        <string>YOUR_FACEBOOK_CLIENT_TOKEN</string>
+
+        <key>FacebookDisplayName</key>
+        <string>Delivery App</string>
+
+        <!-- URL Schemes required for Facebook Login OAuth redirect -->
+        <key>CFBundleURLTypes</key>
+        <array>
+            <!-- Facebook Login callback URL scheme: fb{YOUR_FACEBOOK_APP_ID} -->
+            <dict>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>fbYOUR_FACEBOOK_APP_ID</string>
+                </array>
+            </dict>
+        </array>
+
+        <!-- Allows the app to open the Facebook app if installed -->
+        <key>LSApplicationQueriesSchemes</key>
+        <array>
+            <string>fbapi</string>
+            <string>fb-messenger-share-api</string>
+            <string>fbauth2</string>
+            <string>fbshareextension</string>
+        </array>
+
 </dict>
 </plist>
