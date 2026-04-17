@@ -31,6 +31,7 @@ class ApiUrls {
   static String createReview() => '$base/v1/review/create';
   static String getReview() => '$base/v1/review/get-customer-review';
   static String verifyParcelOtp() => '$base/v1/driver/parcel/verify-otp';
+
   //============== Settting===================
 
   static String changePassword() => '$base/v1/auth/change-password';
@@ -40,6 +41,7 @@ class ApiUrls {
   static String logout() => '$base/v1/auth/logout';
 
   //============== Driver===================
+  
   static String getDriverInfo() => '$base/v1/driver/get-driver-info';
   static String updateDriverInfo() => '$base/v1/driver/update-info';
   static String registerDriver() => '$base/v1/driver/info';
