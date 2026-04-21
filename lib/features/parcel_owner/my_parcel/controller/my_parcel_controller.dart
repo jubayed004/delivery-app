@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class MyParcelController extends GetxController {
+  static MyParcelController get to => Get.find();
   final RxList<ParcelItem> parcels = <ParcelItem>[].obs;
 
   final ApiClient apiClient = sl();

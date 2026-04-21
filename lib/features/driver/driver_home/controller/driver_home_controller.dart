@@ -59,7 +59,7 @@ class DriverHomeController extends GetxController {
       try {
         AppConfig.logger.d('📦 driver:available-parcels → $data');
 
-        final rawList = data?['data']?['data'] as List<dynamic>?;
+        final rawList = data?['data'] as List<dynamic>?;
         if (rawList != null) {
           final parcels = rawList
               .map((item) =>
@@ -160,7 +160,7 @@ class DriverHomeController extends GetxController {
 
       if (response.statusCode == 200) {
         final driverHomeModel = DriverHomeModel.fromJson(response.data);
-        final newItems = driverHomeModel.data ?? [];
+        final newItems = driverHomeModel.data?.data ?? <ParcelInformation>[];
         final isLastPage = newItems.length < 10;
 
         if (isLastPage) {
