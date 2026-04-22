@@ -75,6 +75,7 @@
 
 import 'dart:async';
 import 'package:delivery_app/features/driver/track_parcel/tracking_service/tracking_service.dart';
+import 'package:delivery_app/utils/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -86,7 +87,7 @@ import 'package:delivery_app/utils/color/app_colors.dart';
 
 // ⚠️ Replace with your actual Google Maps API key
 // Make sure Directions API is enabled in Google Cloud Console
-const String _googleApiKey = 'AIzaSyAbmRHOMGItXC6dcajVKckbBpsrygRouts';
+
 
 class TrackParcelController extends GetxController {
   final DriverParcelItem parcelItem;
@@ -157,7 +158,7 @@ class TrackParcelController extends GetxController {
 
       final PolylineResult result = await polylinePoints
           .getRouteBetweenCoordinates(
-            googleApiKey: _googleApiKey,
+            googleApiKey: AppConfig.googleApiKey,
             request: PolylineRequest(
               origin: PointLatLng(
                 _pickupLatLng.latitude,
