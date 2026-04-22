@@ -11,7 +11,6 @@ import 'package:delivery_app/share/widgets/button/custom_button.dart';
 import 'package:delivery_app/share/widgets/text_field/custom_text_field.dart';
 import 'package:delivery_app/utils/app_strings/app_strings.dart';
 import 'package:delivery_app/utils/color/app_colors.dart';
-import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -240,8 +239,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Gap(26),
 
-                /// ---------- Social Icons ----------
-                Row(
+                /// ---------- Social Icons ---------- 
+                /*
+                 
+                 Row(
                   spacing: 24,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -269,6 +270,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
+                */
                 Gap(34),
 
                 /// ---------- Already Have Account ----------

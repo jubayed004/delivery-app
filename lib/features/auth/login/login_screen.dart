@@ -166,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Gap(24),
 
                             /// ----------- SOCIAL ICONS ------------
-                            Row(
+                            /*
+                             Row(
                               spacing: 24,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -194,6 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
+                            */
                             Gap(32),
                           ],
                         ),

@@ -1,5 +1,6 @@
 import 'package:delivery_app/core/di/injection.dart';
 import 'package:delivery_app/core/service/datasource/local/local_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:delivery_app/core/router/route_path.dart';
@@ -53,8 +54,6 @@ class _SplashScreenState extends State<SplashScreen>
     _startAnimations();
 
     _handleNavigationFlow();
-
-    _navigateToNextScreen();
   }
 
   void _startAnimations() async {
@@ -64,34 +63,52 @@ class _SplashScreenState extends State<SplashScreen>
     _cityController.forward();
   }
 
-  void _navigateToNextScreen() async {
-    await Future.delayed(const Duration(milliseconds: 4000));
-    if (mounted) {
-      AppRouter.route.pushReplacementNamed(RoutePath.onboardingScreen);
-    }
-  }
-
   Future<void> _handleNavigationFlow() async {
+    await Future.delayed(const Duration(milliseconds: 3000));
+    if (!mounted) return;
     try {
       final token = await localService.getToken();
       if (token.isEmpty || JwtDecoder.isExpired(token)) {
         AppRouter.route.goNamed(RoutePath.onboardingScreen);
         return;
       }
+      final isEmailVerified = await localService.getIsEmailVerified();
+      if (!isEmailVerified) {
+        final savedEmail = await localService.getEmail();
+        
+        if (savedEmail.isEmpty) {
+          await localService.logOut();
+          AppRouter.route.goNamed(RoutePath.onboardingScreen);
+          return;
+        }
+        
+        final body = {
+          "email": savedEmail,
+          "isSignUp": true,
+          "token": token,
+        };
+        AppRouter.route.goNamed(RoutePath.activeOtpScreen, extra: body);
+        return;
+      }
+
       final role = await localService.getRole();
+      final status = await localService.getStatus();
+
       if (role == "DRIVER") {
-        final status = await localService.getStatus();
         final isProfileCompleted = await localService.getIsProfileCompleted();
-        print(status);
-        print(isProfileCompleted);
-        if (status == "PENDING") {
-          if (!isProfileCompleted) {
-            AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
-          } else {
-            AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
-          }
-        } else {
+        if (kDebugMode) {
+          print(status);
+        }
+        if (kDebugMode) {
+          print(isProfileCompleted);
+        }
+
+        if (!isProfileCompleted) {
+          AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+        } else if (status == "ACTIVE") {
           AppRouter.route.goNamed(RoutePath.driverNavScreen);
+        } else {
+          AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
         }
       } else {
         AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);

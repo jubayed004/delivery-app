@@ -230,6 +230,7 @@ class AuthController extends GetxController {
         final status = data['user']['status']?.toString() ?? "";
         final isProfileCompleted =
             data['user']['is_profile_completed'] as bool? ?? false;
+        final isEmailVerified = data['user']['is_verified'] as bool? ?? false;
 
         await localService.saveUserdata(
           token: token,
@@ -239,18 +240,28 @@ class AuthController extends GetxController {
         );
         await localService.saveStatus(status);
         await localService.saveIsProfileCompleted(isProfileCompleted);
+        await localService.saveIsEmailVerified(isEmailVerified);
+        await localService.saveEmail(email);
+
+        if (!isEmailVerified) {
+          final body = {
+            "email": email,
+            "isSignUp": true,
+            "token": token,
+          };
+          AppRouter.route.pushNamed(RoutePath.activeOtpScreen, extra: body);
+          return;
+        }
 
         if (role == "CUSTOMER") {
           AppRouter.route.goNamed(RoutePath.parcelOwnerNavScreen);
         } else {
-          if (status == "PENDING") {
-            if (!isProfileCompleted) {
-              AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
-            } else {
-              AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
-            }
-          } else {
+          if (!isProfileCompleted) {
+            AppRouter.route.goNamed(RoutePath.commuterRegistrationScreen);
+          } else if (status == "ACTIVE") {
             AppRouter.route.goNamed(RoutePath.driverNavScreen);
+          } else {
+            AppRouter.route.goNamed(RoutePath.adminApprovalScreen);
           }
         }
       } else {

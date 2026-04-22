@@ -115,7 +115,7 @@ class CommuterRegistrationController extends GetxController {
         message: response.data?["message"].toString() ?? "Success",
       );
 
-      AppRouter.route.pushNamed(RoutePath.driverNavScreen);
+      AppRouter.route.pushNamed(RoutePath.adminApprovalScreen);
     } else {
       registerCommuterLoadingMethod(false);
       AppConfig.logger.e(response.data);

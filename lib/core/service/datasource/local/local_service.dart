@@ -37,6 +37,16 @@ class LocalService {
     return prefs.getBool(LocalKeys.isProfileCompleted) ?? false;
   }
 
+  Future<bool> getIsEmailVerified() async {
+    final prefs = await _prefs;
+    return prefs.getBool(LocalKeys.isEmailVerified) ?? false;
+  }
+
+  Future<String> getEmail() async {
+    final prefs = await _prefs;
+    return prefs.getString(LocalKeys.email) ?? "";
+  }
+
   Future<bool> isViewOnboarding() async {
     final prefs = await _prefs;
     return prefs.getBool(LocalKeys.onboarding) ?? false;
@@ -156,6 +166,46 @@ class LocalService {
     } catch (e, stack) {
       AppLogger.log(
         "Error saving profile completed status: $e\n$stack",
+        type: AppLogType.error,
+      );
+      return false;
+    }
+  }
+
+  Future<bool> saveIsEmailVerified(bool isEmailVerified) async {
+    try {
+      final prefs = await _prefs;
+      final success = await prefs.setBool(
+        LocalKeys.isEmailVerified,
+        isEmailVerified,
+      );
+      if (!success) {
+        AppLogger.log(
+          "Failed to save email verified status",
+          type: AppLogType.error,
+        );
+      }
+      return success;
+    } catch (e, stack) {
+      AppLogger.log(
+        "Error saving email verified status: $e\n$stack",
+        type: AppLogType.error,
+      );
+      return false;
+    }
+  }
+
+  Future<bool> saveEmail(String email) async {
+    try {
+      final prefs = await _prefs;
+      final success = await prefs.setString(LocalKeys.email, email);
+      if (!success) {
+        AppLogger.log("Failed to save email", type: AppLogType.error);
+      }
+      return success;
+    } catch (e, stack) {
+      AppLogger.log(
+        "Error saving email: $e\n$stack",
         type: AppLogType.error,
       );
       return false;

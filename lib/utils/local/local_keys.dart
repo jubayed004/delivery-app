@@ -6,7 +6,9 @@ class LocalKeys {
   static const String role = "role";
   static const String status = "status";
   static const String isProfileCompleted = "isProfileCompleted";
+  static const String isEmailVerified = "isEmailVerified";
   static const String languageKey = "language";
   static const String languageCode = "languagesCode";
   static const String countryCode = "countryCode";
+  static const String email = "email";
 }
