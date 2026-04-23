@@ -30,12 +30,11 @@ class ChatController extends GetxController {
     }
   }
 
-  Future<void> getChatList({
+  Future<List<ChatMessage>> getChatList({
     required int pageKey,
     required String id,
-    required PagingController<int, ChatMessage> pagingController,
   }) async {
-    if (isLoading) return;
+    if (isLoading) return [];
     isLoading = true;
 
     try {
@@ -47,18 +46,13 @@ class ChatController extends GetxController {
         final newData = ChatModel.fromJson(response.data);
         if (pageKey == 1) chatModel.value = newData;
 
-        final newItems = newData.data ?? [];
-        if (newItems.isEmpty) {
-          pagingController.appendLastPage(newItems);
-        } else {
-          pagingController.appendPage(newItems, pageKey + 1);
-        }
+        return newData.data ?? [];
       } else {
-        pagingController.error = 'Error fetching messages';
+        throw Exception('Error fetching messages');
       }
     } catch (e) {
       debugPrint('Error in getChatList: $e');
-      pagingController.error = 'Error fetching messages';
+      throw Exception('Error fetching messages');
     } finally {
       isLoading = false;
     }
@@ -87,7 +81,6 @@ class ChatController extends GetxController {
 
   Future<UploadImage> sendMessage({
     required Map<String, String> body,
-    PagingController<int, ChatMessage>? pagingController,
   }) async {
     final token = await localService.getToken();
     try {
@@ -118,7 +111,7 @@ class ChatController extends GetxController {
 
   void listenForNewMessages({
     required String chatId,
-    required PagingController<int, ChatMessage> pagingController,
+    required Function(ChatMessage) onNewMessage,
   }) {
     SocketApi.socket?.off('new_message');
 
@@ -130,11 +123,7 @@ class ChatController extends GetxController {
       final newMessage = ChatMessage.fromJson(data);
 
       if (newMessage.chatId == chatId) {
-        final currentMessages = pagingController.itemList ?? [];
-
-        if (!currentMessages.any((msg) => msg.id == newMessage.id)) {
-          pagingController.itemList = [newMessage, ...currentMessages];
-        }
+        onNewMessage(newMessage);
       }
     });
   }

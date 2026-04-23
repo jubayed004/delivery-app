@@ -164,11 +164,21 @@ class ApiClient {
         final mimeType =
             lookupMimeType(file.file.path) ?? 'application/octet-stream';
         final split = mimeType.split('/');
-        formMap[file.fieldKey] = await MultipartFile.fromFile(
+        final multipartFile = await MultipartFile.fromFile(
           file.file.path,
           filename: file.file.uri.pathSegments.last,
           contentType: MediaType(split[0], split[1]),
         );
+        
+        if (formMap.containsKey(file.fieldKey)) {
+          if (formMap[file.fieldKey] is List) {
+            (formMap[file.fieldKey] as List).add(multipartFile);
+          } else {
+            formMap[file.fieldKey] = [formMap[file.fieldKey], multipartFile];
+          }
+        } else {
+          formMap[file.fieldKey] = multipartFile;
+        }
       }
 
       final formData = FormData.fromMap(formMap);

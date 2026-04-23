@@ -29,12 +29,20 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _initializeSocketAndController();
-    pagingController.addPageRequestListener((pageKey) {
-      controller.getChatList(
-        pageKey: pageKey,
-        id: widget.chatId,
-        pagingController: pagingController,
-      );
+    pagingController.addPageRequestListener((pageKey) async {
+      try {
+        final newItems = await controller.getChatList(
+          pageKey: pageKey,
+          id: widget.chatId,
+        );
+        if (newItems.isEmpty) {
+          pagingController.appendLastPage(newItems);
+        } else {
+          pagingController.appendPage(newItems, pageKey + 1);
+        }
+      } catch (error) {
+        pagingController.error = error;
+      }
     });
   }
 
@@ -42,8 +50,14 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       await SocketApi.init();
       controller.listenForNewMessages(
-        pagingController: pagingController,
         chatId: widget.chatId,
+        onNewMessage: (newMessage) {
+          if (!mounted) return;
+          final currentMessages = pagingController.itemList ?? [];
+          if (!currentMessages.any((msg) => msg.id == newMessage.id)) {
+            pagingController.itemList = [newMessage, ...currentMessages];
+          }
+        },
       );
     } catch (e) {
       debugPrint("Socket Error Chat Screen: $e");
@@ -52,6 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    SocketApi.socket?.off('new_message');
     pagingController.dispose();
     scrollController.dispose();
     messageController.dispose();
@@ -172,10 +187,19 @@ class _ChatScreenState extends State<ChatScreen> {
     };
     messageController.clear();
 
-    await controller.sendMessage(
+    final result = await controller.sendMessage(
       body: body,
-      pagingController: pagingController,
     );
+
+    if (result.success == true && result.data != null) {
+      if (mounted) {
+        final chatMessage = ChatMessage.fromJson(result.data!.toJson());
+        final currentMessages = pagingController.itemList ?? [];
+        if (!currentMessages.any((msg) => msg.id == chatMessage.id)) {
+          pagingController.itemList = [chatMessage, ...currentMessages];
+        }
+      }
+    }
 
     isSending.value = false;
   }
