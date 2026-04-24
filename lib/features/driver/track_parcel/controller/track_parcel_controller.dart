@@ -134,8 +134,8 @@ class TrackParcelController extends GetxController {
     _setMarkers();
     _fetchRoadPolyline(); // road-following polyline
 
-    // Start emitting location to server every 20 m via socket
-    _trackingService.startTracking();
+    // Start emitting location to server via socket (includes parcel_id in payload)
+    _trackingService.startTracking(parcelId: parcelItem.id ?? '');
 
     // Mirror live position on the map
     _subscribeLivePosition();
@@ -280,7 +280,7 @@ class TrackParcelController extends GetxController {
           icon: BitmapDescriptor.defaultMarkerWithHue(
             BitmapDescriptor.hueGreen,
           ),
-          zIndex: 2,
+          zIndexInt: 2,
         ),
       );
   }

@@ -83,7 +83,7 @@ class _TrackParcelOwnerScreenState extends State<TrackParcelOwnerScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 5,
                         ),
                       ],
@@ -124,7 +124,7 @@ class _TrackParcelOwnerScreenState extends State<TrackParcelOwnerScreen> {
                           borderRadius: BorderRadius.circular(20.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                             ),
                           ],

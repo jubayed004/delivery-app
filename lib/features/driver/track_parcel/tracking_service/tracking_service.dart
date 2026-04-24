@@ -14,18 +14,27 @@ class LocationTrackingService {
   StreamSubscription<Position>? _positionSubscription;
   Position? _lastEmittedPosition;
 
+  /// The parcel ID currently being tracked — set when startTracking() is called.
+  String? _parcelId;
+
   /// Minimum distance (meters) before emitting a new location
   static const double _minDistanceMeters = 1.0;
 
-  /// Start tracking. Call this when driver goes "online" / starts a delivery.
-  Future<void> startTracking() async {
+  /// Start tracking. Call this when driver starts a delivery.
+  /// [parcelId] is required so the server can broadcast to the correct room.
+  Future<void> startTracking({required String parcelId}) async {
     if (_positionSubscription != null) {
       debugPrint('LocationTrackingService: already tracking.');
       return;
     }
 
+    _parcelId = parcelId;
+
     final bool hasPermission = await _checkPermissions();
     if (!hasPermission) return;
+
+    // Join the parcel room on the server so the owner can listen
+    _joinParcelRoom();
 
     // LocationSettings for smooth, battery-aware updates
     const LocationSettings locationSettings = LocationSettings(
@@ -41,15 +50,38 @@ class LocationTrackingService {
           },
         );
 
-    debugPrint('LocationTrackingService: started.');
+    debugPrint('LocationTrackingService: started for parcel $_parcelId.');
   }
 
   /// Stop tracking. Call when driver goes offline or delivery ends.
   void stopTracking() {
+    _leaveParcelRoom();
     _positionSubscription?.cancel();
     _positionSubscription = null;
     _lastEmittedPosition = null;
+    _parcelId = null;
     debugPrint('LocationTrackingService: stopped.');
+  }
+
+  // ─── Socket Room ────────────────────────────────────────────────────────────
+
+  void _joinParcelRoom() {
+    final socket = SocketApi.socket;
+    if (socket == null || !socket.connected) {
+      // Retry in 2 s if socket is not yet ready
+      debugPrint('LocationTrackingService: socket not ready — retrying join in 2s');
+      Future.delayed(const Duration(seconds: 2), _joinParcelRoom);
+      return;
+    }
+    socket.emit('join_parcel_tracking', {'parcel_id': _parcelId});
+    debugPrint('LocationTrackingService: joined room for parcel $_parcelId');
+  }
+
+  void _leaveParcelRoom() {
+    final socket = SocketApi.socket;
+    if (socket == null || _parcelId == null) return;
+    socket.emit('leave_parcel_tracking', {'parcel_id': _parcelId});
+    debugPrint('LocationTrackingService: left room for parcel $_parcelId');
   }
 
   // ─── Private ────────────────────────────────────────────────────────────────
@@ -89,10 +121,11 @@ class LocationTrackingService {
     }
 
     final Map<String, dynamic> payload = {
+      if (_parcelId != null) 'parcel_id': _parcelId, // ← server needs this to route broadcast
       'latitude': position.latitude,
       'longitude': position.longitude,
-      'heading': position.heading, // degrees from north
-      'speed': position.speed, // m/s  — convert if server expects km/h
+      'heading': position.heading,  // degrees from north
+      'speed': position.speed,      // m/s
       'accuracy': position.accuracy, // metres
     };
 
@@ -124,3 +157,4 @@ class LocationTrackingService {
     return true;
   }
 }
+
